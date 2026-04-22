@@ -1,6 +1,7 @@
 # 20. Kế Hoạch Triển Khai Sau MVP
 
 ## Mục lục
+
 - Thứ tự triển khai
 - Phase 1
 - Phase 2
@@ -78,12 +79,6 @@ Phạm vi:
 - đo retrieval quality, grounding, citation correctness
 - đo latency cơ bản
 
-Workstreams:
-
-1. `fixtures_and_golden_cases`
-2. `benchmark_and_baseline_metrics`
-3. `regression_suite_and_result_storage`
-
 Deliverable:
 
 - baseline metric đầu tiên
@@ -106,25 +101,26 @@ Deliverable:
 
 - feature đầu tiên sau MVP được ship có kiểm soát
 - benchmark hoặc test chứng minh feature không làm regress behavior lõi
+- layout `src/tuesday_rag` mới đủ ổn để feature đầu tiên có thể phát triển tiếp trên đó
 
 ## Deliverable theo phase
 
-| Phase | Deliverable chính |
-| --- | --- |
-| 1 | Baseline dev/test/release nội bộ ổn định |
-| 2 | Persistence + hardening + smoke test vận hành |
-| 3 | Baseline chất lượng và regression suite |
-| 4 | Feature mở rộng đầu tiên có spec và benchmark riêng |
+| Phase | Deliverable chính                                   |
+| ----- | --------------------------------------------------- |
+| 1     | Baseline dev/test/release nội bộ ổn định            |
+| 2     | Persistence + hardening + smoke test vận hành       |
+| 3     | Baseline chất lượng và regression suite             |
+| 4     | Feature mở rộng đầu tiên có spec và benchmark riêng |
 
 ## Rủi ro
 
-| Rủi ro | Tác động |
-| --- | --- |
-| Mở rộng feature quá sớm | đội mất tập trung, khó xác định lỗi do nền hay do feature |
-| Thay adapter thật nhưng không có smoke test | lỗi tích hợp lọt qua review |
-| Không có baseline benchmark | tuning theo cảm giác, dễ regress retrieval/generation |
-| Logging/metrics yếu | khó phân biệt lỗi dữ liệu, lỗi provider, lỗi ứng dụng |
-| Persistence mới làm lệch semantics cũ | vi phạm contract hoặc policy re-index |
+| Rủi ro                                      | Tác động                                                  |
+| ------------------------------------------- | --------------------------------------------------------- |
+| Mở rộng feature quá sớm                     | đội mất tập trung, khó xác định lỗi do nền hay do feature |
+| Thay adapter thật nhưng không có smoke test | lỗi tích hợp lọt qua review                               |
+| Không có baseline benchmark                 | tuning theo cảm giác, dễ regress retrieval/generation     |
+| Logging/metrics yếu                         | khó phân biệt lỗi dữ liệu, lỗi provider, lỗi ứng dụng     |
+| Persistence mới làm lệch semantics cũ       | vi phạm contract hoặc policy re-index                     |
 
 ## Cách giảm rủi ro
 

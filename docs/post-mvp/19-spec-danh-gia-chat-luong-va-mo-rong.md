@@ -86,3 +86,8 @@ Mở rộng khả năng của hệ thống sau khi đã có nền ổn định v
 
 - Chỉ vào `quality_evaluation` khi `stabilize` đã xong ở mức đủ chạy lặp lại.
 - Chỉ vào `feature_expansion` khi đã có baseline tối thiểu từ `quality_evaluation`, trừ khi có yêu cầu nghiệp vụ khẩn cấp được chấp nhận rõ ràng.
+
+## Ghi chú kiến trúc sau post-MVP
+
+- Full migration cấu trúc `src/tuesday_rag` được chấp nhận như một phần của bước vào `feature_expansion`.
+- Migration này phải bám theo decision và guardrail trong `40-spec-quyet-dinh-migration-cau-truc-src.md`.
