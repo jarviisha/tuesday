@@ -20,6 +20,12 @@ Phase này không thêm feature mới. Nó chuẩn hóa nền phát triển và 
 - `25-spec-runbook-config-va-release-baseline.md`
 - `26-checklist-phase-1-stabilize.md`
 
+## Artefact triển khai
+
+- `../../../README.md`
+- `27-runbook-config-va-release-baseline-implementation.md`
+- `../../../.github/workflows/ci.yml`
+
 ## Thứ tự đọc
 
 1. `22-phase-1-overview.md`

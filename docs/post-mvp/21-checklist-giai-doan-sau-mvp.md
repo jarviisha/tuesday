@@ -8,13 +8,13 @@
 
 ## Checklist stabilize
 
-- [ ] Có quy trình cài dependency dev rõ ràng.
-- [ ] Có lệnh chuẩn để chạy lint.
-- [ ] Có lệnh chuẩn để chạy test.
-- [ ] Có lệnh chuẩn để chạy API local.
-- [ ] Có CI hoặc automation tương đương cho lint + test.
-- [ ] Có runbook local/staging ngắn gọn.
-- [ ] Bộ spec chi tiết của Phase 1 đã đủ để giao việc theo workstream.
+- [x] Có quy trình cài dependency dev rõ ràng.
+- [x] Có lệnh chuẩn để chạy lint.
+- [x] Có lệnh chuẩn để chạy test.
+- [x] Có lệnh chuẩn để chạy API local.
+- [x] Có CI hoặc automation tương đương cho lint + test.
+- [x] Có runbook local/staging ngắn gọn.
+- [x] Bộ spec chi tiết của Phase 1 đã đủ để giao việc theo workstream.
 
 ## Checklist operational hardening
 
@@ -43,15 +43,15 @@
 
 ## Checklist boundary và guardrails
 
-- [ ] Không có object provider/store/framework rò rỉ lên application/domain.
-- [ ] Không đổi semantics `insufficient_context`.
-- [ ] Không đổi semantics `citations`.
-- [ ] Không đổi semantics `tags = contains-any`.
-- [ ] Không log raw content ngoài mức tối thiểu cần thiết.
+- [x] Không có object provider/store/framework rò rỉ lên application/domain.
+- [x] Không đổi semantics `insufficient_context`.
+- [x] Không đổi semantics `citations`.
+- [x] Không đổi semantics `tags = contains-any`.
+- [x] Không log raw content ngoài mức tối thiểu cần thiết.
 
 ## Kết luận vào phase mở rộng
 
-- [ ] `stabilize` đã đạt mức done.
+- [x] `stabilize` đã đạt mức done.
 - [ ] `operational_hardening` đã đạt mức done tối thiểu.
 - [ ] `quality_evaluation` đã có baseline đủ dùng.
 - [ ] Có quyết định rõ feature nào được làm tiếp theo.
