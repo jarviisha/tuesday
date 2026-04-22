@@ -9,11 +9,11 @@ from tuesday_rag.domain.errors import (
     InvalidInputError,
 )
 from tuesday_rag.domain.models import Chunk, IndexedChunk, SourceDocument
-from tuesday_rag.ingestion.service import IndexerService
-from tuesday_rag.ingestion.use_case import IngestionUseCase
 from tuesday_rag.infrastructure.chunking import CharacterChunker
 from tuesday_rag.infrastructure.providers import HashEmbeddingProvider
 from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore
+from tuesday_rag.ingestion.service import IndexerService
+from tuesday_rag.ingestion.use_case import IngestionUseCase
 
 
 class EmptyChunker:

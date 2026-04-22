@@ -1,8 +1,6 @@
 from tuesday_rag.config import RuntimeConfig
 from tuesday_rag.generation.service import GeneratorService
 from tuesday_rag.generation.use_case import GenerationUseCase
-from tuesday_rag.ingestion.service import IndexerService
-from tuesday_rag.ingestion.use_case import IngestionUseCase
 from tuesday_rag.infrastructure.chunking import CharacterChunker
 from tuesday_rag.infrastructure.file_vector_store import FileBackedVectorStore
 from tuesday_rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
@@ -12,6 +10,8 @@ from tuesday_rag.infrastructure.resilience import (
     ResilientVectorStore,
 )
 from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore
+from tuesday_rag.ingestion.service import IndexerService
+from tuesday_rag.ingestion.use_case import IngestionUseCase
 from tuesday_rag.retrieval.service import RetrieverService
 from tuesday_rag.retrieval.use_case import RetrievalUseCase
 

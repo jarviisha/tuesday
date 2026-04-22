@@ -1,13 +1,13 @@
 from tests.fixtures import NO_MATCH_QUERY, ONBOARDING_DOCUMENT, REFUND_DOCUMENT
 
 from tuesday_rag.config import RuntimeConfig
+from tuesday_rag.infrastructure.chunking import CharacterChunker
+from tuesday_rag.infrastructure.providers import HashEmbeddingProvider
+from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore
 from tuesday_rag.ingestion.service import IndexerService
 from tuesday_rag.ingestion.use_case import IngestionUseCase
 from tuesday_rag.retrieval.service import RetrieverService
 from tuesday_rag.retrieval.use_case import RetrievalUseCase
-from tuesday_rag.infrastructure.chunking import CharacterChunker
-from tuesday_rag.infrastructure.providers import HashEmbeddingProvider
-from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore
 
 
 def _build_ingestion_and_retrieval() -> tuple[IngestionUseCase, RetrievalUseCase]:
