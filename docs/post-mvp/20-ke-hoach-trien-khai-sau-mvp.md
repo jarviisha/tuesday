@@ -78,6 +78,12 @@ Phạm vi:
 - đo retrieval quality, grounding, citation correctness
 - đo latency cơ bản
 
+Workstreams:
+
+1. `fixtures_and_golden_cases`
+2. `benchmark_and_baseline_metrics`
+3. `regression_suite_and_result_storage`
+
 Deliverable:
 
 - baseline metric đầu tiên

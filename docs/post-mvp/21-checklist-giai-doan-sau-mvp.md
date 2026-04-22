@@ -28,6 +28,7 @@
 
 ## Checklist quality evaluation
 
+- [x] Bộ spec chi tiết của Phase 3 đã đủ để giao việc theo workstream.
 - [ ] Có bộ fixture/golden cases sau MVP.
 - [ ] Có baseline retrieval quality.
 - [ ] Có baseline cho grounding/citation correctness.
