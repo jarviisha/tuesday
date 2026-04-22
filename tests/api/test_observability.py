@@ -24,6 +24,9 @@ async def test_request_logs_include_lifecycle_fields(caplog: pytest.LogCaptureFi
     assert record.use_case == "documents.index"
     assert record.error_code is None
     assert isinstance(record.latency_ms, int)
+    assert record.failure_group is None
+    assert record.failure_component is None
+    assert record.retry_count == 0
 
 
 @pytest.mark.anyio
@@ -44,3 +47,7 @@ async def test_failed_request_logs_include_error_code(caplog: pytest.LogCaptureF
     assert record.request_id
     assert record.use_case == "documents.index"
     assert record.error_code == "INVALID_INPUT"
+    assert record.failure_group == "application"
+    assert record.failure_component == "request_validation"
+    assert record.failure_mode == "handled_error"
+    assert record.retry_count == 0

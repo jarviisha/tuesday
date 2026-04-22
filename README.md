@@ -73,6 +73,40 @@ pytest tests/api/test_health.py
 
 Runtime configuration is loaded from environment variables with the `TUESDAY_RAG_` prefix. The Phase 1 runbook, config baseline, and release baseline are documented in `docs/post-mvp/phase-1/27-runbook-config-va-release-baseline-implementation.md`.
 
+Phase 2 operational hardening adds:
+
+```bash
+TUESDAY_RAG_VECTOR_STORE_BACKEND=memory|file
+TUESDAY_RAG_VECTOR_STORE_FILE_PATH=.tuesday-rag/vector_store.json
+TUESDAY_RAG_EMBEDDING_TIMEOUT_MS=1000
+TUESDAY_RAG_EMBEDDING_MAX_RETRIES=0
+TUESDAY_RAG_GENERATION_TIMEOUT_MS=1000
+TUESDAY_RAG_GENERATION_MAX_RETRIES=0
+TUESDAY_RAG_VECTOR_STORE_TIMEOUT_MS=1000
+TUESDAY_RAG_VECTOR_STORE_MAX_RETRIES=0
+```
+
+Use the file-backed adapter when you want persistence across process restarts:
+
+```bash
+export TUESDAY_RAG_VECTOR_STORE_BACKEND=file
+export TUESDAY_RAG_VECTOR_STORE_FILE_PATH=.tuesday-rag/vector_store.json
+```
+
+## Smoke Test
+
+Run the Phase 2 smoke test in-process:
+
+```bash
+python scripts/smoke_test.py
+```
+
+Run the same smoke test against a running local or staging-like API:
+
+```bash
+python scripts/smoke_test.py --base-url http://127.0.0.1:8000
+```
+
 ## Repository Layout
 
 - `src/tuesday_rag/api/`: FastAPI app, schemas, and request handling

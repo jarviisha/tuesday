@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 
 from tuesday_rag.api.dependencies import container
 from tuesday_rag.api.error_mapping import map_domain_error
+from tuesday_rag.api.observability import classify_domain_error
 from tuesday_rag.api.schemas import (
     DocumentIndexRequest,
     DocumentIndexResponse,
@@ -36,6 +37,11 @@ async def request_context_middleware(request: Request, call_next):
     started_at = time.perf_counter()
     request.state.request_id = request_id
     request.state.error_code = None
+    request.state.failure_group = None
+    request.state.failure_component = None
+    request.state.failure_mode = None
+    request.state.retry_count = 0
+    request.state.timeout_ms = None
     response = await call_next(request)
     latency_ms = int((time.perf_counter() - started_at) * 1000)
     response.headers["x-request-id"] = request_id
@@ -47,6 +53,11 @@ async def request_context_middleware(request: Request, call_next):
             "use_case": getattr(request.state, "use_case", request.url.path),
             "error_code": getattr(request.state, "error_code", None),
             "latency_ms": latency_ms,
+            "failure_group": getattr(request.state, "failure_group", None),
+            "failure_component": getattr(request.state, "failure_component", None),
+            "failure_mode": getattr(request.state, "failure_mode", None),
+            "retry_count": getattr(request.state, "retry_count", 0),
+            "timeout_ms": getattr(request.state, "timeout_ms", None),
         },
     )
     return response
@@ -56,6 +67,12 @@ async def request_context_middleware(request: Request, call_next):
 async def domain_error_handler(request: Request, error: DomainError):
     status_code, body = map_domain_error(error)
     request.state.error_code = error.error_code
+    error_context = classify_domain_error(error)
+    request.state.failure_group = error_context["failure_group"]
+    request.state.failure_component = error_context["failure_component"]
+    request.state.failure_mode = error_context["failure_mode"]
+    request.state.retry_count = error_context["retry_count"]
+    request.state.timeout_ms = error_context["timeout_ms"]
     logger.warning(
         "request.failed",
         extra={
@@ -63,6 +80,11 @@ async def domain_error_handler(request: Request, error: DomainError):
             "use_case": getattr(request.state, "use_case", request.url.path),
             "error_code": error.error_code,
             "latency_ms": None,
+            "failure_group": error_context["failure_group"],
+            "failure_component": error_context["failure_component"],
+            "failure_mode": error_context["failure_mode"],
+            "retry_count": error_context["retry_count"],
+            "timeout_ms": error_context["timeout_ms"],
         },
     )
     return JSONResponse(status_code=status_code, content=ErrorResponseSchema(**body).model_dump())

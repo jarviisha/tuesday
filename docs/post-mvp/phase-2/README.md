@@ -20,6 +20,11 @@ Phase này tập trung vào độ bền vận hành, khả năng quan sát và f
 - `31-spec-observability-va-smoke-test.md`
 - `32-checklist-phase-2-operational-hardening.md`
 
+## Artefact triển khai
+
+- `33-runbook-persistence-resilience-va-smoke.md`
+- `../../../scripts/smoke_test.py`
+
 ## Thứ tự đọc
 
 1. `28-phase-2-overview.md`

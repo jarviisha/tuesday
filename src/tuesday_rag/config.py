@@ -4,12 +4,20 @@ from dataclasses import dataclass, fields
 
 @dataclass(frozen=True)
 class RuntimeConfig:
+    vector_store_backend: str = "memory"
+    vector_store_file_path: str = ".tuesday-rag/vector_store.json"
     retrieval_top_k_default: int = 5
     retrieval_top_k_min: int = 1
     retrieval_top_k_max: int = 20
     generation_max_context_chunks_default: int = 5
     generation_max_context_chunks_min: int = 1
     generation_max_context_chunks_max: int = 10
+    embedding_timeout_ms: int = 1000
+    embedding_max_retries: int = 0
+    generation_timeout_ms: int = 1000
+    generation_max_retries: int = 0
+    vector_store_timeout_ms: int = 1000
+    vector_store_max_retries: int = 0
     ingestion_chunk_size_chars_default: int = 1000
     ingestion_chunk_size_chars_min: int = 300
     ingestion_chunk_size_chars_max: int = 2000
@@ -69,6 +77,42 @@ class RuntimeConfig:
                 self.ingestion_chunk_overlap_chars_max,
             ),
             (
+                "embedding_timeout_ms",
+                self.embedding_timeout_ms,
+                1,
+                60000,
+            ),
+            (
+                "embedding_max_retries",
+                self.embedding_max_retries,
+                0,
+                5,
+            ),
+            (
+                "generation_timeout_ms",
+                self.generation_timeout_ms,
+                1,
+                60000,
+            ),
+            (
+                "generation_max_retries",
+                self.generation_max_retries,
+                0,
+                5,
+            ),
+            (
+                "vector_store_timeout_ms",
+                self.vector_store_timeout_ms,
+                1,
+                60000,
+            ),
+            (
+                "vector_store_max_retries",
+                self.vector_store_max_retries,
+                0,
+                5,
+            ),
+            (
                 "content_length_max",
                 self.content_length_max,
                 self.content_length_min,
@@ -90,6 +134,8 @@ class RuntimeConfig:
         for field_name, value, minimum, maximum in integer_bounds:
             if not (minimum <= value <= maximum):
                 raise ValueError(f"{field_name} is outside spec bounds")
+        if self.vector_store_backend not in {"memory", "file"}:
+            raise ValueError("vector_store_backend is outside supported values")
         if self.retrieval_top_k_min > self.retrieval_top_k_max:
             raise ValueError("retrieval_top_k bounds are invalid")
         if (

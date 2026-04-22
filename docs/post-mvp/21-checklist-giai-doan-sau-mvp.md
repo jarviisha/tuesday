@@ -19,12 +19,12 @@
 ## Checklist operational hardening
 
 - [x] Bộ spec chi tiết của Phase 2 đã đủ để giao việc theo workstream.
-- [ ] Dữ liệu index không còn phụ thuộc hoàn toàn vào memory của process.
-- [ ] Tích hợp ngoài có timeout tối thiểu.
-- [ ] Tích hợp ngoài có retry ở nơi phù hợp.
-- [ ] Error mapping cho failure path đã được rà lại.
-- [ ] Có smoke test cho luồng `index -> retrieve -> generate`.
-- [ ] Logging/metrics đủ để phân biệt nhóm lỗi chính.
+- [x] Dữ liệu index không còn phụ thuộc hoàn toàn vào memory của process.
+- [x] Tích hợp ngoài có timeout tối thiểu.
+- [x] Tích hợp ngoài có retry ở nơi phù hợp.
+- [x] Error mapping cho failure path đã được rà lại.
+- [x] Có smoke test cho luồng `index -> retrieve -> generate`.
+- [x] Logging/metrics đủ để phân biệt nhóm lỗi chính.
 
 ## Checklist quality evaluation
 
@@ -53,6 +53,6 @@
 ## Kết luận vào phase mở rộng
 
 - [x] `stabilize` đã đạt mức done.
-- [ ] `operational_hardening` đã đạt mức done tối thiểu.
+- [x] `operational_hardening` đã đạt mức done tối thiểu.
 - [ ] `quality_evaluation` đã có baseline đủ dùng.
 - [ ] Có quyết định rõ feature nào được làm tiếp theo.

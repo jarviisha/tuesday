@@ -10,33 +10,33 @@
 
 ## Checklist persistence and runtime wiring
 
-- [ ] Có storage/index adapter không còn phụ thuộc hoàn toàn vào memory của process.
-- [ ] Có runtime wiring rõ ràng để chọn adapter theo môi trường.
-- [ ] Có tài liệu config local/staging cho adapter persistence-backed.
-- [ ] Có integration test cho storage mới.
-- [ ] Có kiểm chứng `replace-by-document_id-within-index_name` trên storage mới.
+- [x] Có storage/index adapter không còn phụ thuộc hoàn toàn vào memory của process.
+- [x] Có runtime wiring rõ ràng để chọn adapter theo môi trường.
+- [x] Có tài liệu config local/staging cho adapter persistence-backed.
+- [x] Có integration test cho storage mới.
+- [x] Có kiểm chứng `replace-by-document_id-within-index_name` trên storage mới.
 
 ## Checklist integration resilience and error mapping
 
-- [ ] Có timeout tối thiểu cho tích hợp ngoài.
-- [ ] Có retry ở nơi phù hợp với failure tạm thời.
-- [ ] Có giới hạn retry rõ ràng.
-- [ ] Có rà soát error mapping cho failure path chính.
-- [ ] Có test hoặc sandbox check cho ít nhất một failure path timeout hoặc retry.
+- [x] Có timeout tối thiểu cho tích hợp ngoài.
+- [x] Có retry ở nơi phù hợp với failure tạm thời.
+- [x] Có giới hạn retry rõ ràng.
+- [x] Có rà soát error mapping cho failure path chính.
+- [x] Có test hoặc sandbox check cho ít nhất một failure path timeout hoặc retry.
 
 ## Checklist observability and smoke test
 
-- [ ] Có định nghĩa nhóm lỗi chính cần phân biệt.
-- [ ] Có logging hoặc metrics đủ để phân biệt lỗi ứng dụng, storage, provider.
-- [ ] Có smoke test `index -> retrieve -> generate`.
-- [ ] Có command hoặc script rõ ràng để chạy smoke test.
-- [ ] Có runbook ngắn cho việc đọc tín hiệu khi smoke test fail.
+- [x] Có định nghĩa nhóm lỗi chính cần phân biệt.
+- [x] Có logging hoặc metrics đủ để phân biệt lỗi ứng dụng, storage, provider.
+- [x] Có smoke test `index -> retrieve -> generate`.
+- [x] Có command hoặc script rõ ràng để chạy smoke test.
+- [x] Có runbook ngắn cho việc đọc tín hiệu khi smoke test fail.
 
 ## Checklist guardrails
 
-- [ ] Không có feature mới chen vào Phase 2.
-- [ ] Không đổi public API contract.
-- [ ] Không đổi semantics `insufficient_context`.
-- [ ] Không đổi semantics `citations`.
-- [ ] Không đổi semantics `tags = contains-any`.
-- [ ] Không log raw content ngoài mức tối thiểu cần thiết.
+- [x] Không có feature mới chen vào Phase 2.
+- [x] Không đổi public API contract.
+- [x] Không đổi semantics `insufficient_context`.
+- [x] Không đổi semantics `citations`.
+- [x] Không đổi semantics `tags = contains-any`.
+- [x] Không log raw content ngoài mức tối thiểu cần thiết.
