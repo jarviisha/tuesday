@@ -131,3 +131,23 @@ Mốc release nội bộ của Phase 1:
 3. Runbook local/staging-like và baseline config đã được ghi lại.
 4. Logging tối thiểu giữ đủ `request_id`, `use_case`, `error_code`, `latency_ms`.
 5. Không có thay đổi public API contract hoặc semantics lõi của MVP.
+
+## CI pass/fail baseline
+
+Pipeline CI Phase 1 được coi là `pass` khi:
+
+- job `lint` pass với command `ruff check .`
+- job `test` pass với command `pytest`
+
+Pipeline CI Phase 1 được coi là `fail` khi:
+
+- job `lint` fail
+- job `test` fail
+- dependency không cài được bằng `pip install -e '.[dev]'`
+- repo không setup được Python `3.12` như yêu cầu của `pyproject.toml`
+
+Ý nghĩa baseline này:
+
+- Nếu `lint` fail, lỗi nằm ở chuẩn code hoặc import/order theo cấu hình hiện tại của repo.
+- Nếu `test` fail, lỗi nằm ở hành vi hoặc wiring đang được test.
+- Không coi trạng thái warning-only là pass cho baseline review nội bộ của Phase 1.
