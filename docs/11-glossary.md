@@ -14,10 +14,10 @@
 | reranker | Thành phần xếp hạng lại kết quả retrieval bằng mô hình chuyên biệt. Không thuộc MVP hiện tại. |
 | grounding | Nguyên tắc buộc câu trả lời bám vào ngữ cảnh đã truy hồi. |
 | citation | Tham chiếu nguồn trong câu trả lời. Trong dự án này citation chuẩn là `chunk_id`. |
-| composite service | Service ở application layer điều phối nhiều port lõi để thực hiện một luồng nghiệp vụ. Trong MVP này gồm `Indexer`, `Retriever`, `Generator`. |
+| service nội bộ gần capability | Service điều phối nhiều port lõi để thực hiện một luồng nghiệp vụ. Trong MVP này gồm `Indexer`, `Retriever`, `Generator`. |
 | hot path | Luồng xử lý trực tiếp ảnh hưởng độ trễ người dùng, ví dụ `/retrieve`, `/generate`. |
 | adapter | Thành phần triển khai một port để tích hợp với công nghệ cụ thể. |
-| port | Interface ở ranh giới application với hạ tầng. |
+| port | Interface ở ranh giới orchestration/capability với hạ tầng. |
 | config runtime | Tập cấu hình được nạp khi ứng dụng khởi động để override các giá trị mặc định trong biên spec. |
 | vector store | Hệ lưu trữ vector và metadata, hỗ trợ truy vấn tương đồng. |
 | ingestion | Luồng tiếp nhận tài liệu, parse, chunk, embed và index. |
@@ -34,4 +34,4 @@
 | retrieved chunk | Chunk được lấy ra từ retrieval để dùng làm context. |
 | insufficient context | Trạng thái không đủ ngữ cảnh để trả lời chắc chắn. |
 | observability tối thiểu | Mức log/trace tối thiểu để debug MVP, ví dụ `request_id`, `use_case`, `error_code`, `latency_ms`, nhưng không lộ dữ liệu nhạy cảm. |
-| ports/adapters | Kiến trúc tách application khỏi công nghệ hạ tầng bằng interface và adapter. |
+| ports/adapters | Kiến trúc tách orchestration/domain khỏi công nghệ hạ tầng bằng interface và adapter. |

@@ -2,11 +2,11 @@
 
 ## Checklist kiến trúc
 
-- [x] Đã chốt rõ 4 lớp: API, application, domain, infrastructure.
+- [x] Đã chốt rõ boundary lõi ban đầu: API, orchestration/application, domain, infrastructure.
 - [x] Đã xác nhận domain/application không phụ thuộc trực tiếp vào object của LlamaIndex.
 - [x] Đã xác nhận mọi SDK cloud/vector store chỉ xuất hiện trong adapter.
 - [x] Đã chốt public API MVP chỉ hỗ trợ mode nào và mode nào để sau.
-- [x] `Indexer`, `Retriever`, `Generator` là composite service ở application, chưa phải port lõi.
+- [x] `Indexer`, `Retriever`, `Generator` là service nội bộ gần capability, chưa phải port lõi.
 
 ## Checklist domain model
 
@@ -71,7 +71,7 @@
 ## Checklist adapter boundaries
 
 - [x] Adapter chỉ map vào/ra model nội bộ.
-- [x] Không trả object LlamaIndex ra application layer.
+- [x] Không trả object LlamaIndex ra orchestration/capability layer.
 - [x] Không trả object SDK của provider ra domain/application.
 - [x] Semantics filter `tags` đã chốt là `contains-any`.
 - [x] Filter metadata được adapter hỗ trợ đúng semantics đã chốt.

@@ -32,7 +32,7 @@ MVP bao gồm:
   - `POST /retrieve`
   - `POST /generate`
 - Ghi log kỹ thuật tối thiểu để trace request.
-- Khi không có context phù hợp, trả kết quả `insufficient_context` trực tiếp ở application layer, không gọi LLM.
+- Khi không có context phù hợp, trả kết quả `insufficient_context` trực tiếp ở orchestration/capability layer, không gọi LLM.
 
 ## Ngoài phạm vi
 
@@ -71,7 +71,7 @@ Các hạng mục chưa thuộc MVP:
   - object model của LlamaIndex
   - SDK riêng của vector store
   - SDK riêng của cloud LLM/embedding
-- Mọi object framework-specific phải được map về model nội bộ trước khi đi vào application layer.
+- Mọi object framework-specific phải được map về model nội bộ trước khi đi vào orchestration/capability layer.
 - Hành vi `generation` phải grounding vào context đã truy hồi.
 
 ## Nguyên tắc thiết kế
@@ -88,6 +88,6 @@ Các hạng mục chưa thuộc MVP:
   - lọc theo tài liệu
   - truy vết citation
   - hỗ trợ mở rộng sau MVP
-- Ưu tiên deterministic behavior ở application layer; phần không deterministic được cô lập trong adapter gọi mô hình.
+- Ưu tiên deterministic behavior ở orchestration/capability layer; phần không deterministic được cô lập trong adapter gọi mô hình.
 - Thiết kế để thay thế engine mà không làm đổi API contract công khai.
-- Với trường hợp không có context phù hợp, application layer nên trả kết quả `insufficient_context` có kiểm soát thay vì phụ thuộc hoàn toàn vào hành vi ngẫu nhiên của LLM.
+- Với trường hợp không có context phù hợp, orchestration/capability layer nên trả kết quả `insufficient_context` có kiểm soát thay vì phụ thuộc hoàn toàn vào hành vi ngẫu nhiên của LLM.

@@ -209,8 +209,8 @@ Schema cho `retrieval_request`:
 
 Quy tắc mapping sang domain:
 
-- Ở application layer, `retrieval_request` của API phải được map thành `RetrievalRequest`.
-- Nếu `retrieval_request.query` bị bỏ trống thì application phải gán `query = question` trước khi gọi use case retrieval.
+- Ở orchestration/capability layer, `retrieval_request` của API phải được map thành `RetrievalRequest`.
+- Nếu `retrieval_request.query` bị bỏ trống thì orchestration phải gán `query = question` trước khi gọi use case retrieval.
 
 Schema cho từng phần tử `retrieved_chunks` giống response của `/retrieve`.
 

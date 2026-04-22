@@ -6,7 +6,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from tuesday_rag.api.dependencies import container
 from tuesday_rag.api.error_mapping import map_domain_error
 from tuesday_rag.api.observability import classify_domain_error
 from tuesday_rag.api.schemas import (
@@ -19,6 +18,7 @@ from tuesday_rag.api.schemas import (
     RetrievalResponseSchema,
 )
 from tuesday_rag.domain.errors import DomainError
+from tuesday_rag.runtime.container import container
 
 logger = logging.getLogger("tuesday_rag.api")
 

@@ -20,7 +20,7 @@ DEFAULT_OUTPUT = "benchmarks/phase-3/initial-baseline.json"
 
 async def _run_benchmark(iterations: int) -> dict:
     from tuesday_rag.api.app import app
-    from tuesday_rag.api.dependencies import container
+    from tuesday_rag.runtime.container import container
 
     container.vector_store.reset()
     transport = httpx.ASGITransport(app=app)

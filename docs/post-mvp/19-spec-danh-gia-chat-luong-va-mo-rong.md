@@ -90,4 +90,5 @@ Mở rộng khả năng của hệ thống sau khi đã có nền ổn định v
 ## Ghi chú kiến trúc sau post-MVP
 
 - Full migration cấu trúc `src/tuesday_rag` được chấp nhận như một phần của bước vào `feature_expansion`.
+- Migration này ưu tiên layout capability-oriented nhưng phải bám boundary thực tế của codebase hiện tại, không ép tách cơ học mọi concern thành module độc lập.
 - Migration này phải bám theo decision và guardrail trong `40-spec-quyet-dinh-migration-cau-truc-src.md`.

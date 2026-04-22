@@ -11,7 +11,7 @@
 
 ## Mục tiêu
 
-Khóa rõ quyết định kiến trúc sau post-MVP về việc migrate cấu trúc `src/tuesday_rag` sang layout capability-based, để team có một hướng refactor thống nhất trước khi mở rộng feature sâu hơn.
+Khóa rõ quyết định kiến trúc sau post-MVP về việc migrate cấu trúc `src/tuesday_rag` theo hướng capability-oriented, để team có một hướng refactor thống nhất trước khi mở rộng feature sâu hơn.
 
 ## Quyết định hiện tại
 
@@ -59,15 +59,21 @@ Migration này bao gồm:
 Mục tiêu capability tối thiểu phải có trong layout mới:
 
 - `ingestion`
-- `index`
 - `retrieval`
 - `generation`
-- `observability`
 
-Phần có thể vẫn tạm hoãn hoặc chỉ tạo placeholder nếu chưa có implementation thật:
+Phần có thể vẫn tạm hoãn, gộp tạm vào capability khác, hoặc chỉ tạo placeholder nếu chưa có implementation thật hay boundary đủ rõ:
 
+- `index` như một module độc lập
+- `observability` như một module độc lập
 - thêm `tenant` như một module độc lập
 - thêm `pipeline` như một orchestration layer độc lập
+
+Ở trạng thái codebase hiện tại:
+
+- `index` vẫn chủ yếu là phần nội bộ của luồng `ingestion`, chưa phải một capability công khai hay use case độc lập
+- `observability` vẫn chủ yếu là concern của API transport, runtime wiring và error classification, chưa phải một capability domain/application độc lập
+- migration không nên ép tách hai phần này thành boundary riêng nếu chưa có use case hoặc contract mới thật sự cần
 
 ## Lộ trình migration
 
@@ -83,9 +89,16 @@ Lộ trình gợi ý:
 
 1. `retrieval`
 2. `generation`
-3. `index`
-4. `ingestion`
+3. `ingestion`
+4. phần nội bộ `index` đi cùng hoặc ngay sau `ingestion`
 5. `observability`
+
+Nguyên tắc ưu tiên:
+
+- migrate theo cụm coupling thực tế thay vì tách cơ học theo tên capability
+- `generation` đi sau hoặc cùng nhịp với `retrieval` vì đang phụ thuộc trực tiếp vào retrieval flow
+- `ingestion` và phần nội bộ `index` nên đi cùng nhau vì chunking, embedding và replace/write semantics hiện vẫn nằm trong cùng một luồng nghiệp vụ
+- `observability` chỉ nên tách thành module riêng nếu sau migration vẫn chứng minh được boundary rõ và không làm phình scope của nhịp refactor cấu trúc
 
 `tenant` và `pipeline` chỉ nên được hiện thực đầy đủ sau khi có use case thật hoặc feature spec riêng.
 

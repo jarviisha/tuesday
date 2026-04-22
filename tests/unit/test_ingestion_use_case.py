@@ -1,8 +1,6 @@
 import pytest
 from tests.fixtures import ONBOARDING_DOCUMENT, REFUND_DOCUMENT
 
-from tuesday_rag.application.services.indexer import IndexerService
-from tuesday_rag.application.use_cases.ingestion import IngestionUseCase
 from tuesday_rag.config import RuntimeConfig
 from tuesday_rag.domain.errors import (
     ChunkingError,
@@ -11,6 +9,8 @@ from tuesday_rag.domain.errors import (
     InvalidInputError,
 )
 from tuesday_rag.domain.models import Chunk, IndexedChunk, SourceDocument
+from tuesday_rag.ingestion.service import IndexerService
+from tuesday_rag.ingestion.use_case import IngestionUseCase
 from tuesday_rag.infrastructure.chunking import CharacterChunker
 from tuesday_rag.infrastructure.providers import HashEmbeddingProvider
 from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore

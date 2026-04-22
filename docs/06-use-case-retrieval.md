@@ -31,7 +31,7 @@ Nhận truy vấn người dùng, thực hiện truy hồi các chunk liên quan
 2. Chuẩn hóa query:
    - trim khoảng trắng
    - loại bỏ trường hợp rỗng
-3. Gọi composite service `Retriever`.
+3. Gọi service `Retriever`.
 4. Bên trong `Retriever`:
    - gọi `EmbeddingProvider` để embed query
    - gọi `VectorStore` để truy hồi theo vector + filter
@@ -53,7 +53,7 @@ MVP hỗ trợ bộ lọc đơn giản theo phép so sánh bằng:
 Nguyên tắc:
 
 - Chỉ chấp nhận whitelist field đã định nghĩa.
-- Filter không hợp lệ phải bị từ chối ở application layer.
+- Filter không hợp lệ phải bị từ chối ở orchestration/capability layer.
 - Nếu vector store không hỗ trợ native filter tương ứng, adapter phải fail rõ ràng hoặc degrade có kiểm soát; không được âm thầm bỏ filter.
 - `tags` trong MVP dùng semantics `contains-any` và phải được giữ nhất quán giữa fake adapter, adapter thật và test contract.
 

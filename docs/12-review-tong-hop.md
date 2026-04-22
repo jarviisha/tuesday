@@ -25,7 +25,7 @@ Sau khi rà chéo và chốt các quyết định kiến trúc mở, bộ tài l
 
 - Một số chỗ còn trộn giữa “khả năng hệ thống có thể hỗ trợ” và “public API MVP thực sự khóa gì”.
 - Tên contract ở generation trước đó chưa thống nhất giữa domain và API.
-- Bộ port/composite service vẫn cần được implement cẩn thận để không trôi boundary khi vào code.
+- Bộ port/service nội bộ vẫn cần được implement cẩn thận để không trôi boundary khi vào code.
 - Các giới hạn input đã được khóa, nhưng vẫn cần map rõ vào config runtime khi triển khai.
 
 ## Các mâu thuẫn phát hiện được
@@ -51,7 +51,7 @@ Sau khi rà chéo và chốt các quyết định kiến trúc mở, bộ tài l
 ## Các điểm over-engineer
 
 - Bộ port hiện tại có xu hướng dày hơn mức MVP:
-  - cần tránh nâng `Indexer`, `Retriever`, `Generator` thành abstraction hạ tầng quá sớm khi chúng đã được chốt là composite service ở application.
+  - cần tránh nâng `Indexer`, `Retriever`, `Generator` thành abstraction hạ tầng quá sớm khi chúng đã được chốt là service nội bộ gần capability.
 - Parser file đã được nhắc ở nhiều nơi dù public API MVP hiện chỉ khóa JSON text.
 - Tài liệu có nói tới nhiều hướng mở rộng hợp lý nhưng cần tránh để đội triển khai “thi công trước cho tương lai”, nhất là:
   - hybrid retrieval
@@ -67,7 +67,7 @@ Quyết định đã khóa:
   - `VectorStore`
   - `Chunker`
   - `DocumentParser` nếu có ingestion path nội bộ
-- Giữ `Indexer`, `Retriever`, `Generator` như composite service nội bộ ở application.
+- Giữ `Indexer`, `Retriever`, `Generator` như service nội bộ gần capability.
 - Re-index policy là `replace-by-document_id-within-index_name`.
 - `tags` dùng semantics `contains-any`.
 - `version` chỉ để metadata, chưa ảnh hưởng retrieval logic.
@@ -82,7 +82,7 @@ Quyết định đã khóa:
 ### A. Tính nhất quán
 
 - Tên domain model hiện tương đối thống nhất sau khi đã đồng bộ `retrieval_request`.
-- Tên thành phần hiện nhất quán hơn sau khi chốt `Indexer`/`Retriever`/`Generator` là composite service ở application.
+- Tên thành phần hiện nhất quán hơn sau khi chốt `Indexer`/`Retriever`/`Generator` là service nội bộ gần capability.
 - API request/response nhìn chung khớp với use case, trừ một số chỗ đã chỉnh như trên.
 - Acceptance criteria và test strategy nhìn chung khớp nhau; phần generation đã tốt hơn sau khi khóa nhánh `insufficient_context`.
 - Glossary khớp ở mức thuật ngữ chung, chưa có vấn đề lớn.
@@ -95,7 +95,7 @@ Quyết định đã khóa:
 - Validation rules đã đủ để bắt đầu code MVP; phần còn lại chủ yếu là regex/format chi tiết nếu team muốn siết thêm.
 - Metadata schema chunk ở mức đủ dùng cho MVP: trace, filter, citation.
 - Citation semantics và insufficient-context contract đã đủ rõ để viết test hành vi trước.
-- Boundary application và infrastructure đã có; điểm cần giữ là không làm composite service trôi sang vai trò adapter.
+- Boundary orchestration và infrastructure đã có; điểm cần giữ là không làm service nội bộ trôi sang vai trò adapter.
 - Grounding/citations/insufficient context đã có, và đã rõ hơn sau khi chỉnh nhánh context rỗng.
 
 ### C. Mức độ phù hợp với MVP
@@ -107,7 +107,7 @@ Quyết định đã khóa:
 
 ### D. Hỗ trợ TDD
 
-- Use case đủ cụ thể để viết test trước ở mức application.
+- Use case đủ cụ thể để viết test trước ở mức orchestration/capability.
 - API contract đủ rõ để viết API test cơ bản.
 - Port/interface đủ rõ để fake hoặc mock.
 - Acceptance criteria phần lớn đo được.
@@ -119,7 +119,7 @@ Quyết định đã khóa:
 - Không thấy business logic bị khóa trực tiếp vào object của LlamaIndex trong domain.
 - Domain model chưa bị leak framework type.
 - Contract công khai chưa bị phụ thuộc vào provider cloud cụ thể.
-- Điểm cần canh là không để adapter LlamaIndex quyết định prompt format, retrieval response format hay citation format ở phía application.
+- Điểm cần canh là không để adapter LlamaIndex quyết định prompt format, retrieval response format hay citation format ở phía orchestration.
 
 ## Các điểm cần làm rõ trước khi code
 

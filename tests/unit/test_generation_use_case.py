@@ -1,12 +1,14 @@
 import pytest
 from tests.fixtures import REFUND_DOCUMENT
 
-from tuesday_rag.application.services.generator import GeneratorService
-from tuesday_rag.application.services.retriever import RetrieverService
-from tuesday_rag.application.use_cases.generation import GenerationUseCase
 from tuesday_rag.config import RuntimeConfig
 from tuesday_rag.domain.errors import InvalidGenerationOutputError, InvalidInputError
 from tuesday_rag.domain.models import LLMGenerationResult
+from tuesday_rag.generation.service import GeneratorService
+from tuesday_rag.generation.use_case import GenerationUseCase
+from tuesday_rag.ingestion.service import IndexerService
+from tuesday_rag.ingestion.use_case import IngestionUseCase
+from tuesday_rag.retrieval.service import RetrieverService
 from tuesday_rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
 from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore
 
@@ -72,8 +74,6 @@ def test_generation_uses_question_as_retrieval_query_when_query_missing() -> Non
         insufficient_context_answer=config.insufficient_context_answer,
     )
 
-    from tuesday_rag.application.services.indexer import IndexerService
-    from tuesday_rag.application.use_cases.ingestion import IngestionUseCase
     from tuesday_rag.infrastructure.chunking import CharacterChunker
 
     ingestion = IngestionUseCase(

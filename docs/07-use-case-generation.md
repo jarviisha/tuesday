@@ -36,7 +36,7 @@ Sinh câu trả lời cho người dùng dựa trên retrieved context, có grou
 3. Kiểm tra danh sách context sau cùng.
 4. Nếu danh sách context rỗng, trả trực tiếp `GeneratedAnswer` với `insufficient_context = true`, `grounded = false`, `citations = []`, `used_chunks = []` theo policy MVP.
 5. Nếu có context, chọn tối đa `max_context_chunks` để build prompt.
-6. Gọi composite service `Generator`.
+6. Gọi service `Generator`.
 7. Bên trong `Generator`:
    - build prompt theo template nội bộ
    - chèn context theo format ổn định, có `chunk_id`
@@ -80,7 +80,7 @@ Nguyên tắc:
   - `insufficient_context = true`
   - `grounded = false`
   - answer phải nói rõ không đủ dữ liệu để trả lời chắc chắn
-  - application layer phải trả lời theo template nội bộ cố định hoặc format tương đương mà không gọi LLM
+  - orchestration/capability layer phải trả lời theo template nội bộ cố định hoặc format tương đương mà không gọi LLM
 - Nếu retrieval có chunk nhưng không đủ để trả lời đầy đủ:
   - answer phải nêu phần nào có căn cứ, phần nào chưa đủ dữ liệu
   - không được bịa phần thiếu

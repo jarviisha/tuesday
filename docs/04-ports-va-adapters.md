@@ -2,9 +2,9 @@
 
 ## Mục lục
 - Cách áp dụng kiến trúc ports/adapters
-- Boundary application và infrastructure
+- Boundary orchestration/capability và infrastructure
 - Danh sách port
-- Composite service ở application
+- Service nội bộ gần capability
 - Trách nhiệm từng port
 - Adapter sử dụng LlamaIndex và cloud provider
 - Nguyên tắc thay thế engine
@@ -13,21 +13,21 @@
 
 Mục tiêu của ports/adapters trong dự án này:
 
-- Ổn định application layer khi thay đổi công nghệ hạ tầng.
+- Ổn định orchestration nội bộ khi thay đổi công nghệ hạ tầng.
 - Cô lập SDK và object model bên ngoài.
 - Cho phép test use case bằng fake hoặc mock adapter.
 
 Quy tắc:
 
-- Application chỉ biết interface.
+- Orchestration/capability layer chỉ biết interface.
 - Infrastructure chịu trách nhiệm:
   - gọi SDK
   - map dữ liệu vào/ra domain model
   - chuyển lỗi kỹ thuật sang lỗi hạ tầng có kiểm soát
 
-## Boundary giữa application và infrastructure
+## Boundary giữa orchestration/capability và infrastructure
 
-### Application layer chịu trách nhiệm
+### Orchestration/capability layer chịu trách nhiệm
 
 - Validate nghiệp vụ.
 - Điều phối thứ tự xử lý use case.
@@ -50,7 +50,7 @@ Quy tắc:
 - `DocumentParser`
 - `Chunker`
 
-## Composite service ở application
+## Service nội bộ gần capability
 
 Trong MVP này:
 
@@ -58,12 +58,12 @@ Trong MVP này:
 - `Retriever`
 - `Generator`
 
-được xem là application/composite services, chưa phải port lõi.
+được xem là service nội bộ gần capability, chưa phải port lõi.
 
 Nguyên tắc:
 
-- Composite service có thể điều phối nhiều port lõi.
-- Composite service không làm thay đổi boundary giữa application và infrastructure.
+- Service nội bộ có thể điều phối nhiều port lõi.
+- Service nội bộ không làm thay đổi boundary giữa orchestration/capability và infrastructure.
 - Nếu sau này cần thay engine hoặc tách abstraction sâu hơn, khi đó mới cân nhắc nâng chúng thành port riêng.
 
 ## Trách nhiệm của từng port
@@ -98,7 +98,7 @@ Trách nhiệm:
 
 Lưu ý:
 
-- Port này không được buộc application biết chi tiết engine của vector store.
+- Port này không được buộc orchestration/capability layer biết chi tiết engine của vector store.
 
 ### DocumentParser
 
@@ -117,7 +117,7 @@ Trách nhiệm:
 
 ### Indexer
 
-Vai trò hiện tại: application/composite service, không phải port lõi.
+Vai trò hiện tại: service nội bộ gần capability, không phải port lõi.
 
 Trách nhiệm:
 
@@ -130,7 +130,7 @@ Trách nhiệm:
 
 ### Retriever
 
-Vai trò hiện tại: application/composite service, không phải port lõi.
+Vai trò hiện tại: service nội bộ gần capability, không phải port lõi.
 
 Trách nhiệm:
 
@@ -141,7 +141,7 @@ Trách nhiệm:
 
 ### Generator
 
-Vai trò hiện tại: application/composite service, không phải port lõi.
+Vai trò hiện tại: service nội bộ gần capability, không phải port lõi.
 
 Trách nhiệm:
 
@@ -163,7 +163,7 @@ LlamaIndex chỉ được dùng trong infrastructure với vai trò engine phụ
 
 Ràng buộc:
 
-- Không expose `Node`, `Document`, `QueryEngine`, `Response` của LlamaIndex ra application layer.
+- Không expose `Node`, `Document`, `QueryEngine`, `Response` của LlamaIndex ra orchestration/capability layer.
 - Nếu LlamaIndex bị thay thế, domain và use case không phải sửa contract.
 
 ## Adapter nào dùng cloud provider

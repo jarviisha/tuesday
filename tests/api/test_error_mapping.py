@@ -54,7 +54,7 @@ async def test_documents_index_returns_400_for_invalid_input() -> None:
 
 @pytest.mark.anyio
 async def test_retrieve_returns_502_for_embedding_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    from tuesday_rag.api.dependencies import container
+    from tuesday_rag.runtime.container import container
 
     def fail_embed_query(_: str) -> list[float]:
         raise RuntimeError("embed failed")
@@ -76,7 +76,7 @@ async def test_retrieve_returns_502_for_embedding_error(monkeypatch: pytest.Monk
 
 @pytest.mark.anyio
 async def test_generate_returns_502_for_generation_error(monkeypatch: pytest.MonkeyPatch) -> None:
-    from tuesday_rag.api.dependencies import container
+    from tuesday_rag.runtime.container import container
 
     def fail_generate(_: str) -> LLMGenerationResult:
         raise RuntimeError("llm failed")

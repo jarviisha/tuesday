@@ -38,7 +38,7 @@
 
 ## Checklist feature expansion
 
-- [x] Có decision rõ về việc thực hiện full migration cấu trúc `src/tuesday_rag`.
+- [x] Có decision rõ về việc thực hiện full migration cấu trúc `src/tuesday_rag` theo guardrail và boundary hiện có.
 - [ ] Feature đầu tiên sau MVP đã có spec riêng.
 - [ ] Feature đầu tiên sau MVP đã nêu rõ lý do ưu tiên.
 - [ ] Feature đầu tiên sau MVP có test hoặc benchmark chứng minh giá trị.

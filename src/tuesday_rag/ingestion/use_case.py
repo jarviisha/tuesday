@@ -1,16 +1,16 @@
 from hashlib import sha256
 
-from tuesday_rag.application.services.indexer import IndexerService
-from tuesday_rag.application.validators import (
+from tuesday_rag.config import RuntimeConfig
+from tuesday_rag.domain.errors import ChunkingError, EmptyDocumentError
+from tuesday_rag.domain.models import DocumentIndexResult, SourceDocument
+from tuesday_rag.domain.ports import Chunker
+from tuesday_rag.ingestion.service import IndexerService
+from tuesday_rag.shared.validation import (
     enforce_length,
     require_non_blank,
     validate_metadata,
     validate_source_type,
 )
-from tuesday_rag.config import RuntimeConfig
-from tuesday_rag.domain.errors import ChunkingError, EmptyDocumentError
-from tuesday_rag.domain.models import DocumentIndexResult, SourceDocument
-from tuesday_rag.domain.ports import Chunker
 
 
 class IngestionUseCase:

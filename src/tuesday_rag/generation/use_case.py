@@ -1,12 +1,3 @@
-from tuesday_rag.application.services.generator import GeneratorService
-from tuesday_rag.application.services.retriever import RetrieverService
-from tuesday_rag.application.validators import (
-    enforce_length,
-    require_non_blank,
-    validate_filters,
-    validate_max_context_chunks,
-    validate_top_k,
-)
 from tuesday_rag.config import RuntimeConfig
 from tuesday_rag.domain.errors import InvalidInputError, RetrievalRequiredIndexMissingError
 from tuesday_rag.domain.models import (
@@ -14,6 +5,15 @@ from tuesday_rag.domain.models import (
     GenerationRequest,
     RetrievalRequest,
     RetrievedChunk,
+)
+from tuesday_rag.generation.service import GeneratorService
+from tuesday_rag.retrieval.service import RetrieverService
+from tuesday_rag.shared.validation import (
+    enforce_length,
+    require_non_blank,
+    validate_filters,
+    validate_max_context_chunks,
+    validate_top_k,
 )
 
 
@@ -49,10 +49,7 @@ class GenerationUseCase:
         if raw_retrieved_chunks is not None:
             retrieved_chunks = [self._to_retrieved_chunk(item) for item in raw_retrieved_chunks]
         elif retrieval_request_payload is not None:
-            index_name = (
-                retrieval_request_payload.get("index_name")
-                or payload.get("index_name")
-            )
+            index_name = retrieval_request_payload.get("index_name") or payload.get("index_name")
             if not index_name:
                 raise RetrievalRequiredIndexMissingError(
                     "index_name is required for internal retrieval",

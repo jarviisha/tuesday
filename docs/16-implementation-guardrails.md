@@ -28,18 +28,18 @@ Nếu một thay đổi vi phạm guardrail, mặc định phải dừng lại v
 
 ## Guardrails về boundary kiến trúc
 
-- Domain và application không được phụ thuộc trực tiếp vào object model của LlamaIndex.
-- Domain và application không được trả hoặc nhận object SDK của vector store, embedding provider hoặc LLM provider.
-- Mọi object framework-specific phải được map về model nội bộ trước khi đi vào application layer.
-- `Indexer`, `Retriever`, `Generator` phải giữ vai trò composite service ở application, không bị đẩy xuống thành adapter hoặc kéo lên thành public framework abstraction.
+- Domain và orchestration/capability layer không được phụ thuộc trực tiếp vào object model của LlamaIndex.
+- Domain và orchestration/capability layer không được trả hoặc nhận object SDK của vector store, embedding provider hoặc LLM provider.
+- Mọi object framework-specific phải được map về model nội bộ trước khi đi vào orchestration/capability layer.
+- `Indexer`, `Retriever`, `Generator` phải giữ vai trò service nội bộ gần capability, không bị đẩy xuống thành adapter hoặc kéo lên thành public framework abstraction.
 - API layer chỉ làm nhiệm vụ nhận request, map schema, gọi use case, map response và lỗi.
-- Business rules, validation nghiệp vụ và semantics của `insufficient_context`, `grounded`, `citations` phải nằm ở application/domain, không nằm rải trong adapter.
+- Business rules, validation nghiệp vụ và semantics của `insufficient_context`, `grounded`, `citations` phải nằm ở orchestration/domain, không nằm rải trong adapter.
 
 ## Guardrails về behavior
 
 - Re-index phải bám đúng policy `replace-by-document_id-within-index_name`.
 - `tags` phải giữ semantics `contains-any` trừ khi có quyết định mới được ghi rõ.
-- Khi không có context phù hợp, application phải trả `insufficient_context` và không gọi `LLMProvider`.
+- Khi không có context phù hợp, orchestration/capability layer phải trả `insufficient_context` và không gọi `LLMProvider`.
 - Citation chỉ được tham chiếu theo `chunk_id` và chỉ lấy từ tập `retrieved_chunks` thực tế đã dùng.
 - Runtime defaults chỉ được override trong biên spec đã khóa; không để config làm thay đổi public contract ngầm.
 - Không log raw content hoặc dữ liệu nhạy cảm ngoài mức tối thiểu cần cho debug.
@@ -54,8 +54,8 @@ Nếu một thay đổi vi phạm guardrail, mặc định phải dừng lại v
 
 ## Dấu hiệu đang lệch khỏi đường ray
 
-- Code ở application bắt đầu dùng trực tiếp object của engine hoặc provider.
-- Adapter bắt đầu quyết định output schema, citation format hoặc prompt contract thay cho application.
+- Code ở orchestration/capability layer bắt đầu dùng trực tiếp object của engine hoặc provider.
+- Adapter bắt đầu quyết định output schema, citation format hoặc prompt contract thay cho orchestration.
 - Một endpoint mới xuất hiện nhưng không có spec và không nằm trong sprint plan.
 - Config được dùng để mở rộng phạm vi behavior thay vì chỉ override trong biên đã khóa.
 - Test phải sửa hàng loạt chỉ vì semantics chưa được khóa rõ.

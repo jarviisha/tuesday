@@ -47,6 +47,8 @@ Phase 2 bao gồm 3 workstream:
 
 Bổ sung quan sát tối thiểu cho các luồng chính và khóa một smoke test ngắn cho chuỗi `index -> retrieve -> generate`.
 
+Workstream này là hardening concern ở mức vận hành và verification; nó không tự động hàm ý `observability` phải trở thành một capability hoặc module kiến trúc độc lập ở các phase sau.
+
 ## Tiêu chí thành công
 
 - Team có thể khởi động repo ở chế độ dùng adapter persistence-backed hoặc thành phần bền hơn mà không đổi contract HTTP.

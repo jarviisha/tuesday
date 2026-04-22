@@ -101,7 +101,7 @@ Deliverable:
 
 - feature đầu tiên sau MVP được ship có kiểm soát
 - benchmark hoặc test chứng minh feature không làm regress behavior lõi
-- layout `src/tuesday_rag` mới đủ ổn để feature đầu tiên có thể phát triển tiếp trên đó
+- layout `src/tuesday_rag` mới đủ ổn để feature đầu tiên có thể phát triển tiếp trên đó mà vẫn bám guardrail và boundary thực tế của codebase
 
 ## Deliverable theo phase
 

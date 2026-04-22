@@ -1,4 +1,3 @@
-from tuesday_rag.application.prompt_builder import build_grounded_prompt
 from tuesday_rag.domain.errors import (
     GenerationError,
     InvalidGenerationOutputError,
@@ -6,6 +5,7 @@ from tuesday_rag.domain.errors import (
 )
 from tuesday_rag.domain.models import GeneratedAnswer, GenerationRequest
 from tuesday_rag.domain.ports import LLMProvider
+from tuesday_rag.generation.prompt_builder import build_grounded_prompt
 
 
 class GeneratorService:

@@ -1,12 +1,12 @@
-from tuesday_rag.application.services.retriever import RetrieverService
-from tuesday_rag.application.validators import (
+from tuesday_rag.config import RuntimeConfig
+from tuesday_rag.domain.models import RetrievalRequest, RetrievalResponse
+from tuesday_rag.retrieval.service import RetrieverService
+from tuesday_rag.shared.validation import (
     enforce_length,
     require_non_blank,
     validate_filters,
     validate_top_k,
 )
-from tuesday_rag.config import RuntimeConfig
-from tuesday_rag.domain.models import RetrievalRequest, RetrievalResponse
 
 
 class RetrievalUseCase:

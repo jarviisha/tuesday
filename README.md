@@ -1,11 +1,10 @@
 # Tuesday RAG Core
 
-Tuesday RAG Core is a FastAPI-based MVP RAG service built with a ports-and-adapters structure under `src/`.
+Tuesday RAG Core is a FastAPI-based RAG service built under `src/` with a ports-and-adapters foundation and a capability-oriented package layout.
 
 ## Prerequisites
 
 - Python 3.12+
-- `pip`
 
 ## Development Setup
 
@@ -22,16 +21,23 @@ Install the project with development dependencies:
 pip install -e '.[dev]'
 ```
 
+If the repository already has `.venv`, prefer running commands through it directly instead of using system Python:
+
+```bash
+./.venv/bin/python -m pytest
+./.venv/bin/python -m uvicorn tuesday_rag.api.app:app --reload
+```
+
 ## Source-of-Truth Commands
 
 These commands are the Phase 1 baseline for local development and CI:
 
 ```bash
-ruff check .
-pytest
-pytest tests/unit
-pytest tests/api/test_health.py
-python -m uvicorn tuesday_rag.api.app:app --reload
+./.venv/bin/python -m ruff check .
+./.venv/bin/python -m pytest
+./.venv/bin/python -m pytest tests/unit
+./.venv/bin/python -m pytest tests/api/test_health.py
+./.venv/bin/python -m uvicorn tuesday_rag.api.app:app --reload
 ```
 
 ## Local API
@@ -39,7 +45,7 @@ python -m uvicorn tuesday_rag.api.app:app --reload
 Start the API locally:
 
 ```bash
-python -m uvicorn tuesday_rag.api.app:app --reload
+./.venv/bin/python -m uvicorn tuesday_rag.api.app:app --reload
 ```
 
 Health check endpoint:
@@ -65,8 +71,9 @@ Expected response:
 Use targeted tests when iterating:
 
 ```bash
-pytest tests/unit
-pytest tests/api/test_health.py
+./.venv/bin/python -m pytest tests/unit
+./.venv/bin/python -m pytest tests/api/test_health.py
+./.venv/bin/python -m pytest tests/api tests/smoke/test_index_retrieve_generate.py tests/regression/test_quality_regression.py -q
 ```
 
 ## Runtime Configuration
@@ -98,13 +105,13 @@ export TUESDAY_RAG_VECTOR_STORE_FILE_PATH=.tuesday-rag/vector_store.json
 Run the Phase 2 smoke test in-process:
 
 ```bash
-python scripts/smoke_test.py
+./.venv/bin/python scripts/smoke_test.py
 ```
 
 Run the same smoke test against a running local or staging-like API:
 
 ```bash
-python scripts/smoke_test.py --base-url http://127.0.0.1:8000
+./.venv/bin/python scripts/smoke_test.py --base-url http://127.0.0.1:8000
 ```
 
 ## Quality Evaluation
@@ -112,20 +119,34 @@ python scripts/smoke_test.py --base-url http://127.0.0.1:8000
 Run the Phase 3 benchmark:
 
 ```bash
-python scripts/benchmark_quality.py
+./.venv/bin/python scripts/benchmark_quality.py
 ```
 
 Run the Phase 3 regression suite:
 
 ```bash
-pytest tests/regression
+./.venv/bin/python -m pytest tests/regression
 ```
 
 ## Repository Layout
 
 - `src/tuesday_rag/api/`: FastAPI app, schemas, and request handling
-- `src/tuesday_rag/application/`: use cases and services
+- `src/tuesday_rag/runtime/`: composition root and runtime wiring
+- `src/tuesday_rag/shared/`: shared validation helpers
+- `src/tuesday_rag/ingestion/`: ingestion use case and indexing service
+- `src/tuesday_rag/retrieval/`: retrieval use case and retrieval service
+- `src/tuesday_rag/generation/`: generation use case, prompt builder, and generation service
 - `src/tuesday_rag/domain/`: domain models, ports, and errors
 - `src/tuesday_rag/infrastructure/`: chunking, providers, and vector store adapters
+- `src/tuesday_rag/evaluation/`: golden cases used by benchmark/regression flows
 - `tests/`: unit, API, and integration tests
 - `docs/`: design notes and post-MVP planning
+
+## Architecture Notes
+
+- `api/` handles HTTP transport, schema mapping, and request-level observability.
+- `runtime/` wires the app together through a shared container.
+- Capability packages (`ingestion/`, `retrieval/`, `generation/`) hold orchestration logic close to each feature area.
+- `domain/` and `infrastructure/` keep the ports-and-adapters boundary intact.
+
+The file `src/tuesday_rag/api/dependencies.py` is kept as a thin compatibility shim during the migration period; the main container now lives in `src/tuesday_rag/runtime/container.py`.

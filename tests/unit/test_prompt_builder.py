@@ -1,5 +1,5 @@
-from tuesday_rag.application.prompt_builder import build_grounded_prompt
 from tuesday_rag.domain.models import RetrievedChunk
+from tuesday_rag.generation.prompt_builder import build_grounded_prompt
 
 
 def test_prompt_builder_creates_deterministic_grounded_prompt() -> None:

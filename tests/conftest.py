@@ -1,6 +1,6 @@
 import pytest
 
-from tuesday_rag.api.dependencies import container
+from tuesday_rag.runtime.container import container
 
 
 @pytest.fixture(autouse=True)

@@ -21,6 +21,8 @@
 - viết hoặc tài liệu hóa smoke test cho `index -> retrieve -> generate`
 - khóa command hoặc script chạy smoke test trong local/staging-like
 
+Spec này khóa một workstream hardening ở mức vận hành; nó không mặc định yêu cầu tạo `observability` như một capability hoặc module kiến trúc độc lập.
+
 ## Deliverable
 
 - baseline observability cho các request chính
