@@ -18,6 +18,7 @@
 
 ## Checklist operational hardening
 
+- [x] Bộ spec chi tiết của Phase 2 đã đủ để giao việc theo workstream.
 - [ ] Dữ liệu index không còn phụ thuộc hoàn toàn vào memory của process.
 - [ ] Tích hợp ngoài có timeout tối thiểu.
 - [ ] Tích hợp ngoài có retry ở nơi phù hợp.

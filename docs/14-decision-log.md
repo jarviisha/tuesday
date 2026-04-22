@@ -52,6 +52,7 @@ Decision log không thay thế các tài liệu spec chính. Nó chỉ ghi lại
 | `DL-013` | `accepted` | Thứ tự ưu tiên sau MVP là `stabilize -> operational_hardening -> quality_evaluation -> feature_expansion` | Giữ team tập trung vào độ ổn định, khả năng vận hành và baseline đánh giá trước khi mở rộng tính năng | planning sau MVP, checklist, phase specs |
 | `DL-014` | `accepted` | Feature mới sau MVP không mặc định là blocker; chỉ được ưu tiên sớm khi có yêu cầu nghiệp vụ hoặc dữ liệu benchmark rõ ràng | Tránh scope creep và tránh dùng feature mới để che vấn đề vận hành/chất lượng chưa được giải quyết | planning sau MVP, spec feature mới, review phạm vi |
 | `DL-015` | `accepted` | Phase 1 `stabilize` được tách thành 3 workstream: `dev_setup_and_commands`, `ci_baseline`, `runbook_config_and_release_baseline` | Giúp chia việc và review implementation sau MVP theo đơn vị nhỏ, kiểm chứng được | docs post-MVP, phase 1 implementation planning, checklist |
+| `DL-016` | `accepted` | Phase 2 `operational_hardening` được tách thành 3 workstream: `persistence_and_runtime_wiring`, `integration_resilience_and_error_mapping`, `observability_and_smoke_test` | Giúp Phase 2 bám đúng hardening scope, giao việc rõ và tránh trộn persistence, resilience, observability thành một khối mơ hồ | docs post-MVP, phase 2 planning, checklist |
 
 ## Mẫu ghi quyết định mới
 

@@ -53,6 +53,12 @@ Phạm vi:
 - tăng observability cho failure path
 - thêm smoke test cho luồng chính
 
+Workstreams:
+
+1. `persistence_and_runtime_wiring`
+2. `integration_resilience_and_error_mapping`
+3. `observability_and_smoke_test`
+
 Deliverable:
 
 - hệ thống không còn phụ thuộc hoàn toàn vào in-memory state
