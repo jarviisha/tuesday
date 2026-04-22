@@ -20,6 +20,14 @@ Phase này tập trung vào fixture chung, benchmark nhỏ nhưng lặp lại đ
 - `37-spec-regression-suite-va-luu-ket-qua.md`
 - `38-checklist-phase-3-quality-evaluation.md`
 
+## Artefact triển khai
+
+- `39-runbook-benchmark-va-regression-baseline.md`
+- `../../../scripts/benchmark_quality.py`
+- `../../../src/tuesday_rag/evaluation/golden_cases.py`
+- `../../../tests/regression/test_quality_regression.py`
+- `../../../benchmarks/phase-3/initial-baseline.json`
+
 ## Thứ tự đọc
 
 1. `34-phase-3-overview.md`

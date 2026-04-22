@@ -10,31 +10,31 @@
 
 ## Checklist fixtures and golden cases
 
-- [ ] Có bộ fixture/golden cases sau MVP được khóa.
-- [ ] Có mapping giữa golden case và behavior cần bảo vệ.
-- [ ] Có ít nhất một case retrieval match và một case no-match.
-- [ ] Có ít nhất một case grounded generation và một case `insufficient_context`.
+- [x] Có bộ fixture/golden cases sau MVP được khóa.
+- [x] Có mapping giữa golden case và behavior cần bảo vệ.
+- [x] Có ít nhất một case retrieval match và một case no-match.
+- [x] Có ít nhất một case grounded generation và một case `insufficient_context`.
 
 ## Checklist benchmark and baseline metrics
 
-- [ ] Có command hoặc script benchmark rõ ràng.
-- [ ] Có baseline retrieval quality.
-- [ ] Có baseline grounding/citation correctness.
-- [ ] Có baseline latency `p50/p95`.
-- [ ] Có ghi chú cách đọc và giới hạn của benchmark.
+- [x] Có command hoặc script benchmark rõ ràng.
+- [x] Có baseline retrieval quality.
+- [x] Có baseline grounding/citation correctness.
+- [x] Có baseline latency `p50/p95`.
+- [x] Có ghi chú cách đọc và giới hạn của benchmark.
 
 ## Checklist regression suite and result storage
 
-- [ ] Có regression suite cho case quan trọng.
-- [ ] Có nơi lưu baseline benchmark ban đầu.
-- [ ] Có quy tắc cập nhật baseline khi behavior đổi có chủ đích.
-- [ ] Có target đủ ngắn để chạy lại trước thay đổi retrieval/generation quan trọng.
+- [x] Có regression suite cho case quan trọng.
+- [x] Có nơi lưu baseline benchmark ban đầu.
+- [x] Có quy tắc cập nhật baseline khi behavior đổi có chủ đích.
+- [x] Có target đủ ngắn để chạy lại trước thay đổi retrieval/generation quan trọng.
 
 ## Checklist guardrails
 
-- [ ] Không có feature mới chen vào Phase 3.
-- [ ] Không đổi public API contract.
-- [ ] Không đổi semantics `insufficient_context`.
-- [ ] Không đổi semantics `citations`.
-- [ ] Không đổi semantics `tags = contains-any`.
-- [ ] Không dùng benchmark ngẫu nhiên khiến baseline không thể so sánh.
+- [x] Không có feature mới chen vào Phase 3.
+- [x] Không đổi public API contract.
+- [x] Không đổi semantics `insufficient_context`.
+- [x] Không đổi semantics `citations`.
+- [x] Không đổi semantics `tags = contains-any`.
+- [x] Không dùng benchmark ngẫu nhiên khiến baseline không thể so sánh.

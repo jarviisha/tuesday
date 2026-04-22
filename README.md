@@ -107,6 +107,20 @@ Run the same smoke test against a running local or staging-like API:
 python scripts/smoke_test.py --base-url http://127.0.0.1:8000
 ```
 
+## Quality Evaluation
+
+Run the Phase 3 benchmark:
+
+```bash
+python scripts/benchmark_quality.py
+```
+
+Run the Phase 3 regression suite:
+
+```bash
+pytest tests/regression
+```
+
 ## Repository Layout
 
 - `src/tuesday_rag/api/`: FastAPI app, schemas, and request handling

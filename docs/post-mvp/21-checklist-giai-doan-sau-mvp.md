@@ -29,12 +29,12 @@
 ## Checklist quality evaluation
 
 - [x] Bộ spec chi tiết của Phase 3 đã đủ để giao việc theo workstream.
-- [ ] Có bộ fixture/golden cases sau MVP.
-- [ ] Có baseline retrieval quality.
-- [ ] Có baseline cho grounding/citation correctness.
-- [ ] Có baseline latency `p50/p95`.
-- [ ] Có regression suite cho case quan trọng.
-- [ ] Có nơi lưu kết quả benchmark ban đầu.
+- [x] Có bộ fixture/golden cases sau MVP.
+- [x] Có baseline retrieval quality.
+- [x] Có baseline cho grounding/citation correctness.
+- [x] Có baseline latency `p50/p95`.
+- [x] Có regression suite cho case quan trọng.
+- [x] Có nơi lưu kết quả benchmark ban đầu.
 
 ## Checklist feature expansion
 
@@ -55,5 +55,5 @@
 
 - [x] `stabilize` đã đạt mức done.
 - [x] `operational_hardening` đã đạt mức done tối thiểu.
-- [ ] `quality_evaluation` đã có baseline đủ dùng.
+- [x] `quality_evaluation` đã có baseline đủ dùng.
 - [ ] Có quyết định rõ feature nào được làm tiếp theo.

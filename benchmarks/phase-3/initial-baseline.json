@@ -1,0 +1,38 @@
+{
+  "phase": "quality_evaluation",
+  "run_mode": "in_process",
+  "iterations": 5,
+  "config": {
+    "vector_store_backend": "memory",
+    "embedding_timeout_ms": 1000,
+    "generation_timeout_ms": 1000,
+    "vector_store_timeout_ms": 1000
+  },
+  "dataset": {
+    "documents": 2,
+    "retrieval_cases": 2,
+    "generation_cases": 2
+  },
+  "metrics": {
+    "retrieval_hit_rate": 1.0,
+    "insufficient_context_rate": 0.5,
+    "citation_valid_rate": 1.0,
+    "latency_ms": {
+      "index": {
+        "count": 10,
+        "p50": 7.139,
+        "p95": 9.924
+      },
+      "retrieve": {
+        "count": 10,
+        "p50": 2.6,
+        "p95": 2.885
+      },
+      "generate": {
+        "count": 10,
+        "p50": 2.878,
+        "p95": 4.937
+      }
+    }
+  }
+}
