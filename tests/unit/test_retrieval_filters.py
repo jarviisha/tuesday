@@ -1,0 +1,114 @@
+import pytest
+from tests.fixtures import NO_MATCH_QUERY, REFUND_DOCUMENT
+
+from tuesday_rag.application.services.indexer import IndexerService
+from tuesday_rag.application.services.retriever import RetrieverService
+from tuesday_rag.application.use_cases.ingestion import IngestionUseCase
+from tuesday_rag.application.use_cases.retrieval import RetrievalUseCase
+from tuesday_rag.config import RuntimeConfig
+from tuesday_rag.domain.errors import InvalidInputError, UnsupportedFilterError
+from tuesday_rag.infrastructure.chunking import CharacterChunker
+from tuesday_rag.infrastructure.providers import HashEmbeddingProvider
+from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore
+
+
+def test_retrieval_tags_filter_uses_contains_any() -> None:
+    config = RuntimeConfig()
+    vector_store = InMemoryVectorStore()
+    embedding_provider = HashEmbeddingProvider()
+    ingestion = IngestionUseCase(
+        config=config,
+        chunker=CharacterChunker(
+            chunk_size=config.ingestion_chunk_size_chars_default,
+            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        ),
+        indexer=IndexerService(embedding_provider, vector_store),
+    )
+    retrieval = RetrievalUseCase(
+        config=config,
+        retriever=RetrieverService(embedding_provider, vector_store),
+    )
+
+    ingestion.execute(
+        {
+            "document_id": "doc-001",
+            "content": "Nội dung hoàn tiền " * 80,
+            "source_type": "text",
+            "metadata": {"language": "vi", "tags": ["policy", "refund"]},
+            "index_name": "enterprise-kb",
+        }
+    )
+
+    result = retrieval.execute(
+        {
+            "query": "hoàn tiền",
+            "filters": {"tags": ["refund"]},
+            "index_name": "enterprise-kb",
+        }
+    )
+
+    assert result.chunks
+
+
+def test_retrieval_returns_empty_list_when_query_has_no_match() -> None:
+    config = RuntimeConfig()
+    vector_store = InMemoryVectorStore()
+    embedding_provider = HashEmbeddingProvider()
+    ingestion = IngestionUseCase(
+        config=config,
+        chunker=CharacterChunker(
+            chunk_size=config.ingestion_chunk_size_chars_default,
+            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        ),
+        indexer=IndexerService(embedding_provider, vector_store),
+    )
+    retrieval = RetrievalUseCase(
+        config=config,
+        retriever=RetrieverService(embedding_provider, vector_store),
+    )
+    ingestion.execute(REFUND_DOCUMENT)
+
+    result = retrieval.execute(
+        {
+            "query": NO_MATCH_QUERY,
+            "index_name": "enterprise-kb",
+        }
+    )
+
+    assert result.chunks == []
+
+
+def test_retrieval_rejects_unknown_filter_key() -> None:
+    config = RuntimeConfig()
+    use_case = RetrievalUseCase(
+        config=config,
+        retriever=RetrieverService(HashEmbeddingProvider(), InMemoryVectorStore()),
+    )
+
+    with pytest.raises(UnsupportedFilterError):
+        use_case.execute(
+            {
+                "query": "hoàn tiền",
+                "filters": {"foo": "bar"},
+                "index_name": "enterprise-kb",
+            }
+        )
+
+
+def test_retrieval_rejects_invalid_tags_filter_shape() -> None:
+    config = RuntimeConfig()
+    use_case = RetrievalUseCase(
+        config=config,
+        retriever=RetrieverService(HashEmbeddingProvider(), InMemoryVectorStore()),
+    )
+
+    with pytest.raises(InvalidInputError) as exc_info:
+        use_case.execute(
+            {
+                "query": "hoàn tiền",
+                "filters": {"tags": []},
+                "index_name": "enterprise-kb",
+            }
+        )
+
+    assert exc_info.value.details == {"field": "filters.tags"}
