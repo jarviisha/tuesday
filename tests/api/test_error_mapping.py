@@ -13,7 +13,7 @@ async def test_generate_returns_400_when_internal_retrieval_index_name_missing()
         response = await client.post(
             "/generate",
             json={
-                "question": "Khách hàng được hoàn tiền trong bao lâu?",
+                "question": "Khach hang duoc hoan tien trong bao lau?",
                 "retrieval_request": {},
             },
         )
@@ -29,7 +29,7 @@ async def test_retrieve_returns_400_for_unsupported_filter() -> None:
         response = await client.post(
             "/retrieve",
             json={
-                "query": "Khách hàng được hoàn tiền trong bao lâu?",
+                "query": "Khach hang duoc hoan tien trong bao lau?",
                 "filters": {"foo": "bar"},
                 "index_name": "enterprise-kb",
             },
@@ -65,7 +65,7 @@ async def test_retrieve_returns_502_for_embedding_error(monkeypatch: pytest.Monk
         response = await client.post(
             "/retrieve",
             json={
-                "query": "Khách hàng được hoàn tiền trong bao lâu?",
+                "query": "Khach hang duoc hoan tien trong bao lau?",
                 "index_name": "enterprise-kb",
             },
         )
@@ -88,7 +88,7 @@ async def test_generate_returns_502_for_generation_error(monkeypatch: pytest.Mon
         response = await client.post(
             "/generate",
             json={
-                "question": "Khách hàng được hoàn tiền trong bao lâu?",
+                "question": "Khach hang duoc hoan tien trong bao lau?",
                 "index_name": "enterprise-kb",
                 "retrieval_request": {"filters": {"tags": ["refund"]}},
             },

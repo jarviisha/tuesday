@@ -40,7 +40,7 @@ class GenerationUseCase:
         retrieval_request_payload = payload.get("retrieval_request")
         if raw_retrieved_chunks is None and retrieval_request_payload is None:
             raise InvalidInputError(
-                "Phải có retrieval_request hoặc retrieved_chunks",
+                "Either retrieval_request or retrieved_chunks is required",
                 details={"field": "retrieval_request"},
             )
 
@@ -55,7 +55,7 @@ class GenerationUseCase:
             )
             if not index_name:
                 raise RetrievalRequiredIndexMissingError(
-                    "Thiếu index_name cho nhánh retrieval nội bộ",
+                    "index_name is required for internal retrieval",
                 )
             retrieval_request = RetrievalRequest(
                 query=retrieval_request_payload.get("query") or question,
@@ -92,7 +92,7 @@ class GenerationUseCase:
         for field in ("chunk_id", "document_id", "text", "metadata"):
             if field not in payload:
                 raise InvalidInputError(
-                    f"retrieved_chunks.{field} là bắt buộc",
+                    f"retrieved_chunks.{field} is required",
                     details={"field": f"retrieved_chunks.{field}"},
                 )
         return RetrievedChunk(

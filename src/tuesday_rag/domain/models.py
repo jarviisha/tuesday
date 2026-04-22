@@ -41,7 +41,7 @@ class IndexedChunk:
 
     def __post_init__(self) -> None:
         if not self.embedding:
-            raise InvalidInputError("embedding không được rỗng", details={"field": "embedding"})
+            raise InvalidInputError("embedding must not be empty", details={"field": "embedding"})
 
 
 @dataclass(frozen=True)
@@ -63,7 +63,7 @@ class RetrievalRequest:
 
     def __post_init__(self) -> None:
         if self.top_k <= 0:
-            raise InvalidInputError("top_k không hợp lệ", details={"field": "top_k"})
+            raise InvalidInputError("top_k is invalid", details={"field": "top_k"})
 
 
 @dataclass(frozen=True)
@@ -86,7 +86,7 @@ class GenerationRequest:
     def __post_init__(self) -> None:
         if self.retrieval_request is None and self.retrieved_chunks is None:
             raise InvalidInputError(
-                "Phải có retrieval_request hoặc retrieved_chunks",
+                "Either retrieval_request or retrieved_chunks is required",
                 details={"field": "retrieval_request"},
             )
 
@@ -102,15 +102,15 @@ class GeneratedAnswer:
     def __post_init__(self) -> None:
         valid_chunk_ids = {chunk.chunk_id for chunk in self.used_chunks}
         if any(citation not in valid_chunk_ids for citation in self.citations):
-            raise InvalidInputError("citation không hợp lệ", details={"field": "citations"})
+            raise InvalidInputError("citation is invalid", details={"field": "citations"})
         if self.insufficient_context and self.grounded:
             raise InvalidInputError(
-                "insufficient_context không được đi cùng grounded=true",
+                "insufficient_context must not be combined with grounded=true",
                 details={"field": "grounded"},
             )
         if not self.used_chunks and self.citations:
             raise InvalidInputError(
-                "citations phải rỗng khi used_chunks rỗng",
+                "citations must be empty when used_chunks is empty",
                 details={"field": "citations"},
             )
 
@@ -133,4 +133,4 @@ class DocumentIndexResult:
 
     def __post_init__(self) -> None:
         if self.status not in {"indexed", "partial", "failed"}:
-            raise InvalidInputError("status không hợp lệ", details={"field": "status"})
+            raise InvalidInputError("status is invalid", details={"field": "status"})

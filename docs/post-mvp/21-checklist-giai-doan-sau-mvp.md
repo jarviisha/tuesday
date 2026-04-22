@@ -14,6 +14,7 @@
 - [ ] Có lệnh chuẩn để chạy API local.
 - [ ] Có CI hoặc automation tương đương cho lint + test.
 - [ ] Có runbook local/staging ngắn gọn.
+- [ ] Bộ spec chi tiết của Phase 1 đã đủ để giao việc theo workstream.
 
 ## Checklist operational hardening
 

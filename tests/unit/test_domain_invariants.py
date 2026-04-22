@@ -52,7 +52,7 @@ def test_generation_request_requires_context_source() -> None:
 def test_generated_answer_requires_citations_to_be_subset_of_used_chunks() -> None:
     with pytest.raises(InvalidInputError) as exc_info:
         GeneratedAnswer(
-            answer="Theo tài liệu hiện có...",
+            answer="According to the current documentation...",
             citations=["chunk-002"],
             grounded=True,
             insufficient_context=False,
@@ -73,7 +73,7 @@ def test_generated_answer_requires_citations_to_be_subset_of_used_chunks() -> No
 def test_generated_answer_rejects_grounded_when_insufficient_context() -> None:
     with pytest.raises(InvalidInputError) as exc_info:
         GeneratedAnswer(
-            answer="Không đủ dữ liệu.",
+            answer="Not enough information.",
             citations=[],
             grounded=True,
             insufficient_context=True,

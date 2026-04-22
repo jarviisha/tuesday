@@ -18,7 +18,7 @@ class IndexerService:
         try:
             embeddings = self._embedding_provider.embed_texts([chunk.text for chunk in chunks])
         except Exception as exc:
-            raise EmbeddingError("Không thể sinh embedding cho tài liệu") from exc
+            raise EmbeddingError("Failed to generate embeddings for the document") from exc
         indexed_chunks = [
             IndexedChunk(
                 chunk_id=chunk.chunk_id,
@@ -37,5 +37,5 @@ class IndexerService:
                 chunks=indexed_chunks,
             )
         except Exception as exc:
-            raise IndexWriteError("Không thể ghi dữ liệu vào vector store") from exc
+            raise IndexWriteError("Failed to write data to the vector store") from exc
         return indexed_chunks, replaced_document

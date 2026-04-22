@@ -5,13 +5,13 @@ from tuesday_rag.domain.models import Chunk, SourceDocument
 class CharacterChunker:
     def __init__(self, *, chunk_size: int, chunk_overlap: int) -> None:
         if chunk_overlap >= chunk_size:
-            raise ValueError("chunk_overlap phải nhỏ hơn chunk_size")
+            raise ValueError("chunk_overlap must be smaller than chunk_size")
         self._chunk_size = chunk_size
         self._chunk_overlap = chunk_overlap
 
     def chunk(self, document: SourceDocument) -> list[Chunk]:
         if not document.content:
-            raise ChunkingError("Nội dung tài liệu rỗng")
+            raise ChunkingError("Document content is empty")
         chunks: list[Chunk] = []
         start = 0
         sequence_no = 1

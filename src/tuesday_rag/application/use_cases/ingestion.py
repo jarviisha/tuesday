@@ -57,10 +57,10 @@ class IngestionUseCase:
             checksum=sha256(content.encode("utf-8")).hexdigest(),
         )
         if not document.content.strip():
-            raise EmptyDocumentError("Tài liệu rỗng sau chuẩn hóa")
+            raise EmptyDocumentError("Document is empty after normalization")
         chunks = self._chunker.chunk(document)
         if not chunks:
-            raise ChunkingError("Không tạo được chunk hợp lệ")
+            raise ChunkingError("Failed to create any valid chunks")
         indexed_chunks, replaced_document = self._indexer.index_chunks(
             index_name=index_name,
             document_id=document.document_id,

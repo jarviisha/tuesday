@@ -1,9 +1,9 @@
 REFUND_DOCUMENT = {
     "document_id": "doc-refund-001",
-    "title": "Chính sách hoàn tiền",
+    "title": "Chinh sach hoan tien",
     "content": (
-        "Khách hàng có thể yêu cầu hoàn tiền trong vòng 7 ngày kể từ ngày thanh toán. "
-        "Yêu cầu hoàn tiền cần gửi qua cổng hỗ trợ chính thức."
+        "Khach hang co the yeu cau hoan tien trong vong 7 ngay ke tu ngay thanh toan. "
+        "Yeu cau hoan tien phai duoc gui qua cong ho tro chinh thuc."
     ),
     "source_type": "text",
     "source_uri": "internal://policy/refund",
@@ -16,12 +16,12 @@ REFUND_DOCUMENT = {
 
 ONBOARDING_DOCUMENT = {
     "document_id": "doc-onboarding-001",
-    "title": "Hướng dẫn onboarding nhân sự",
+    "title": "Huong dan onboarding nhan su",
     "content": " ".join(
         [
-            "Nhân sự mới cần hoàn tất hồ sơ trong 3 ngày đầu.",
-            "Tài khoản email nội bộ được cấp trong ngày làm việc đầu tiên.",
-            "Quản lý trực tiếp cần lên lịch buổi giới thiệu đội nhóm.",
+            "Nhan su moi phai hoan tat giay to trong 3 ngay dau tien.",
+            "Tai khoan email noi bo duoc cap trong ngay lam viec dau tien.",
+            "Quan ly truc tiep phai sap xep buoi gioi thieu voi ca nhom.",
         ]
         * 120
     ),
@@ -34,4 +34,4 @@ ONBOARDING_DOCUMENT = {
     "index_name": "enterprise-kb",
 }
 
-NO_MATCH_QUERY = "Vệ tinh quỹ đạo có cần hiệu chuẩn quang phổ định kỳ không?"
+NO_MATCH_QUERY = "Ve tinh quy dao can hieu chuan quang pho dinh ky khong?"

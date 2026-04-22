@@ -4,25 +4,25 @@ from hashlib import sha256
 from tuesday_rag.domain.models import LLMGenerationResult
 
 STOPWORDS = {
-    "va",
-    "và",
-    "co",
-    "có",
-    "cho",
-    "trong",
-    "theo",
-    "la",
-    "là",
-    "duoc",
-    "được",
-    "khong",
-    "không",
-    "cần",
-    "gi",
-    "gì",
-    "bao",
-    "lâu",
-    "bao_lâu",
+    "a",
+    "an",
+    "and",
+    "are",
+    "for",
+    "from",
+    "how",
+    "in",
+    "is",
+    "of",
+    "the",
+    "to",
+    "what",
+    "when",
+    "where",
+    "which",
+    "who",
+    "why",
+    "with",
 }
 
 
@@ -60,6 +60,6 @@ class DeterministicLLMProvider:
         first_line = context_lines[0]
         chunk_id, _, text = first_line.partition("] ")
         return LLMGenerationResult(
-            answer=f"Theo ngữ cảnh hiện có, {text}",
+            answer=f"According to the available context, {text}",
             citations=[chunk_id.lstrip("[")],
         )

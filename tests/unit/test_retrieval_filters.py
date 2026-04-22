@@ -32,7 +32,7 @@ def test_retrieval_tags_filter_uses_contains_any() -> None:
     ingestion.execute(
         {
             "document_id": "doc-001",
-            "content": "Nội dung hoàn tiền " * 80,
+            "content": "Noi dung hoan tien " * 80,
             "source_type": "text",
             "metadata": {"language": "vi", "tags": ["policy", "refund"]},
             "index_name": "enterprise-kb",
@@ -41,7 +41,7 @@ def test_retrieval_tags_filter_uses_contains_any() -> None:
 
     result = retrieval.execute(
         {
-            "query": "hoàn tiền",
+            "query": "hoan tien",
             "filters": {"tags": ["refund"]},
             "index_name": "enterprise-kb",
         }
@@ -88,7 +88,7 @@ def test_retrieval_rejects_unknown_filter_key() -> None:
     with pytest.raises(UnsupportedFilterError):
         use_case.execute(
             {
-                "query": "hoàn tiền",
+                "query": "hoan tien",
                 "filters": {"foo": "bar"},
                 "index_name": "enterprise-kb",
             }
@@ -105,7 +105,7 @@ def test_retrieval_rejects_invalid_tags_filter_shape() -> None:
     with pytest.raises(InvalidInputError) as exc_info:
         use_case.execute(
             {
-                "query": "hoàn tiền",
+                "query": "hoan tien",
                 "filters": {"tags": []},
                 "index_name": "enterprise-kb",
             }

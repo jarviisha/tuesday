@@ -23,7 +23,7 @@ class RuntimeConfig:
     question_length_min: int = 1
     question_length_max: int = 2000
     insufficient_context_answer: str = (
-        "Không đủ dữ liệu trong ngữ cảnh hiện có để trả lời chắc chắn."
+        "There is not enough information in the available context to answer confidently."
     )
 
     @classmethod
@@ -89,34 +89,34 @@ class RuntimeConfig:
         ]
         for field_name, value, minimum, maximum in integer_bounds:
             if not (minimum <= value <= maximum):
-                raise ValueError(f"{field_name} ngoài biên spec")
+                raise ValueError(f"{field_name} is outside spec bounds")
         if self.retrieval_top_k_min > self.retrieval_top_k_max:
-            raise ValueError("biên retrieval_top_k không hợp lệ")
+            raise ValueError("retrieval_top_k bounds are invalid")
         if (
             self.generation_max_context_chunks_min
             > self.generation_max_context_chunks_max
         ):
-            raise ValueError("biên generation_max_context_chunks không hợp lệ")
+            raise ValueError("generation_max_context_chunks bounds are invalid")
         if not (
             self.ingestion_chunk_size_chars_min
             <= self.ingestion_chunk_size_chars_default
             <= self.ingestion_chunk_size_chars_max
         ):
-            raise ValueError("ingestion_chunk_size_chars_default ngoài biên spec")
+            raise ValueError("ingestion_chunk_size_chars_default is outside spec bounds")
         if not (
             self.ingestion_chunk_overlap_chars_min
             <= self.ingestion_chunk_overlap_chars_default
             <= self.ingestion_chunk_overlap_chars_max
         ):
-            raise ValueError("ingestion_chunk_overlap_chars_default ngoài biên spec")
+            raise ValueError("ingestion_chunk_overlap_chars_default is outside spec bounds")
         if (
             self.ingestion_chunk_overlap_chars_default
             >= self.ingestion_chunk_size_chars_default
         ):
-            raise ValueError("chunk_overlap phải nhỏ hơn chunk_size")
+            raise ValueError("chunk_overlap must be smaller than chunk_size")
         if self.content_length_min > self.content_length_max:
-            raise ValueError("biên content_length không hợp lệ")
+            raise ValueError("content_length bounds are invalid")
         if self.query_length_min > self.query_length_max:
-            raise ValueError("biên query_length không hợp lệ")
+            raise ValueError("query_length bounds are invalid")
         if self.question_length_min > self.question_length_max:
-            raise ValueError("biên question_length không hợp lệ")
+            raise ValueError("question_length bounds are invalid")

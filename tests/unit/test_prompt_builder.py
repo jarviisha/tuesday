@@ -7,24 +7,30 @@ def test_prompt_builder_creates_deterministic_grounded_prompt() -> None:
         RetrievedChunk(
             chunk_id="chunk-doc-001-0001",
             document_id="doc-001",
-            text="Khách hàng có thể yêu cầu hoàn tiền trong vòng 7 ngày.",
+            text="Khach hang co the yeu cau hoan tien trong vong 7 ngay.",
             score=0.92,
             metadata={"chunk_id": "chunk-doc-001-0001"},
         ),
         RetrievedChunk(
             chunk_id="chunk-doc-001-0002",
             document_id="doc-001",
-            text="Yêu cầu hoàn tiền cần gửi qua cổng hỗ trợ chính thức.",
+            text="Yeu cau hoan tien phai duoc gui qua cong ho tro chinh thuc.",
             score=0.81,
             metadata={"chunk_id": "chunk-doc-001-0002"},
         ),
     ]
 
-    prompt = build_grounded_prompt("Khách hàng được hoàn tiền trong bao lâu?", chunks)
+    prompt = build_grounded_prompt("Khach hang duoc hoan tien trong bao lau?", chunks)
 
-    assert "Bạn là trợ lý trả lời chỉ dựa trên context được cung cấp." in prompt
-    assert "Câu hỏi: Khách hàng được hoàn tiền trong bao lâu?" in prompt
-    assert "[chunk-doc-001-0001] Khách hàng có thể yêu cầu hoàn tiền trong vòng 7 ngày." in prompt
-    assert "[chunk-doc-001-0002] Yêu cầu hoàn tiền cần gửi qua cổng hỗ trợ chính thức." in prompt
-    assert "Nếu context không đủ, phải nói rõ không đủ dữ liệu." in prompt
-    assert "Mọi viện dẫn phải dùng chunk_id." in prompt
+    assert "You are an assistant that answers only from the provided context." in prompt
+    assert "Question: Khach hang duoc hoan tien trong bao lau?" in prompt
+    assert "[chunk-doc-001-0001] Khach hang co the yeu cau hoan tien trong vong 7 ngay." in prompt
+    assert (
+        "[chunk-doc-001-0002] Yeu cau hoan tien phai duoc gui qua cong ho tro chinh thuc."
+        in prompt
+    )
+    assert (
+        "If the context is insufficient, explicitly say there is not enough information."
+        in prompt
+    )
+    assert "All citations must use chunk_id." in prompt

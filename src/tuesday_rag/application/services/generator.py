@@ -29,18 +29,18 @@ class GeneratorService:
         try:
             prompt = build_grounded_prompt(request.question, used_chunks)
         except Exception as exc:
-            raise PromptBuildError("Không thể build prompt hợp lệ") from exc
+            raise PromptBuildError("Failed to build a valid prompt") from exc
         try:
             generation_result = self._llm_provider.generate_text(prompt)
         except Exception as exc:
-            raise GenerationError("Không thể sinh câu trả lời từ LLM provider") from exc
+            raise GenerationError("Failed to generate an answer from the LLM provider") from exc
         answer = generation_result.answer.strip()
         if not answer:
-            raise InvalidGenerationOutputError("answer không hợp lệ")
+            raise InvalidGenerationOutputError("answer is invalid")
         valid_chunk_ids = {chunk.chunk_id for chunk in used_chunks}
         citations = generation_result.citations
         if not all(citation in valid_chunk_ids for citation in citations):
-            raise InvalidGenerationOutputError("citation không hợp lệ")
+            raise InvalidGenerationOutputError("citation is invalid")
         return GeneratedAnswer(
             answer=answer,
             citations=citations,

@@ -18,7 +18,10 @@ class CountingLLMProvider:
     def generate_text(self, prompt: str) -> LLMGenerationResult:
         self.calls += 1
         return LLMGenerationResult(
-            answer="Theo ngữ cảnh hiện có, khách hàng có thể yêu cầu hoàn tiền trong vòng 7 ngày.",
+            answer=(
+                "According to the available context, khach hang co the yeu cau "
+                "hoan tien trong vong 7 ngay."
+            ),
             citations=["chunk-doc-refund-001-0001"],
         )
 
@@ -26,7 +29,10 @@ class CountingLLMProvider:
 class InvalidCitationLLMProvider:
     def generate_text(self, prompt: str) -> LLMGenerationResult:
         return LLMGenerationResult(
-            answer="Theo ngữ cảnh hiện có, khách hàng có thể yêu cầu hoàn tiền trong vòng 7 ngày.",
+            answer=(
+                "According to the available context, khach hang co the yeu cau "
+                "hoan tien trong vong 7 ngay."
+            ),
             citations=["chunk-does-not-exist"],
         )
 
@@ -45,7 +51,7 @@ def test_generation_returns_insufficient_context_without_llm_when_chunks_empty()
 
     result = use_case.execute(
         {
-            "question": "Chính sách hoàn tiền là gì?",
+            "question": "Chinh sach hoan tien la gi?",
             "retrieved_chunks": [],
         }
     )
@@ -88,7 +94,7 @@ def test_generation_uses_question_as_retrieval_query_when_query_missing() -> Non
 
     result = use_case.execute(
         {
-            "question": "Khách hàng được hoàn tiền trong bao lâu?",
+            "question": "Khach hang duoc hoan tien trong bao lau?",
             "index_name": "enterprise-kb",
             "retrieval_request": {
                 "filters": {"tags": ["refund"]},
@@ -100,7 +106,7 @@ def test_generation_uses_question_as_retrieval_query_when_query_missing() -> Non
     assert result.grounded is True
     assert result.citations
     assert set(result.citations).issubset({chunk.chunk_id for chunk in result.used_chunks})
-    assert "7 ngày" in result.answer
+    assert "7 ngay" in result.answer
     assert "Context:" not in result.answer
 
 
@@ -118,7 +124,7 @@ def test_generation_rejects_missing_retrieved_chunk_fields() -> None:
     with pytest.raises(InvalidInputError) as exc_info:
         use_case.execute(
             {
-                "question": "Khách hàng được hoàn tiền trong bao lâu?",
+                "question": "Khach hang duoc hoan tien trong bao lau?",
                 "retrieved_chunks": [{"chunk_id": "chunk-001"}],
             }
         )
@@ -140,12 +146,12 @@ def test_generation_rejects_citation_outside_used_chunks() -> None:
     with pytest.raises(InvalidGenerationOutputError):
         use_case.execute(
             {
-                "question": "Khách hàng được hoàn tiền trong bao lâu?",
+                "question": "Khach hang duoc hoan tien trong bao lau?",
                 "retrieved_chunks": [
                     {
                         "chunk_id": "chunk-doc-refund-001-0001",
                         "document_id": "doc-refund-001",
-                        "text": "Khách hàng có thể yêu cầu hoàn tiền trong vòng 7 ngày.",
+                        "text": "Khach hang co the yeu cau hoan tien trong vong 7 ngay.",
                         "metadata": {"chunk_id": "chunk-doc-refund-001-0001"},
                     }
                 ],

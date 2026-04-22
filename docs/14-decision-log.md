@@ -51,6 +51,7 @@ Decision log không thay thế các tài liệu spec chính. Nó chỉ ghi lại
 | `DL-012` | `accepted` | Public MVP được coi là đã đóng scope khi hoàn tất 3 endpoint HTTP, behavior cốt lõi, test contract/use case/integration tối thiểu và logging cơ bản; parser nội bộ, `PARTIAL_INDEXED`, adapter thật là phase sau | Tránh kéo dài vô hạn phạm vi MVP và giúp team chuyển sang phase kế tiếp với ranh giới rõ | sprint plan, checklist, review docs, phase planning |
 | `DL-013` | `accepted` | Thứ tự ưu tiên sau MVP là `stabilize -> operational_hardening -> quality_evaluation -> feature_expansion` | Giữ team tập trung vào độ ổn định, khả năng vận hành và baseline đánh giá trước khi mở rộng tính năng | planning sau MVP, checklist, phase specs |
 | `DL-014` | `accepted` | Feature mới sau MVP không mặc định là blocker; chỉ được ưu tiên sớm khi có yêu cầu nghiệp vụ hoặc dữ liệu benchmark rõ ràng | Tránh scope creep và tránh dùng feature mới để che vấn đề vận hành/chất lượng chưa được giải quyết | planning sau MVP, spec feature mới, review phạm vi |
+| `DL-015` | `accepted` | Phase 1 `stabilize` được tách thành 3 workstream: `dev_setup_and_commands`, `ci_baseline`, `runbook_config_and_release_baseline` | Giúp chia việc và review implementation sau MVP theo đơn vị nhỏ, kiểm chứng được | docs post-MVP, phase 1 implementation planning, checklist |
 
 ## Mẫu ghi quyết định mới
 

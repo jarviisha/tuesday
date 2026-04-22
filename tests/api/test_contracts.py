@@ -41,7 +41,7 @@ async def test_retrieve_contract_applies_tags_contains_any() -> None:
         response = await client.post(
             "/retrieve",
             json={
-                "query": "Khách hàng được hoàn tiền trong bao lâu?",
+                "query": "Khach hang duoc hoan tien trong bao lau?",
                 "top_k": 3,
                 "filters": {"language": "vi", "tags": ["refund"]},
                 "index_name": "enterprise-kb",
@@ -76,7 +76,7 @@ async def test_retrieve_contract_rejects_unknown_filter() -> None:
         response = await client.post(
             "/retrieve",
             json={
-                "query": "Khách hàng được hoàn tiền trong bao lâu?",
+                "query": "How long do customers have to request a refund?",
                 "filters": {"foo": "bar"},
                 "index_name": "enterprise-kb",
             },
@@ -94,14 +94,14 @@ async def test_generate_contract_uses_retrieved_chunks() -> None:
         retrieve_response = await client.post(
             "/retrieve",
             json={
-                "query": "Khách hàng được hoàn tiền trong bao lâu?",
+                "query": "Khach hang duoc hoan tien trong bao lau?",
                 "index_name": "enterprise-kb",
             },
         )
         response = await client.post(
             "/generate",
             json={
-                "question": "Khách hàng được hoàn tiền trong bao lâu?",
+                "question": "Khach hang duoc hoan tien trong bao lau?",
                 "retrieved_chunks": retrieve_response.json()["chunks"],
             },
         )
@@ -112,7 +112,7 @@ async def test_generate_contract_uses_retrieved_chunks() -> None:
     assert body["grounded"] is True
     assert body["citations"]
     assert set(body["citations"]).issubset({chunk["chunk_id"] for chunk in body["used_chunks"]})
-    assert "7 ngày" in body["answer"]
+    assert "7 ngay" in body["answer"]
     assert "Context:" not in body["answer"]
 
 
@@ -124,7 +124,7 @@ async def test_generate_contract_performs_internal_retrieval() -> None:
         response = await client.post(
             "/generate",
             json={
-                "question": "Khách hàng được hoàn tiền trong bao lâu?",
+                "question": "Khach hang duoc hoan tien trong bao lau?",
                 "index_name": "enterprise-kb",
                 "retrieval_request": {
                     "filters": {"tags": ["refund"]},
@@ -137,7 +137,7 @@ async def test_generate_contract_performs_internal_retrieval() -> None:
     assert body["insufficient_context"] is False
     assert body["grounded"] is True
     assert body["citations"]
-    assert "7 ngày" in body["answer"]
+    assert "7 ngay" in body["answer"]
     assert "Context:" not in body["answer"]
 
 

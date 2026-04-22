@@ -12,7 +12,7 @@ class RetrieverService:
         try:
             query_embedding = self._embedding_provider.embed_query(request.query)
         except Exception as exc:
-            raise EmbeddingError("Không thể sinh embedding cho query") from exc
+            raise EmbeddingError("Failed to generate an embedding for the query") from exc
         try:
             chunks = self._vector_store.query(
                 index_name=request.index_name,
@@ -21,7 +21,7 @@ class RetrieverService:
                 filters=request.filters,
             )
         except Exception as exc:
-            raise RetrievalError("Không thể truy hồi dữ liệu từ vector store") from exc
+            raise RetrievalError("Failed to retrieve data from the vector store") from exc
         chunks = sorted(chunks, key=lambda chunk: chunk.score, reverse=True)
         return RetrievalResponse(
             query=request.query,

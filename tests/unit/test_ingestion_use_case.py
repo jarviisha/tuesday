@@ -82,7 +82,7 @@ def test_ingestion_returns_replaced_document_false_on_first_index() -> None:
     result = use_case.execute(
         {
             **REFUND_DOCUMENT,
-            "content": "Nội dung kiểm thử " * 100,
+            "content": "Test content " * 100,
         }
     )
 

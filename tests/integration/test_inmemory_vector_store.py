@@ -37,14 +37,14 @@ def test_inmemory_vector_store_replace_document_within_index_name() -> None:
         {
             **REFUND_DOCUMENT,
             "content": (
-                "Khách hàng có thể yêu cầu hoàn tiền trong vòng 14 ngày kể từ ngày thanh toán. "
-                "Yêu cầu hoàn tiền cần gửi qua cổng hỗ trợ chính thức."
+                "Khach hang co the yeu cau hoan tien trong vong 14 ngay ke tu ngay thanh toan. "
+                "Yeu cau hoan tien phai duoc gui qua cong ho tro chinh thuc."
             ),
         }
     )
     result = retrieval.execute(
         {
-            "query": "Khách hàng được hoàn tiền trong bao lâu?",
+            "query": "Khach hang duoc hoan tien trong bao lau?",
             "index_name": "enterprise-kb",
         }
     )
@@ -52,8 +52,8 @@ def test_inmemory_vector_store_replace_document_within_index_name() -> None:
     assert first_result.replaced_document is False
     assert second_result.replaced_document is True
     assert result.chunks
-    assert any("14 ngày" in chunk.text for chunk in result.chunks)
-    assert all("7 ngày" not in chunk.text for chunk in result.chunks)
+    assert any("14 ngay" in chunk.text for chunk in result.chunks)
+    assert all("7 ngay" not in chunk.text for chunk in result.chunks)
 
 
 def test_inmemory_vector_store_supports_tags_contains_any_and_top_k_sorted() -> None:
@@ -63,7 +63,7 @@ def test_inmemory_vector_store_supports_tags_contains_any_and_top_k_sorted() -> 
 
     result = retrieval.execute(
         {
-            "query": "Khách hàng được hoàn tiền trong bao lâu?",
+            "query": "Khach hang duoc hoan tien trong bao lau?",
             "top_k": 1,
             "filters": {"tags": ["refund", "missing-tag"]},
             "index_name": "enterprise-kb",
