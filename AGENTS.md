@@ -32,6 +32,11 @@ python -m uvicorn tuesday_rag.api.app:app --reload
 ## Coding Style & Naming Conventions
 Follow the existing Python style: 4-space indentation, type hints on public functions, and small focused modules. Use `snake_case` for functions, variables, and module names, `PascalCase` for classes, and explicit names such as `IngestionUseCase` or `test_generation_returns_citations`. Keep architectural boundaries intact: API code should orchestrate requests, while business rules stay in `application/` and `domain/`.
 
+## Language Rules
+Use English across the codebase by default, including source code, tests, prompts, commit messages, comments, identifiers, and non-spec documentation.
+
+Exception: specification documents under `docs/` may use Vietnamese with full diacritics when the document is part of the project's spec, planning, checklist, review, or decision-log flow. For these spec documents, do not write Vietnamese without diacritics.
+
 ## Agent Working Rules
 Before implementing, state assumptions explicitly when they matter. If multiple interpretations are possible, surface them instead of silently picking one. Prefer the simplest approach that satisfies the request, and avoid speculative abstractions, configurability, or extra features that were not asked for.
 
