@@ -222,15 +222,15 @@ Preview a batch run without indexing anything:
 
 ## Repository Layout
 
-- `src/tuesday_rag/api/`: FastAPI app, schemas, and request handling
-- `src/tuesday_rag/runtime/`: composition root and runtime wiring
-- `src/tuesday_rag/shared/`: shared validation helpers
-- `src/tuesday_rag/ingestion/`: ingestion use case and indexing service
-- `src/tuesday_rag/retrieval/`: retrieval use case and retrieval service
-- `src/tuesday_rag/generation/`: generation use case, prompt builder, and generation service
-- `src/tuesday_rag/domain/`: domain models, ports, and errors
-- `src/tuesday_rag/infrastructure/`: chunking, providers, and vector store adapters
-- `src/tuesday_rag/evaluation/`: golden cases used by benchmark/regression flows
+- `src/tuesday_rag/api/`: HTTP transport layer. Contains the FastAPI app, request/response schemas, API error mapping, and request-level observability hooks. This folder should translate HTTP payloads into use-case inputs and return HTTP-safe responses, without owning business rules.
+- `src/tuesday_rag/runtime/`: composition root for the whole application. Contains container-style wiring that builds config, adapters, and use cases, then exposes assembled runtime dependencies to the API layer and internal scripts.
+- `src/tuesday_rag/shared/`: cross-cutting helpers that are reused by multiple capabilities. At the moment this mainly holds validation utilities for runtime limits and input guardrails that do not belong to one specific feature package.
+- `src/tuesday_rag/ingestion/`: document indexing capability. Contains the ingestion use case, file-ingestion use case, and indexing service that turn source documents into chunks, embeddings, and stored indexed chunks.
+- `src/tuesday_rag/retrieval/`: retrieval capability. Contains the retrieval use case and retriever service that embed a query, apply filter semantics, read from the vector store, and return ranked retrieved chunks.
+- `src/tuesday_rag/generation/`: answer generation capability. Contains the generation use case, prompt builder, and generator service that decide whether context is sufficient, build a grounded prompt, and validate the generated answer/citations.
+- `src/tuesday_rag/domain/`: core domain contracts. Contains domain models, protocol-style ports, and domain errors that define the stable language between use cases and infrastructure adapters.
+- `src/tuesday_rag/infrastructure/`: adapter implementations for external or concrete mechanics. Contains chunking, embedding/LLM providers, vector-store adapters, resilience wrappers, and file-document parsing. This is where framework- or tool-specific code should live.
+- `src/tuesday_rag/evaluation/`: evaluation assets for quality measurement. Contains golden cases and related inputs used by benchmark and regression flows to track retrieval/generation behavior over time.
 - `tests/`: unit, API, and integration tests
 - `docs/`: design notes and post-MVP planning
 
