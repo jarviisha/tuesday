@@ -6,7 +6,7 @@
 
 **Tuesday** là platform định hướng capability, khởi đầu với **RAG core** cho chatbot doanh nghiệp. Mục tiêu của core là pipeline `ingestion → retrieval → generation` ổn định, tách domain khỏi hạ tầng để thay engine (LLM, embedding, vector store) mà **không đổi HTTP contract công khai**. Phương pháp: **Spec-Driven Development + TDD**, Python 3.12+, FastAPI, ports-and-adapters.
 
-## 2. Cấu trúc mã nguồn hiện tại (post-migration)
+## 2. Cấu trúc mã nguồn hiện tại
 
 ```
 src/tuesday/
@@ -21,13 +21,14 @@ src/tuesday/
     generation/     # use_case, service, prompt_builder
     infrastructure/ # chunking, vector_store (memory, file), resilience, providers (demo + vendor), file_document_parser, http_client
     evaluation/     # golden_cases cho benchmark/regression
-src/tuesday_rag/    # legacy shim: mỗi file 1 dòng re-export từ tuesday.* (xoá theo DL-xxx tương lai)
 tests/              # api, unit, integration, smoke, regression, quality, fixtures.py, conftest.py
 docs/               # spec gốc; post-mvp/ chứa phase 1-4 và migration specs
 scripts/            # index_file, index_directory, smoke_test, benchmark_quality
 examples/           # fixture thật dùng cho manual test ingestion
 benchmarks/         # artifact đánh giá chất lượng
 ```
+
+> Package cũ `src/tuesday_rag/` (legacy shim) đã được xoá hoàn toàn. Mọi import phải dùng `tuesday.*`; không tái tạo đường dẫn cũ kể cả qua re-export.
 
 **Luồng phụ thuộc (bất biến)**: `api → runtime → capability → domain ports → infrastructure adapters`. Không có chiều ngược. Không có `domain` hay capability import framework.
 
@@ -116,7 +117,7 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | `INDEX_WRITE_ERROR`, `RETRIEVAL_ERROR` | 502 | storage |
 | `PROMPT_BUILD_ERROR` | 500 | application |
 
-## 8. Runtime defaults (override bằng env `TUESDAY_<FIELD>` hoặc legacy `TUESDAY_RAG_<FIELD>`; cũng đọc từ `.env`)
+## 8. Runtime defaults (override bằng env `TUESDAY_<FIELD>`; cũng đọc từ `.env`. Prefix legacy `TUESDAY_RAG_` vẫn được container chấp nhận như fallback nhưng không còn là đường dẫn khuyến nghị)
 
 | Field | Default | Bounds |
 |---|---|---|
@@ -193,7 +194,7 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | DL-014 | Feature mới không mặc định là blocker; cần business case rõ |
 | DL-015..017 | Workstream split cho phase 1/2/3 |
 | DL-018 | Full migration `src/tuesday_rag` từng bị hoãn (đã `superseded` bởi DL-019) |
-| DL-019 | **Chấp nhận full migration** sang capability-oriented (`src/tuesday/`) — đã thực hiện |
+| DL-019 | **Chấp nhận full migration** sang capability-oriented (`src/tuesday/`) — đã hoàn tất, legacy shim `tuesday_rag` đã xoá |
 | DL-020 | Feature đầu Phase 4: `internal file ingestion` qua entrypoint nội bộ |
 | DL-021 | Parser `.html` tối giản trong cùng Phase 4 |
 | DL-022 | Batch ingestion nội bộ qua script — continue-on-error |
