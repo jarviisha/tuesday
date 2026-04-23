@@ -3,6 +3,7 @@
 .ruff_cache/
 .mypy_cache/
 .hypothesis/
+tmp/
 .tox/
 .nox/
 __pycache__/
