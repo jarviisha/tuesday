@@ -87,7 +87,7 @@ Runtime configuration is loaded from:
 
 If the same key exists in both places, the OS environment variable wins over `.env`.
 
-You can start from [.env.example](/home/jarviisha/development/tuesday/.env.example). The Phase 1 runbook, config baseline, and release baseline are documented in `docs/post-mvp/phase-1/27-runbook-config-va-release-baseline-implementation.md`.
+You can start from [.env.example](/home/jarviisha/development/tuesday/.env.example). The Phase 1 runbook, config baseline, and release baseline are documented in `docs/history/post-mvp/phase-1/27-runbook-config-va-release-baseline-implementation.md` (historical archive).
 
 Phase 2 operational hardening adds:
 

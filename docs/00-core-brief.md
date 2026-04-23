@@ -1,6 +1,6 @@
 # 00. Core Brief — Bản Tóm Tắt Cho Phiên Làm Việc
 
-> **Mục đích**: tài liệu nén cho future session (người và agent). Đọc file này trước khi code để bám đúng rule đã khóa. Khi mâu thuẫn với file nén này, spec gốc trong `docs/` và `docs/post-mvp/` mới là nguồn sự thật — cập nhật cả hai nơi khi chốt thay đổi.
+> **Mục đích**: tài liệu nén cho future session (người và agent). Đọc file này trước khi code để bám đúng rule đã khóa. Khi mâu thuẫn với file nén này, spec hiện hành ở `docs/` root và `docs/core/` mới là nguồn sự thật — cập nhật cả hai nơi khi chốt thay đổi. `docs/history/` chỉ là hồ sơ lịch sử, không áp dụng trực tiếp cho hành vi hiện tại.
 
 ## 1. Bản chất dự án
 
@@ -205,18 +205,21 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | DL-027 | `--dry-run` preview candidate + document_id, không ghi |
 | DL-028 | Chương `post-mvp` đã đóng; nhịp mới chuyển track `core` |
 | DL-029 | **Ưu tiên track `core`**: provider thật + env-based selection → vector store thật → container qua lifespan → context-sufficiency policy → retrieval hardening |
+| DL-030 | Journey docs tách sang `docs/history/`; `docs/` root = spec hiện hành, `docs/core/` = track đang mở |
 
 ## 14. Dấu hiệu đang lệch khỏi đường ray (checklist tự rà)
 
 - [ ] Code ở `rag/*/use_case.py` hoặc `rag/*/service.py` đang import SDK provider hoặc `llama_index` → vi phạm boundary.
 - [ ] Adapter bắt đầu quyết định prompt format, citation format, response schema → kéo lên `generation/` hoặc `api/`.
-- [ ] Endpoint mới xuất hiện không có spec trong `docs/` hoặc `docs/post-mvp/`.
+- [ ] Endpoint mới xuất hiện không có spec trong `docs/` root hoặc `docs/core/`.
 - [ ] Config mới thêm để mở rộng behavior thay vì siết/nới trong biên đã khóa.
 - [ ] Test phải sửa hàng loạt do semantics chưa được khóa rõ — dừng, ghi decision log trước.
 - [ ] Comment giải thích WHAT thay vì WHY.
 - [ ] Thêm file markdown mới ngoài `docs/` mà user không yêu cầu.
 
 ## 15. Tham chiếu gốc (khi cần chi tiết)
+
+### Spec hiện hành (`docs/` root)
 
 | Chủ đề | File gốc |
 |---|---|
@@ -229,18 +232,36 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | Generation use case đầy đủ | `docs/07-use-case-generation.md` |
 | API contract + error mapping + runtime defaults | `docs/08-api-contract.md` |
 | Test strategy đầy đủ | `docs/09-test-strategy.md` |
-| Kế hoạch sprint | `docs/10-ke-hoach-trien-khai-theo-sprint.md` |
 | Glossary | `docs/11-glossary.md` |
-| Review + điểm thiếu + decision đã khóa | `docs/12-review-tong-hop.md` |
-| Checklist trước khi code | `docs/13-checklist-truoc-khi-code.md` |
-| Decision log (nguồn chính) | `docs/14-decision-log.md` |
+| Decision log (nguồn chính, sống chung với spec) | `docs/14-decision-log.md` |
 | Golden cases + fixture | `docs/15-golden-cases-va-fixtures.md` |
 | Implementation guardrails | `docs/16-implementation-guardrails.md` |
-| Post-MVP phase 1-4 | `docs/post-mvp/` |
-| Migration structure | `docs/post-mvp/40-spec-quyet-dinh-migration-cau-truc-src.md`, `41-spec-target-layout-migration-phase-4.md` |
+
+### Track đang mở (`docs/core/`)
+
+| Chủ đề | File gốc |
+|---|---|
+| Core track overview + ưu tiên hiện tại | `docs/core/55-core-track-overview.md` |
+| Retrieval core hardening v1 | `docs/core/56-spec-retrieval-core-hardening-v1.md` |
+| Provider integration + runtime lifecycle v1 | `docs/core/57-spec-provider-integration-and-runtime-lifecycle-v1.md` |
+| Real vector store adapter v1 | `docs/core/58-spec-real-vector-store-adapter-v1.md` |
+| Generation context policy v1 | `docs/core/59-spec-generation-context-policy-v1.md` |
+| Provider runtime implementation v1 | `docs/core/60-spec-provider-runtime-implementation-v1.md` |
+
+### Archive lịch sử (`docs/history/` — tham khảo cho provenance, không áp dụng cho behavior hiện tại)
+
+| Chủ đề | File |
+|---|---|
+| Kế hoạch sprint MVP | `docs/history/10-ke-hoach-trien-khai-theo-sprint.md` |
+| Review tổng hợp pre-code | `docs/history/12-review-tong-hop.md` |
+| Checklist trước khi code MVP | `docs/history/13-checklist-truoc-khi-code.md` |
+| Closeout post-MVP | `docs/history/54-closeout-post-mvp.md` |
+| Journey post-MVP phase 1-4 | `docs/history/post-mvp/` |
+| Migration structure spec | `docs/history/post-mvp/40-spec-quyet-dinh-migration-cau-truc-src.md`, `41-spec-target-layout-migration-phase-4.md` |
 
 ## 16. Khi có thay đổi, cập nhật ở đâu
 
-- **Đổi behavior, contract, config bounds, semantics** → ghi decision log mới (`docs/14-decision-log.md`) + cập nhật spec gốc tương ứng + cập nhật **file này** + cập nhật test.
-- **Đổi layout src** → cập nhật mục 2 của file này + README + AGENTS.md + migration spec trong `docs/post-mvp/`.
-- **Đóng phase/track mới** → decision log + README section tương ứng.
+- **Đổi behavior, contract, config bounds, semantics** → ghi decision log mới (`docs/14-decision-log.md`) + cập nhật spec hiện hành tương ứng + cập nhật **file này** + cập nhật test.
+- **Đổi layout src** → cập nhật mục 2 của file này + README + AGENTS.md + spec trong `docs/core/` nếu có liên quan.
+- **Đóng phase/track mới, hoặc di chuyển doc sang archive** → decision log + README section tương ứng + cập nhật mục 15 của file này.
+- **Không thêm doc mới vào `docs/history/`** — spec mới đi vào `docs/core/` hoặc `docs/` root.
