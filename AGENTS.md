@@ -68,7 +68,9 @@ Respect the project's lint rules as configured in `pyproject.toml` for every cod
 Prefer deterministic tests with fake ports for use-case coverage; reserve integration-style behavior for adapters, persistence, and API wiring. When changing locked semantics, config bounds, or API contract behavior, update the corresponding tests and the active docs together.
 
 ## Commit & Pull Request Guidelines
-This repository has no established commit history yet, so use short imperative commit messages, for example: `Add retrieval filter validation`. Keep commits scoped to one change. PRs should summarize the behavior change, list the commands run (`pytest`, targeted tests, manual API checks), and include request/response examples when endpoint behavior changes.
+Use conventional-style commit prefixes for every commit message: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `build:`, or `ci:`. Keep the subject short, imperative, and scoped to one change, for example: `feat: add retrieval filter validation` or `fix: preserve replace-document semantics in qdrant adapter`. Avoid free-form commit subjects without one of these prefixes.
+
+PRs should summarize the behavior change, list the commands run (`pytest`, targeted tests, manual API checks), and include request/response examples when endpoint behavior changes.
 
 ## Configuration & Runtime Notes
 Runtime defaults are defined in `src/tuesday/runtime/config.py` and are expected to be loaded through the runtime/container path. When changing limits such as chunk size, overlap, retrieval bounds, provider selection, or startup checks, update tests alongside the code so the spec stays locked.
