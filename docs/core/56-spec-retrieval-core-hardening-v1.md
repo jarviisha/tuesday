@@ -7,6 +7,7 @@
 ## Mục lục
 
 - Mục tiêu
+- Vị trí trong backlog
 - Lý do ưu tiên
 - Phạm vi v1
 - Ngoài phạm vi v1
@@ -18,13 +19,27 @@
 
 Xác định nhịp đầu tiên để cải thiện phần lõi retrieval của hệ thống trên baseline hiện tại, trước khi mở thêm capability lớn hoặc thay toàn bộ framework.
 
+## Vị trí trong backlog
+
+Tài liệu này vẫn còn hiệu lực, nhưng **không còn là nhịp implementation đầu tiên của track `core`**.
+
+Theo thứ tự ưu tiên mới, `retrieval_core_hardening` nên đi sau:
+
+1. provider thật + env-based selection
+2. vector store thật
+3. container lifecycle qua lifespan
+4. context-sufficiency policy rõ hơn
+
+Lý do là các bước trên sẽ tạo nền thực tế hơn để đo retrieval quality, thay vì tối ưu retrieval trên adapter demo và runtime wiring tạm thời.
+
 ## Lý do ưu tiên
 
 Ở trạng thái hiện tại:
 
 - ingestion nội bộ đã đủ dùng cho việc đưa dữ liệu thật vào hệ thống
 - benchmark và regression đã tồn tại để đo tác động của thay đổi
-- retrieval hiện vẫn còn khá tối giản, nên đây là nơi có tiềm năng tăng giá trị lớn nhất cho chất lượng đầu ra
+- retrieval hiện vẫn còn khá tối giản, nên đây là nơi có tiềm năng tăng giá trị lớn cho chất lượng đầu ra
+- tuy nhiên, việc triển khai provider/store thật hiện được ưu tiên trước để tránh tối ưu sai mặt bằng kỹ thuật
 
 ## Phạm vi v1
 

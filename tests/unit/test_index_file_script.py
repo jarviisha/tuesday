@@ -18,12 +18,14 @@ def _load_index_file_module():
 def test_index_file_script_indexes_supported_file(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     file_path = tmp_path / "refund.md"
     file_path.write_text("Customers can request a refund within 7 days.", encoding="utf-8")
 
     index_file = _load_index_file_module()
+    monkeypatch.setattr(index_file, "build_runtime_from_env", lambda: runtime_container)
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -52,6 +54,7 @@ def test_index_file_script_indexes_supported_file(
 def test_index_file_script_indexes_html_file(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     file_path = tmp_path / "refund.html"
@@ -64,6 +67,7 @@ def test_index_file_script_indexes_html_file(
     )
 
     index_file = _load_index_file_module()
+    monkeypatch.setattr(index_file, "build_runtime_from_env", lambda: runtime_container)
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -92,6 +96,7 @@ def test_index_file_script_indexes_html_file(
 def test_index_file_script_indexes_pdf_file(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     if shutil.which("ps2pdf") is None or shutil.which("pdftotext") is None:
@@ -107,6 +112,7 @@ def test_index_file_script_indexes_pdf_file(
     )
 
     index_file = _load_index_file_module()
+    monkeypatch.setattr(index_file, "build_runtime_from_env", lambda: runtime_container)
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -135,12 +141,14 @@ def test_index_file_script_indexes_pdf_file(
 def test_index_file_script_returns_error_for_unsupported_file(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     file_path = tmp_path / "refund.docx"
     file_path.write_text("unsupported", encoding="utf-8")
 
     index_file = _load_index_file_module()
+    monkeypatch.setattr(index_file, "build_runtime_from_env", lambda: runtime_container)
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -185,11 +193,13 @@ def _build_simple_pdf(tmp_path: Path, filename: str, lines: list[str]) -> Path:
 def test_index_file_script_returns_error_for_missing_file(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     missing_path = tmp_path / "missing.md"
 
     index_file = _load_index_file_module()
+    monkeypatch.setattr(index_file, "build_runtime_from_env", lambda: runtime_container)
     monkeypatch.setattr(
         "sys.argv",
         [

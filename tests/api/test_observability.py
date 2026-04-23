@@ -1,16 +1,14 @@
-import httpx
 import pytest
 from tests.fixtures import REFUND_DOCUMENT
 
-from tuesday_rag.api.app import app
-
 
 @pytest.mark.anyio
-async def test_request_logs_include_lifecycle_fields(caplog: pytest.LogCaptureFixture) -> None:
+async def test_request_logs_include_lifecycle_fields(
+    api_client,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     caplog.set_level("INFO", logger="tuesday_rag.api")
-    transport = httpx.ASGITransport(app=app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-        response = await client.post("/documents/index", json=REFUND_DOCUMENT)
+    response = await api_client.post("/documents/index", json=REFUND_DOCUMENT)
 
     assert response.status_code == 200
     completion_records = [
@@ -30,11 +28,12 @@ async def test_request_logs_include_lifecycle_fields(caplog: pytest.LogCaptureFi
 
 
 @pytest.mark.anyio
-async def test_failed_request_logs_include_error_code(caplog: pytest.LogCaptureFixture) -> None:
+async def test_failed_request_logs_include_error_code(
+    api_client,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     caplog.set_level("INFO", logger="tuesday_rag.api")
-    transport = httpx.ASGITransport(app=app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-        response = await client.post("/documents/index", json={**REFUND_DOCUMENT, "content": "   "})
+    response = await api_client.post("/documents/index", json={**REFUND_DOCUMENT, "content": "   "})
 
     assert response.status_code == 400
     failure_records = [

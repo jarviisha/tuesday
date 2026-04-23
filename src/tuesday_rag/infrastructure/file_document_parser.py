@@ -1,4 +1,5 @@
 import re
+import shutil
 import subprocess
 from html import unescape
 from html.parser import HTMLParser
@@ -14,6 +15,10 @@ class LocalFileDocumentParser:
     @classmethod
     def supported_extensions(cls) -> set[str]:
         return set(cls._SUPPORTED_EXTENSIONS)
+
+    @staticmethod
+    def has_pdftotext() -> bool:
+        return shutil.which("pdftotext") is not None
 
     def parse(self, raw_input: dict) -> SourceDocument:
         raw_path = raw_input.get("path")

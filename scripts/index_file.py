@@ -4,10 +4,11 @@ import sys
 from dataclasses import asdict
 
 from tuesday_rag.domain.errors import DomainError
-from tuesday_rag.runtime.container import container
+from tuesday_rag.runtime.container import build_runtime_from_env
 
 
 def main() -> int:
+    container = build_runtime_from_env()
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", required=True)
     parser.add_argument("--document-id", required=True)

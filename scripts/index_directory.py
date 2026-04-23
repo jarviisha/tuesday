@@ -8,10 +8,11 @@ from pathlib import Path
 
 from tuesday_rag.domain.errors import DomainError, InvalidInputError
 from tuesday_rag.infrastructure.file_document_parser import LocalFileDocumentParser
-from tuesday_rag.runtime.container import container
+from tuesday_rag.runtime.container import build_runtime_from_env
 
 
 def main() -> int:
+    container = build_runtime_from_env()
     parser = argparse.ArgumentParser()
     parser.add_argument("--dir", required=True)
     parser.add_argument("--index-name", required=True)

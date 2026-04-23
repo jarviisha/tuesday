@@ -5,6 +5,7 @@ Tuesday RAG Core is a FastAPI-based RAG service built under `src/` with a ports-
 ## Prerequisites
 
 - Python 3.12+
+- `pdftotext` on `PATH` if you want to ingest `.pdf` files through the internal file-ingestion flow
 
 ## Development Setup
 
@@ -78,13 +79,37 @@ Use targeted tests when iterating:
 
 ## Runtime Configuration
 
-Runtime configuration is loaded from environment variables with the `TUESDAY_RAG_` prefix. The Phase 1 runbook, config baseline, and release baseline are documented in `docs/post-mvp/phase-1/27-runbook-config-va-release-baseline-implementation.md`.
+Runtime configuration is loaded from:
+
+1. OS environment variables with the `TUESDAY_RAG_` prefix
+2. a local `.env` file in the repository root if present
+3. built-in defaults in `RuntimeConfig`
+
+If the same key exists in both places, the OS environment variable wins over `.env`.
+
+You can start from [.env.example](/home/jarviisha/development/tuesday/.env.example). The Phase 1 runbook, config baseline, and release baseline are documented in `docs/post-mvp/phase-1/27-runbook-config-va-release-baseline-implementation.md`.
 
 Phase 2 operational hardening adds:
 
 ```bash
 TUESDAY_RAG_VECTOR_STORE_BACKEND=memory|file
 TUESDAY_RAG_VECTOR_STORE_FILE_PATH=.tuesday-rag/vector_store.json
+TUESDAY_RAG_PDF_STARTUP_CHECK_MODE=off|warn|strict
+TUESDAY_RAG_EMBEDDING_PROVIDER_BACKEND=demo|openai|gemini|azure_openai
+TUESDAY_RAG_GENERATION_PROVIDER_BACKEND=demo|openai|gemini|azure_openai
+TUESDAY_RAG_OPENAI_API_KEY=
+TUESDAY_RAG_OPENAI_BASE_URL=https://api.openai.com/v1
+TUESDAY_RAG_OPENAI_EMBEDDING_MODEL=
+TUESDAY_RAG_OPENAI_GENERATION_MODEL=
+TUESDAY_RAG_GEMINI_API_KEY=
+TUESDAY_RAG_GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta
+TUESDAY_RAG_GEMINI_EMBEDDING_MODEL=
+TUESDAY_RAG_GEMINI_GENERATION_MODEL=
+TUESDAY_RAG_AZURE_OPENAI_API_KEY=
+TUESDAY_RAG_AZURE_OPENAI_ENDPOINT=
+TUESDAY_RAG_AZURE_OPENAI_API_VERSION=2024-10-21
+TUESDAY_RAG_AZURE_OPENAI_EMBEDDING_DEPLOYMENT=
+TUESDAY_RAG_AZURE_OPENAI_GENERATION_DEPLOYMENT=
 TUESDAY_RAG_EMBEDDING_TIMEOUT_MS=1000
 TUESDAY_RAG_EMBEDDING_MAX_RETRIES=0
 TUESDAY_RAG_GENERATION_TIMEOUT_MS=1000
@@ -99,6 +124,8 @@ Use the file-backed adapter when you want persistence across process restarts:
 export TUESDAY_RAG_VECTOR_STORE_BACKEND=file
 export TUESDAY_RAG_VECTOR_STORE_FILE_PATH=.tuesday-rag/vector_store.json
 ```
+
+Provider backends default to `demo` for both embeddings and generation. To use real providers, set the backend selectors and the matching credentials/model or deployment env vars for `OpenAI`, `Gemini`, or `Azure OpenAI`.
 
 ## Smoke Test
 
@@ -164,6 +191,14 @@ PDF files are also supported:
   --language en \
   --tag refund
 ```
+
+PDF ingestion depends on the system `pdftotext` binary. If it is missing, PDF parsing fails at ingestion time by default.
+
+You can also opt into a startup-time check:
+
+- `TUESDAY_RAG_PDF_STARTUP_CHECK_MODE=off`: do not check at startup
+- `TUESDAY_RAG_PDF_STARTUP_CHECK_MODE=warn`: log a warning if `pdftotext` is missing
+- `TUESDAY_RAG_PDF_STARTUP_CHECK_MODE=strict`: fail fast during runtime startup if `pdftotext` is missing
 
 Batch index every supported file in a local directory:
 

@@ -4,8 +4,6 @@ from pathlib import Path
 
 import pytest
 
-from tuesday_rag.runtime.container import container
-
 
 def _load_index_directory_module():
     module_path = Path(__file__).resolve().parents[2] / "scripts" / "index_directory.py"
@@ -16,9 +14,19 @@ def _load_index_directory_module():
     return module
 
 
+def _patch_runtime_factory(
+    *,
+    monkeypatch: pytest.MonkeyPatch,
+    module,
+    runtime_container,
+) -> None:
+    monkeypatch.setattr(module, "build_runtime_from_env", lambda: runtime_container)
+
+
 def test_index_directory_script_indexes_supported_files(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     (tmp_path / "refund.md").write_text(
@@ -36,6 +44,11 @@ def test_index_directory_script_indexes_supported_files(
     (tmp_path / "ignore.docx").write_text("unsupported", encoding="utf-8")
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -66,7 +79,7 @@ def test_index_directory_script_indexes_supported_files(
         "refund-md",
     }
 
-    retrieval_result = container.retrieval_use_case.execute(
+    retrieval_result = runtime_container.retrieval_use_case.execute(
         {
             "query": "How long do new employees have to complete onboarding documents?",
             "index_name": "enterprise-kb",
@@ -79,6 +92,7 @@ def test_index_directory_script_indexes_supported_files(
 def test_index_directory_script_writes_summary_to_output_file(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     (tmp_path / "refund.md").write_text(
@@ -88,6 +102,11 @@ def test_index_directory_script_writes_summary_to_output_file(
     output_path = tmp_path / "reports" / "batch-summary.json"
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -114,6 +133,7 @@ def test_index_directory_script_writes_summary_to_output_file(
 def test_index_directory_script_dry_run_does_not_index_files(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     (tmp_path / "refund.md").write_text(
@@ -122,6 +142,11 @@ def test_index_directory_script_dry_run_does_not_index_files(
     )
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -144,7 +169,7 @@ def test_index_directory_script_dry_run_does_not_index_files(
     assert summary["indexed_files"] == 0
     assert summary["results"][0]["status"] == "dry_run"
 
-    retrieval_result = container.retrieval_use_case.execute(
+    retrieval_result = runtime_container.retrieval_use_case.execute(
         {
             "query": "How long can customers request a refund?",
             "index_name": "enterprise-kb",
@@ -156,6 +181,7 @@ def test_index_directory_script_dry_run_does_not_index_files(
 def test_index_directory_script_ignores_nested_files_without_recursive_flag(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     nested_directory = tmp_path / "nested"
@@ -170,6 +196,11 @@ def test_index_directory_script_ignores_nested_files_without_recursive_flag(
     )
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -194,6 +225,7 @@ def test_index_directory_script_ignores_nested_files_without_recursive_flag(
 def test_index_directory_script_indexes_nested_files_with_recursive_flag(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     nested_directory = tmp_path / "handbook" / "team"
@@ -208,6 +240,11 @@ def test_index_directory_script_indexes_nested_files_with_recursive_flag(
     )
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -236,6 +273,7 @@ def test_index_directory_script_indexes_nested_files_with_recursive_flag(
 def test_index_directory_script_filters_with_include_pattern(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     (tmp_path / "refund.md").write_text(
@@ -248,6 +286,11 @@ def test_index_directory_script_filters_with_include_pattern(
     )
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -273,6 +316,7 @@ def test_index_directory_script_filters_with_include_pattern(
 def test_index_directory_script_filters_with_exclude_pattern(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     (tmp_path / "refund.md").write_text(
@@ -285,6 +329,11 @@ def test_index_directory_script_filters_with_exclude_pattern(
     )
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -310,6 +359,7 @@ def test_index_directory_script_filters_with_exclude_pattern(
 def test_index_directory_script_exclude_wins_over_include(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     nested_directory = tmp_path / "handbook" / "team"
@@ -320,6 +370,11 @@ def test_index_directory_script_exclude_wins_over_include(
     )
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -346,6 +401,7 @@ def test_index_directory_script_exclude_wins_over_include(
 def test_index_directory_script_dry_run_respects_recursive_and_patterns(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     nested_directory = tmp_path / "handbook" / "team"
@@ -360,6 +416,11 @@ def test_index_directory_script_dry_run_respects_recursive_and_patterns(
     )
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -390,10 +451,16 @@ def test_index_directory_script_dry_run_respects_recursive_and_patterns(
 def test_index_directory_script_returns_error_for_missing_directory(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     missing_directory = tmp_path / "missing"
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -415,11 +482,17 @@ def test_index_directory_script_returns_error_for_missing_directory(
 def test_index_directory_script_returns_error_when_no_supported_files(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     (tmp_path / "ignore.docx").write_text("unsupported", encoding="utf-8")
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -441,6 +514,7 @@ def test_index_directory_script_returns_error_when_no_supported_files(
 def test_index_directory_script_continues_on_file_errors(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     (tmp_path / "refund.md").write_text(
@@ -450,6 +524,11 @@ def test_index_directory_script_continues_on_file_errors(
     (tmp_path / "blank.txt").write_text("   \n\t", encoding="utf-8")
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -477,6 +556,7 @@ def test_index_directory_script_continues_on_file_errors(
 def test_index_directory_script_writes_partial_failure_summary_to_output_file(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
+    runtime_container,
     tmp_path: Path,
 ) -> None:
     (tmp_path / "refund.md").write_text(
@@ -487,6 +567,11 @@ def test_index_directory_script_writes_partial_failure_summary_to_output_file(
     output_path = tmp_path / "reports" / "batch-summary.json"
 
     index_directory = _load_index_directory_module()
+    _patch_runtime_factory(
+        monkeypatch=monkeypatch,
+        module=index_directory,
+        runtime_container=runtime_container,
+    )
     monkeypatch.setattr(
         "sys.argv",
         [

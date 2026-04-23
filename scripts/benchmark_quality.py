@@ -20,113 +20,118 @@ DEFAULT_OUTPUT = "benchmarks/phase-3/initial-baseline.json"
 
 
 async def _run_benchmark(iterations: int) -> dict:
-    from tuesday_rag.api.app import app
-    from tuesday_rag.runtime.container import container
+    from tuesday_rag.api.app import create_app
 
-    container.vector_store.reset()
-    transport = httpx.ASGITransport(app=app)
-    retrieval_successes = 0
-    retrieval_total = 0
-    generation_total = 0
-    insufficient_context_count = 0
-    citation_valid_count = 0
-    error_summary = _empty_error_summary()
-    latency_samples = {
-        "index": [],
-        "retrieve": [],
-        "generate": [],
-    }
+    app = create_app()
+    async with app.router.lifespan_context(app):
+        container = app.state.container
+        container.vector_store.reset()
+        transport = httpx.ASGITransport(app=app)
+        retrieval_successes = 0
+        retrieval_total = 0
+        generation_total = 0
+        insufficient_context_count = 0
+        citation_valid_count = 0
+        error_summary = _empty_error_summary()
+        latency_samples = {
+            "index": [],
+            "retrieve": [],
+            "generate": [],
+        }
 
-    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-        for _ in range(iterations):
-            container.vector_store.reset()
-            await _timed_post(
-                client,
-                "/documents/index",
-                REFUND_DOCUMENT,
-                latency_samples["index"],
-                error_summary,
-            )
-            await _timed_post(
-                client,
-                "/documents/index",
-                ONBOARDING_DOCUMENT,
-                latency_samples["index"],
-                error_summary,
-            )
-
-            for case in RETRIEVAL_GOLDEN_CASES:
-                retrieval_total += 1
-                response = await _timed_post(
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            for _ in range(iterations):
+                container.vector_store.reset()
+                await _timed_post(
                     client,
-                    "/retrieve",
-                    {
-                        "query": case.query,
-                        "index_name": case.index_name,
-                        "filters": case.filters,
-                    },
-                    latency_samples["retrieve"],
+                    "/documents/index",
+                    REFUND_DOCUMENT,
+                    latency_samples["index"],
                     error_summary,
                 )
-                if response.is_error:
-                    continue
-                chunks = response.json()["chunks"]
-                if case.expected_empty and chunks == []:
-                    retrieval_successes += 1
-                elif not case.expected_empty:
-                    returned_ids = {chunk["document_id"] for chunk in chunks}
-                    if returned_ids.issuperset(case.expected_document_ids):
+                await _timed_post(
+                    client,
+                    "/documents/index",
+                    ONBOARDING_DOCUMENT,
+                    latency_samples["index"],
+                    error_summary,
+                )
+
+                for case in RETRIEVAL_GOLDEN_CASES:
+                    retrieval_total += 1
+                    response = await _timed_post(
+                        client,
+                        "/retrieve",
+                        {
+                            "query": case.query,
+                            "index_name": case.index_name,
+                            "filters": case.filters,
+                        },
+                        latency_samples["retrieve"],
+                        error_summary,
+                    )
+                    if response.is_error:
+                        continue
+                    chunks = response.json()["chunks"]
+                    if case.expected_empty and chunks == []:
                         retrieval_successes += 1
+                    elif not case.expected_empty:
+                        returned_ids = {chunk["document_id"] for chunk in chunks}
+                        if returned_ids.issuperset(case.expected_document_ids):
+                            retrieval_successes += 1
 
-            for case in GENERATION_GOLDEN_CASES:
-                generation_total += 1
-                response = await _timed_post(
-                    client,
-                    "/generate",
-                    {
-                        "question": case.question,
-                        "index_name": case.index_name,
-                        "retrieval_request": case.retrieval_request,
-                    },
-                    latency_samples["generate"],
-                    error_summary,
-                )
-                if response.is_error:
-                    continue
-                body = response.json()
-                if body["insufficient_context"]:
-                    insufficient_context_count += 1
-                if set(body["citations"]).issubset(
-                    {chunk["chunk_id"] for chunk in body["used_chunks"]}
-                ):
-                    citation_valid_count += 1
+                for case in GENERATION_GOLDEN_CASES:
+                    generation_total += 1
+                    response = await _timed_post(
+                        client,
+                        "/generate",
+                        {
+                            "question": case.question,
+                            "index_name": case.index_name,
+                            "retrieval_request": case.retrieval_request,
+                        },
+                        latency_samples["generate"],
+                        error_summary,
+                    )
+                    if response.is_error:
+                        continue
+                    body = response.json()
+                    if body["insufficient_context"]:
+                        insufficient_context_count += 1
+                    if set(body["citations"]).issubset(
+                        {chunk["chunk_id"] for chunk in body["used_chunks"]}
+                    ):
+                        citation_valid_count += 1
 
-    config_snapshot = {
-        "vector_store_backend": container.config.vector_store_backend,
-        "embedding_timeout_ms": container.config.embedding_timeout_ms,
-        "generation_timeout_ms": container.config.generation_timeout_ms,
-        "vector_store_timeout_ms": container.config.vector_store_timeout_ms,
-    }
-    return {
-        "phase": "quality_evaluation",
-        "run_mode": "in_process",
-        "iterations": iterations,
-        "config": config_snapshot,
-        "dataset": {
-            "documents": 2,
-            "retrieval_cases": len(RETRIEVAL_GOLDEN_CASES),
-            "generation_cases": len(GENERATION_GOLDEN_CASES),
-        },
-        "metrics": {
-            "retrieval_hit_rate": _safe_rate(retrieval_successes, retrieval_total),
-            "insufficient_context_rate": _safe_rate(insufficient_context_count, generation_total),
-            "citation_valid_rate": _safe_rate(citation_valid_count, generation_total),
-            "latency_ms": {
-                endpoint: _latency_summary(values) for endpoint, values in latency_samples.items()
+        config_snapshot = {
+            "vector_store_backend": container.config.vector_store_backend,
+            "embedding_timeout_ms": container.config.embedding_timeout_ms,
+            "generation_timeout_ms": container.config.generation_timeout_ms,
+            "vector_store_timeout_ms": container.config.vector_store_timeout_ms,
+        }
+        return {
+            "phase": "quality_evaluation",
+            "run_mode": "in_process",
+            "iterations": iterations,
+            "config": config_snapshot,
+            "dataset": {
+                "documents": 2,
+                "retrieval_cases": len(RETRIEVAL_GOLDEN_CASES),
+                "generation_cases": len(GENERATION_GOLDEN_CASES),
             },
-            "errors": error_summary,
-        },
-    }
+            "metrics": {
+                "retrieval_hit_rate": _safe_rate(retrieval_successes, retrieval_total),
+                "insufficient_context_rate": _safe_rate(
+                    insufficient_context_count, generation_total
+                ),
+                "citation_valid_rate": _safe_rate(citation_valid_count, generation_total),
+                "latency_ms": {
+                    endpoint: _latency_summary(values)
+                    for endpoint, values in latency_samples.items()
+                },
+                "errors": error_summary,
+            },
+        }
 
 
 async def _timed_post(

@@ -21,11 +21,13 @@ REFUND_DOCUMENT = {
 
 
 async def _run_in_process() -> None:
-    from tuesday_rag.api.app import app
+    from tuesday_rag.api.app import create_app
 
-    transport = httpx.ASGITransport(app=app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-        await _run_flow(client)
+    app = create_app()
+    async with app.router.lifespan_context(app):
+        transport = httpx.ASGITransport(app=app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            await _run_flow(client)
 
 
 async def _run_remote(base_url: str) -> None:
