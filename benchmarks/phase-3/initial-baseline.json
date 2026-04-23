@@ -20,19 +20,26 @@
     "latency_ms": {
       "index": {
         "count": 10,
-        "p50": 7.139,
-        "p95": 9.924
+        "p50": 5.365,
+        "p95": 7.534
       },
       "retrieve": {
         "count": 10,
-        "p50": 2.6,
-        "p95": 2.885
+        "p50": 2.002,
+        "p95": 2.244
       },
       "generate": {
         "count": 10,
-        "p50": 2.878,
-        "p95": 4.937
+        "p50": 1.863,
+        "p95": 3.844
       }
+    },
+    "errors": {
+      "count": 0,
+      "by_group": {},
+      "by_error_code": {},
+      "by_endpoint": {},
+      "by_status": {}
     }
   }
 }

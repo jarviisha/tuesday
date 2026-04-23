@@ -8,6 +8,7 @@ from pathlib import Path
 
 import httpx
 
+from tuesday_rag.api.observability import classify_error_code
 from tuesday_rag.evaluation.golden_cases import (
     GENERATION_GOLDEN_CASES,
     ONBOARDING_DOCUMENT,
@@ -29,6 +30,7 @@ async def _run_benchmark(iterations: int) -> dict:
     generation_total = 0
     insufficient_context_count = 0
     citation_valid_count = 0
+    error_summary = _empty_error_summary()
     latency_samples = {
         "index": [],
         "retrieve": [],
@@ -43,12 +45,14 @@ async def _run_benchmark(iterations: int) -> dict:
                 "/documents/index",
                 REFUND_DOCUMENT,
                 latency_samples["index"],
+                error_summary,
             )
             await _timed_post(
                 client,
                 "/documents/index",
                 ONBOARDING_DOCUMENT,
                 latency_samples["index"],
+                error_summary,
             )
 
             for case in RETRIEVAL_GOLDEN_CASES:
@@ -62,7 +66,10 @@ async def _run_benchmark(iterations: int) -> dict:
                         "filters": case.filters,
                     },
                     latency_samples["retrieve"],
+                    error_summary,
                 )
+                if response.is_error:
+                    continue
                 chunks = response.json()["chunks"]
                 if case.expected_empty and chunks == []:
                     retrieval_successes += 1
@@ -82,7 +89,10 @@ async def _run_benchmark(iterations: int) -> dict:
                         "retrieval_request": case.retrieval_request,
                     },
                     latency_samples["generate"],
+                    error_summary,
                 )
+                if response.is_error:
+                    continue
                 body = response.json()
                 if body["insufficient_context"]:
                     insufficient_context_count += 1
@@ -108,12 +118,13 @@ async def _run_benchmark(iterations: int) -> dict:
             "generation_cases": len(GENERATION_GOLDEN_CASES),
         },
         "metrics": {
-            "retrieval_hit_rate": retrieval_successes / retrieval_total,
-            "insufficient_context_rate": insufficient_context_count / generation_total,
-            "citation_valid_rate": citation_valid_count / generation_total,
+            "retrieval_hit_rate": _safe_rate(retrieval_successes, retrieval_total),
+            "insufficient_context_rate": _safe_rate(insufficient_context_count, generation_total),
+            "citation_valid_rate": _safe_rate(citation_valid_count, generation_total),
             "latency_ms": {
                 endpoint: _latency_summary(values) for endpoint, values in latency_samples.items()
             },
+            "errors": error_summary,
         },
     }
 
@@ -123,12 +134,24 @@ async def _timed_post(
     path: str,
     payload: dict,
     samples: list[float],
+    error_summary: dict,
 ) -> httpx.Response:
     started_at = time.perf_counter()
     response = await client.post(path, json=payload)
     elapsed_ms = round((time.perf_counter() - started_at) * 1000, 3)
     samples.append(elapsed_ms)
-    response.raise_for_status()
+    if response.is_error:
+        error_code = None
+        try:
+            error_code = response.json().get("error_code")
+        except ValueError:
+            error_code = None
+        _record_error(
+            error_summary,
+            endpoint=path,
+            status_code=response.status_code,
+            error_code=error_code,
+        )
     return response
 
 
@@ -139,6 +162,40 @@ def _latency_summary(samples: list[float]) -> dict[str, float]:
         "p50": round(statistics.median(ordered), 3),
         "p95": round(_percentile(ordered, 0.95), 3),
     }
+
+
+def _safe_rate(numerator: int, denominator: int) -> float:
+    if denominator == 0:
+        return 0.0
+    return numerator / denominator
+
+
+def _empty_error_summary() -> dict:
+    return {
+        "count": 0,
+        "by_group": {},
+        "by_error_code": {},
+        "by_endpoint": {},
+        "by_status": {},
+    }
+
+
+def _record_error(
+    error_summary: dict,
+    *,
+    endpoint: str,
+    status_code: int,
+    error_code: str | None,
+) -> None:
+    error_summary["count"] += 1
+    _increment(error_summary["by_group"], classify_error_code(error_code))
+    _increment(error_summary["by_endpoint"], endpoint)
+    _increment(error_summary["by_status"], str(status_code))
+    _increment(error_summary["by_error_code"], error_code or "UNKNOWN_ERROR")
+
+
+def _increment(counter: dict[str, int], key: str) -> None:
+    counter[key] = counter.get(key, 0) + 1
 
 
 def _percentile(samples: list[float], percentile: float) -> float:

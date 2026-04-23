@@ -166,6 +166,21 @@ def test_ingestion_raises_chunking_error_when_chunker_returns_empty() -> None:
         use_case.execute(REFUND_DOCUMENT)
 
 
+def test_ingestion_raises_chunking_error_when_chunk_count_exceeds_hard_limit() -> None:
+    config = RuntimeConfig(ingestion_chunk_count_max=1)
+    use_case = IngestionUseCase(
+        config=config,
+        chunker=CharacterChunker(
+            chunk_size=config.ingestion_chunk_size_chars_default,
+            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        ),
+        indexer=IndexerService(HashEmbeddingProvider(), InMemoryVectorStore()),
+    )
+
+    with pytest.raises(ChunkingError, match="maximum number of chunks"):
+        use_case.execute(ONBOARDING_DOCUMENT)
+
+
 def test_ingestion_raises_embedding_error_from_provider() -> None:
     config = RuntimeConfig()
     use_case = IngestionUseCase(

@@ -1,5 +1,37 @@
 import os
 from dataclasses import dataclass, fields
+from typing import TypedDict
+
+
+class RuntimeConfigOverrides(TypedDict, total=False):
+    vector_store_backend: str
+    vector_store_file_path: str
+    retrieval_top_k_default: int
+    retrieval_top_k_min: int
+    retrieval_top_k_max: int
+    generation_max_context_chunks_default: int
+    generation_max_context_chunks_min: int
+    generation_max_context_chunks_max: int
+    embedding_timeout_ms: int
+    embedding_max_retries: int
+    generation_timeout_ms: int
+    generation_max_retries: int
+    vector_store_timeout_ms: int
+    vector_store_max_retries: int
+    ingestion_chunk_size_chars_default: int
+    ingestion_chunk_size_chars_min: int
+    ingestion_chunk_size_chars_max: int
+    ingestion_chunk_overlap_chars_default: int
+    ingestion_chunk_overlap_chars_min: int
+    ingestion_chunk_overlap_chars_max: int
+    ingestion_chunk_count_max: int
+    content_length_min: int
+    content_length_max: int
+    query_length_min: int
+    query_length_max: int
+    question_length_min: int
+    question_length_max: int
+    insufficient_context_answer: str
 
 
 @dataclass(frozen=True)
@@ -24,6 +56,7 @@ class RuntimeConfig:
     ingestion_chunk_overlap_chars_default: int = 150
     ingestion_chunk_overlap_chars_min: int = 0
     ingestion_chunk_overlap_chars_max: int = 300
+    ingestion_chunk_count_max: int = 200
     content_length_min: int = 1
     content_length_max: int = 100000
     query_length_min: int = 1
@@ -31,12 +64,12 @@ class RuntimeConfig:
     question_length_min: int = 1
     question_length_max: int = 2000
     insufficient_context_answer: str = (
-        "There is not enough information in the available context to answer confidently."
+        "Không đủ dữ liệu trong ngữ cảnh hiện có để trả lời chắc chắn."
     )
 
     @classmethod
     def from_env(cls) -> "RuntimeConfig":
-        values: dict[str, int | str] = {}
+        values: RuntimeConfigOverrides = {}
         for config_field in fields(cls):
             env_name = f"TUESDAY_RAG_{config_field.name.upper()}"
             raw_value = os.getenv(env_name)
@@ -75,6 +108,12 @@ class RuntimeConfig:
                 self.ingestion_chunk_overlap_chars_default,
                 self.ingestion_chunk_overlap_chars_min,
                 self.ingestion_chunk_overlap_chars_max,
+            ),
+            (
+                "ingestion_chunk_count_max",
+                self.ingestion_chunk_count_max,
+                1,
+                5000,
             ),
             (
                 "embedding_timeout_ms",

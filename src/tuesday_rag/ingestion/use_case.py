@@ -61,6 +61,10 @@ class IngestionUseCase:
         chunks = self._chunker.chunk(document)
         if not chunks:
             raise ChunkingError("Failed to create any valid chunks")
+        if len(chunks) > self._config.ingestion_chunk_count_max:
+            raise ChunkingError(
+                "Document exceeds the maximum number of chunks for the current config"
+            )
         indexed_chunks, replaced_document = self._indexer.index_chunks(
             index_name=index_name,
             document_id=document.document_id,

@@ -23,16 +23,21 @@ STORAGE_ERROR_CODES = {
 }
 
 
+def classify_error_code(error_code: str | None) -> str:
+    if error_code in PROVIDER_ERROR_CODES:
+        return "provider"
+    if error_code in STORAGE_ERROR_CODES:
+        return "storage"
+    if error_code in APPLICATION_ERROR_CODES:
+        return "application"
+    return "unknown"
+
+
 def classify_domain_error(error: DomainError) -> dict[str, int | str | None]:
-    failure_group = "application"
+    failure_group = classify_error_code(error.error_code)
     failure_component = "request_validation"
-    if error.error_code in PROVIDER_ERROR_CODES:
-        failure_group = "provider"
-    elif error.error_code in STORAGE_ERROR_CODES:
-        failure_group = "storage"
+    if failure_group == "storage":
         failure_component = "vector_store"
-    elif error.error_code in APPLICATION_ERROR_CODES:
-        failure_group = "application"
 
     retry_count = 0
     timeout_ms = None

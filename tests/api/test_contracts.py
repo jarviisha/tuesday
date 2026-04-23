@@ -160,3 +160,4 @@ async def test_generate_contract_returns_insufficient_context() -> None:
     assert body["insufficient_context"] is True
     assert body["grounded"] is False
     assert body["citations"] == []
+    assert body["answer"] == "Không đủ dữ liệu trong ngữ cảnh hiện có để trả lời chắc chắn."

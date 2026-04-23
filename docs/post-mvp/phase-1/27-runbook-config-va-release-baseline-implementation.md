@@ -76,13 +76,14 @@ Guardrail của staging-like:
 | `TUESDAY_RAG_INGESTION_CHUNK_OVERLAP_CHARS_DEFAULT` | `150` | Có | Phải nằm trong `0..300` và nhỏ hơn chunk size. |
 | `TUESDAY_RAG_INGESTION_CHUNK_OVERLAP_CHARS_MIN` | `0` | Không khuyến khích | Không cần đổi để chạy baseline. |
 | `TUESDAY_RAG_INGESTION_CHUNK_OVERLAP_CHARS_MAX` | `300` | Không khuyến khích | Không cần đổi để chạy baseline. |
+| `TUESDAY_RAG_INGESTION_CHUNK_COUNT_MAX` | `200` | Có, thận trọng | Giới hạn cứng tổng số chunk sinh ra từ một document. |
 | `TUESDAY_RAG_CONTENT_LENGTH_MIN` | `1` | Không khuyến khích | Thay đổi validation boundary. |
 | `TUESDAY_RAG_CONTENT_LENGTH_MAX` | `100000` | Có, thận trọng | Không được làm lệch contract request body hiện tại. |
 | `TUESDAY_RAG_QUERY_LENGTH_MIN` | `1` | Không khuyến khích | Thay đổi validation boundary. |
 | `TUESDAY_RAG_QUERY_LENGTH_MAX` | `2000` | Có, thận trọng | Không được làm lệch expectation của API hiện tại. |
 | `TUESDAY_RAG_QUESTION_LENGTH_MIN` | `1` | Không khuyến khích | Thay đổi validation boundary. |
 | `TUESDAY_RAG_QUESTION_LENGTH_MAX` | `2000` | Có, thận trọng | Không được làm lệch expectation của API hiện tại. |
-| `TUESDAY_RAG_INSUFFICIENT_CONTEXT_ANSWER` | `There is not enough information in the available context to answer confidently.` | Có | Chỉ đổi message fallback, không đổi semantics `insufficient_context=true`. |
+| `TUESDAY_RAG_INSUFFICIENT_CONTEXT_ANSWER` | `Không đủ dữ liệu trong ngữ cảnh hiện có để trả lời chắc chắn.` | Có | Chỉ đổi message fallback, không đổi semantics `insufficient_context=true`. |
 
 ## Default config và override hợp lệ
 

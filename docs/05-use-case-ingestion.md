@@ -64,6 +64,7 @@ Nhận một tài liệu đầu vào, chuẩn hóa thành domain model, chia chu
 - Nếu `metadata.language` có mặt thì phải là mã ngôn ngữ ngắn ổn định, ví dụ `vi`, `en`.
 - Nếu `metadata.tags` có mặt thì phải là danh sách string không rỗng phần tử.
 - Tổng số chunk sinh ra không được vượt giới hạn cấu hình cứng của MVP.
+  - `ingestion_chunk_count_max`: mặc định `200`, có thể override bằng config runtime.
 
 ## Error cases
 

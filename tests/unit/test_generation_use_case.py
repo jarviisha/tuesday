@@ -110,6 +110,40 @@ def test_generation_uses_question_as_retrieval_query_when_query_missing() -> Non
     assert "Context:" not in result.answer
 
 
+def test_generation_returns_insufficient_context_when_chunks_do_not_cover_question() -> None:
+    config = RuntimeConfig()
+    llm_provider = CountingLLMProvider()
+    use_case = GenerationUseCase(
+        config=config,
+        retriever=RetrieverService(HashEmbeddingProvider(), InMemoryVectorStore()),
+        generator=GeneratorService(
+            llm_provider,
+            insufficient_context_answer=config.insufficient_context_answer,
+        ),
+    )
+
+    result = use_case.execute(
+        {
+            "question": "Muc phi hoan tien la bao nhieu?",
+            "retrieved_chunks": [
+                {
+                    "chunk_id": "chunk-doc-refund-001-0001",
+                    "document_id": "doc-refund-001",
+                    "text": "Khach hang co the yeu cau hoan tien trong vong 7 ngay.",
+                    "metadata": {"chunk_id": "chunk-doc-refund-001-0001"},
+                }
+            ],
+        }
+    )
+
+    assert result.insufficient_context is True
+    assert result.grounded is False
+    assert result.citations == []
+    assert result.answer == config.insufficient_context_answer
+    assert result.used_chunks
+    assert llm_provider.calls == 0
+
+
 def test_generation_rejects_missing_retrieved_chunk_fields() -> None:
     config = RuntimeConfig()
     use_case = GenerationUseCase(
