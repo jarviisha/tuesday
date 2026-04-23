@@ -1,5 +1,18 @@
 # 40. Spec Quyết Định Migration Cấu Trúc `src`
 
+## Migration Note
+
+Đây là decision/spec historical cho quyết định migration, được viết khi target chính còn là `src/tuesday_rag`.
+
+Kết quả implementation đã hoàn tất nhịp package migration ngày `2026-04-23` theo hướng:
+
+- app shell ở `src/tuesday/api/`
+- runtime ở `src/tuesday/runtime/`
+- capability `rag` ở `src/tuesday/rag/`
+- `src/tuesday_rag/` đã được loại bỏ sau giai đoạn chuyển tiếp
+
+Vì vậy, các nhắc đến `src/tuesday_rag` bên dưới nên được đọc như bối cảnh lịch sử của quyết định, không phải layout source-of-truth hiện tại.
+
 ## Mục lục
 - Mục tiêu
 - Quyết định hiện tại

@@ -1,5 +1,14 @@
 # 39. Runbook Benchmark Và Regression Baseline
 
+## Migration Note
+
+Tài liệu này vẫn đúng về intent benchmark/regression, nhưng một số path bên dưới thuộc trạng thái trước migration package ngày `2026-04-23`.
+
+Ở repo hiện tại:
+
+- golden cases source-of-truth nằm ở `src/tuesday/rag/evaluation/golden_cases.py`
+- `src/tuesday_rag/evaluation/golden_cases.py` không còn tồn tại; mọi nhắc đến path này bên dưới là historical reference
+
 ## Mục tiêu
 
 Ghi lại cách chạy benchmark Phase 3, cách chạy regression suite, và nơi lưu baseline benchmark đầu tiên.

@@ -8,8 +8,8 @@ from pathlib import Path
 
 import httpx
 
-from tuesday_rag.api.observability import classify_error_code
-from tuesday_rag.evaluation.golden_cases import (
+from tuesday.api.observability import classify_error_code
+from tuesday.rag.evaluation.golden_cases import (
     GENERATION_GOLDEN_CASES,
     ONBOARDING_DOCUMENT,
     REFUND_DOCUMENT,
@@ -20,7 +20,7 @@ DEFAULT_OUTPUT = "benchmarks/phase-3/initial-baseline.json"
 
 
 async def _run_benchmark(iterations: int) -> dict:
-    from tuesday_rag.api.app import create_app
+    from tuesday.api.app import create_app
 
     app = create_app()
     async with app.router.lifespan_context(app):

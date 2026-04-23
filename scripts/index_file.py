@@ -3,8 +3,8 @@ import json
 import sys
 from dataclasses import asdict
 
-from tuesday_rag.domain.errors import DomainError
-from tuesday_rag.runtime.container import build_runtime_from_env
+from tuesday.rag.domain.errors import DomainError
+from tuesday.runtime.container import build_runtime_from_env
 
 
 def main() -> int:

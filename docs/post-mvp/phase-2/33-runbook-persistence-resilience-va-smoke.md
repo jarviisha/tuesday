@@ -1,5 +1,15 @@
 # 33. Runbook Persistence, Resilience Và Smoke Test
 
+## Migration Note
+
+Runbook này mô tả trạng thái Phase 2 trước migration package ngày `2026-04-23`.
+
+Trong repo hiện tại, khi áp dụng hướng dẫn bên dưới cần quy đổi:
+
+- `TUESDAY_RAG_*` thành `TUESDAY_*` cho env mới
+- `.tuesday-rag/vector_store.json` thành `.tuesday/vector_store.json`
+- `python -m uvicorn tuesday_rag.api.app:app --reload` thành `python -m uvicorn tuesday.api.app:app --reload`
+
 ## Mục tiêu
 
 Ghi lại baseline triển khai thực tế của Phase 2 để local và staging-like có thể bật persistence, chạy smoke test và đọc tín hiệu lỗi chính mà không cần suy đoán.

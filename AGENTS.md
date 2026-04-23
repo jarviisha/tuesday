@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-The codebase uses a `src/` layout. Core package code lives in `src/tuesday_rag/`, split by layer: `api/` for FastAPI endpoints and schemas, `application/` for use cases and services, `domain/` for models, ports, and errors, and `infrastructure/` for adapters such as chunking, providers, and the vector store. Tests live under `tests/unit/` and `tests/api/`. Design and implementation notes are in `docs/`, and prompt drafts are in `prompt/`.
+The codebase uses a `src/` layout. The application shell lives in `src/tuesday/`, with `api/` for the FastAPI app shell, `runtime/` for config and container wiring, `shared/` for cross-capability helpers, and capability modules such as `rag/`. Inside `src/tuesday/rag/`, code is organized by boundary: `api/` for the RAG router and schemas, `domain/` for models, ports, and errors, `ingestion/`, `retrieval/`, and `generation/` for use cases and services, `infrastructure/` for adapters, and `evaluation/` for quality assets. Tests live under `tests/unit/` and `tests/api/`. Design and implementation notes are in `docs/`, and prompt drafts are in `prompt/`.
 
 ## Build, Test, and Development Commands
 Create or reuse a Python 3.12+ environment, then install the package in editable mode:
@@ -26,7 +26,7 @@ pytest tests/api/test_health.py
 Start the local API server with auto-reload:
 
 ```bash
-python -m uvicorn tuesday_rag.api.app:app --reload
+python -m uvicorn tuesday.api.app:app --reload
 ```
 
 ## Coding Style & Naming Conventions
@@ -57,4 +57,4 @@ Respect the project's lint rules as configured in `pyproject.toml` for every cod
 This repository has no established commit history yet, so use short imperative commit messages, for example: `Add retrieval filter validation`. Keep commits scoped to one change. PRs should summarize the behavior change, list the commands run (`pytest`, targeted tests, manual API checks), and include request/response examples when endpoint behavior changes.
 
 ## Configuration & Runtime Notes
-Runtime defaults are defined in `src/tuesday_rag/config.py`. When changing limits such as chunk size, overlap, or retrieval bounds, update tests alongside the code so the spec stays locked.
+Runtime defaults are defined in `src/tuesday/runtime/config.py`. When changing limits such as chunk size, overlap, or retrieval bounds, update tests alongside the code so the spec stays locked.

@@ -1,5 +1,15 @@
 # 27. Runbook, Config Và Release Baseline Implementation
 
+## Migration Note
+
+Runbook này phản ánh baseline Phase 1 trước migration package ngày `2026-04-23`.
+
+Áp dụng vào repo hiện tại cần đổi như sau:
+
+- app entrypoint hiện tại là `python -m uvicorn tuesday.api.app:app --reload`
+- runtime config hiện tại ưu tiên env prefix `TUESDAY_`
+- default file persistence path hiện tại là `.tuesday/vector_store.json`
+
 ## Mục tiêu
 
 Khóa baseline vận hành tối thiểu của Phase 1 cho local và môi trường staging-like, đồng thời chốt mốc release nội bộ cho bản stabilize.

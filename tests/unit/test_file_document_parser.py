@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 
-from tuesday_rag.domain.errors import DocumentParseError, InvalidInputError
-from tuesday_rag.infrastructure.file_document_parser import LocalFileDocumentParser
+from tuesday.rag.domain.errors import DocumentParseError, InvalidInputError
+from tuesday.rag.infrastructure.file_document_parser import LocalFileDocumentParser
 
 
 @pytest.mark.parametrize("extension", [".txt", ".md"])

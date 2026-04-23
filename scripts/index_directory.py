@@ -6,9 +6,9 @@ import sys
 from dataclasses import asdict
 from pathlib import Path
 
-from tuesday_rag.domain.errors import DomainError, InvalidInputError
-from tuesday_rag.infrastructure.file_document_parser import LocalFileDocumentParser
-from tuesday_rag.runtime.container import build_runtime_from_env
+from tuesday.rag.domain.errors import DomainError, InvalidInputError
+from tuesday.rag.infrastructure.file_document_parser import LocalFileDocumentParser
+from tuesday.runtime.container import build_runtime_from_env
 
 
 def main() -> int:

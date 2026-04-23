@@ -1,7 +1,7 @@
 import pytest
 from tests.fixtures import REFUND_DOCUMENT
 
-from tuesday_rag.domain.models import LLMGenerationResult
+from tuesday.rag.domain.models import LLMGenerationResult
 
 
 @pytest.mark.anyio

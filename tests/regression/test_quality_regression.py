@@ -1,7 +1,7 @@
 import pytest
 from tests.fixtures import ONBOARDING_DOCUMENT, REFUND_DOCUMENT
 
-from tuesday_rag.evaluation.golden_cases import GENERATION_GOLDEN_CASES, RETRIEVAL_GOLDEN_CASES
+from tuesday.rag.evaluation.golden_cases import GENERATION_GOLDEN_CASES, RETRIEVAL_GOLDEN_CASES
 
 
 @pytest.mark.anyio

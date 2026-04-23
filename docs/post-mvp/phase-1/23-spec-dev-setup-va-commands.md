@@ -1,5 +1,15 @@
 # 23. Spec Dev Setup Và Commands
 
+## Migration Note
+
+Tài liệu này ghi lại command baseline của Phase 1 trước migration package ngày `2026-04-23`.
+
+Ở trạng thái repo hiện tại:
+
+- command chạy API chuẩn là `python -m uvicorn tuesday.api.app:app --reload`
+- package source-of-truth là `src/tuesday/`, không còn là `src/tuesday_rag/`
+- nếu gặp command hoặc path cũ trong phần nội dung bên dưới, hiểu đó là historical reference
+
 ## Mục lục
 - Mục tiêu
 - Phạm vi

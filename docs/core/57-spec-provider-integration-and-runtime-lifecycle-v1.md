@@ -1,5 +1,18 @@
 # 57. Spec Provider Integration And Runtime Lifecycle v1
 
+## Migration Note
+
+Tài liệu này mô tả hướng ưu tiên của workstream runtime/provider trước khi migration package hoàn tất ngày `2026-04-23`.
+
+Khi đọc tài liệu này ở trạng thái repo hiện tại, cần quy chiếu như sau:
+
+- app shell hiện tại nằm ở `src/tuesday/api/`
+- runtime/config hiện tại nằm ở `src/tuesday/runtime/`
+- capability `rag` hiện tại nằm ở `src/tuesday/rag/`
+- app entrypoint hiện tại là `python -m uvicorn tuesday.api.app:app --reload`
+- env prefix hiện tại là `TUESDAY_`
+- `src/tuesday_rag/` đã bị loại bỏ khỏi codebase; mọi nhắc đến path này bên dưới là historical reference
+
 ## Trạng thái
 
 `proposed`

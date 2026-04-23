@@ -1,7 +1,7 @@
 import pytest
 
-from tuesday_rag.domain.errors import InvalidInputError
-from tuesday_rag.domain.models import (
+from tuesday.rag.domain.errors import InvalidInputError
+from tuesday.rag.domain.models import (
     DocumentIndexResult,
     GeneratedAnswer,
     GenerationRequest,

@@ -1,5 +1,28 @@
 # 41. Spec Target Layout Migration Phase 4
 
+## Migration Note
+
+Tài liệu này là target-layout spec ở thời điểm trước khi team chốt app shell trung lập và capability nesting đầy đủ.
+
+Sau migration package ngày `2026-04-23`, layout source-of-truth hiện tại là:
+
+```text
+src/tuesday/
+  api/
+  runtime/
+  shared/
+  rag/
+    api/
+    domain/
+    ingestion/
+    retrieval/
+    generation/
+    infrastructure/
+    evaluation/
+```
+
+`src/tuesday_rag/` đã bị loại bỏ khỏi codebase. Vì vậy target layout bên dưới nên được đọc như mốc trung gian lịch sử của kế hoạch migration.
+
 ## Mục tiêu
 
 Khóa target layout tối thiểu cho nhịp migration đầu của Phase 4, để team có một package map đủ rõ trước khi move file theo capability.

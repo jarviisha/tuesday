@@ -21,7 +21,7 @@ REFUND_DOCUMENT = {
 
 
 async def _run_in_process() -> None:
-    from tuesday_rag.api.app import create_app
+    from tuesday.api.app import create_app
 
     app = create_app()
     async with app.router.lifespan_context(app):

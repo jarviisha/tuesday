@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tuesday-rag"
+name = "tuesday"
 version = "0.1.0"
-description = "MVP RAG core theo ports/adapters, FastAPI, TDD-first."
+description = "Tuesday platform with capability-oriented modules and a FastAPI shell."
 requires-python = ">=3.12"
 dependencies = [
   "fastapi>=0.115,<1.0",

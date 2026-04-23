@@ -1,8 +1,7 @@
 import pytest
 
-from tuesday_rag.config import RuntimeConfig
-from tuesday_rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
-from tuesday_rag.infrastructure.providers_vendor import (
+from tuesday.rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
+from tuesday.rag.infrastructure.providers_vendor import (
     AzureOpenAIEmbeddingProvider,
     AzureOpenAILLMProvider,
     GeminiEmbeddingProvider,
@@ -10,7 +9,8 @@ from tuesday_rag.infrastructure.providers_vendor import (
     OpenAIEmbeddingProvider,
     OpenAILLMProvider,
 )
-from tuesday_rag.runtime.container import build_container
+from tuesday.runtime.config import RuntimeConfig
+from tuesday.runtime.container import build_container
 
 
 def test_build_container_uses_demo_providers_by_default() -> None:

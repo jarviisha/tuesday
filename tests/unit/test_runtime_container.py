@@ -2,17 +2,17 @@ import logging
 
 import pytest
 
-from tuesday_rag.config import RuntimeConfig
-from tuesday_rag.runtime.container import build_container
+from tuesday.runtime.config import RuntimeConfig
+from tuesday.runtime.container import build_container
 
 
 def test_build_container_warns_when_pdftotext_is_missing(
     monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    caplog.set_level(logging.WARNING, logger="tuesday_rag.runtime")
+    caplog.set_level(logging.WARNING, logger="tuesday.runtime")
     monkeypatch.setattr(
-        "tuesday_rag.infrastructure.file_document_parser.LocalFileDocumentParser.has_pdftotext",
+        "tuesday.rag.infrastructure.file_document_parser.LocalFileDocumentParser.has_pdftotext",
         staticmethod(lambda: False),
     )
 
@@ -26,7 +26,7 @@ def test_build_container_fails_strict_when_pdftotext_is_missing(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "tuesday_rag.infrastructure.file_document_parser.LocalFileDocumentParser.has_pdftotext",
+        "tuesday.rag.infrastructure.file_document_parser.LocalFileDocumentParser.has_pdftotext",
         staticmethod(lambda: False),
     )
 
@@ -38,7 +38,7 @@ def test_build_container_allows_strict_when_pdftotext_is_available(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "tuesday_rag.infrastructure.file_document_parser.LocalFileDocumentParser.has_pdftotext",
+        "tuesday.rag.infrastructure.file_document_parser.LocalFileDocumentParser.has_pdftotext",
         staticmethod(lambda: True),
     )
 

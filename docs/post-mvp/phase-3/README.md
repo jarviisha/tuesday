@@ -1,5 +1,15 @@
 # Phase 3: Quality Evaluation
 
+## Migration Note
+
+Artefact path trong tài liệu này phản ánh layout trước migration package ngày `2026-04-23`.
+
+Khi đọc ở trạng thái repo hiện tại, path chuẩn cần ưu tiên là:
+
+- `../../../src/tuesday/rag/evaluation/golden_cases.py`
+- `../../../scripts/benchmark_quality.py`
+- `../../../tests/regression/test_quality_regression.py`
+
 ## Mục lục
 - Mục tiêu phase
 - Danh sách spec con
