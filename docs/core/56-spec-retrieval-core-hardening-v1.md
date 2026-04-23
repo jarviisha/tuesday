@@ -2,7 +2,7 @@
 
 ## Trạng thái
 
-`proposed`
+`accepted` (`2026-04-23`)
 
 ## Mục lục
 
@@ -43,38 +43,40 @@ Lý do là các bước trên sẽ tạo nền thực tế hơn để đo retrie
 
 ## Phạm vi v1
 
-Nhịp `v1` của `retrieval_core_hardening` nên ưu tiên:
+Nhịp `v1` của `retrieval_core_hardening` khóa một cải tiến nhỏ nhưng đo được ở application layer:
 
-- rà lại scoring và ranking hiện tại
-- xác định các heuristic retrieval đang quá đơn giản hoặc quá mong manh
-- bổ sung benchmark/regression thể hiện các failure mode retrieval rõ hơn
-- chọn một cải tiến retrieval nhỏ nhưng đo được, thay vì nhảy ngay sang framework rewrite
+- giữ nguyên vector query ở từng adapter store hiện có
+- thêm post-retrieval reranking trong `RetrieverService` theo lexical coverage của query trên `chunk.text`
+- nếu có ít nhất một candidate có overlap meaningful tokens với query, loại các candidate overlap bằng `0`
+- sắp xếp candidate còn lại theo `overlap_count`, rồi `overlap_ratio`, rồi mới đến `raw vector score`
+- thêm unit/regression test để khóa failure mode "score vector dương nhưng chunk không thực sự bám query"
 
 ## Ngoài phạm vi v1
 
 - rewrite toàn bộ core sang framework khác
 - hybrid retrieval đầy đủ nếu chưa có benchmark chứng minh cần
 - reranker phụ thuộc model ngoài nếu chưa có baseline cho vấn đề đang gặp
-- đổi public API
+- thay semantics filter hoặc đổi public API
+- thay prompt generation để bù cho retrieval
 
 ## Giả thuyết kỹ thuật
 
-Giả thuyết mở đầu của nhịp này là:
+Giả thuyết đã được chốt cho v1:
 
-- nút thắt hiện tại nhiều khả năng nằm ở retrieval policy và adapter retrieval/store đơn giản, không chỉ ở prompt generation
-- lợi ích lớn nhất trước mắt đến từ việc đo và cải thiện retrieval đúng chỗ, không phải mở thêm utility
-
-Giả thuyết này cần được xác nhận lại bằng benchmark và đọc code trước khi implement.
+- với backend vector thật hoặc demo, vẫn có thể xuất hiện candidate có `score > 0` nhưng không chứa từ khóa hữu ích của câu hỏi
+- một lớp rerank/filter deterministic ở `RetrieverService` là đủ nhỏ để áp dụng thống nhất cho mọi backend hiện có
+- lexical coverage là tín hiệu an toàn hơn việc tăng complexity sang hybrid/BM25/reranker model ngay trong nhịp đầu
 
 ## Success criteria
 
 - có decision mới khóa hướng retrieval đầu tiên được chọn
-- có ít nhất một spec implementation cụ thể hơn từ tài liệu này
-- có benchmark hoặc regression mới chứng minh vấn đề retrieval hiện tại
-- có implementation plan đủ nhỏ để code trong một nhịp riêng
+- `RetrieverService` áp dụng post-retrieval ranking policy provider-independent
+- có unit test chứng minh chunk overlap tốt hơn được ưu tiên hơn chunk chỉ có raw score cao
+- có regression test chứng minh candidate zero-overlap bị loại khi đã có candidate bám query
+- smoke test hiện có không đổi contract
 
 ## Verification mong muốn
 
-- benchmark trước/sau trên golden cases hiện có
+- unit test cho ranking policy và integration của `RetrieverService`
 - regression test cho failure mode retrieval vừa được nhắm tới
 - smoke test hiện có vẫn pass

@@ -1,6 +1,7 @@
 from tuesday.rag.domain.errors import EmbeddingError, RetrievalError
 from tuesday.rag.domain.models import RetrievalRequest, RetrievalResponse
 from tuesday.rag.domain.ports import EmbeddingProvider, VectorStore
+from tuesday.rag.retrieval.ranking_policy import rerank_chunks
 
 
 class RetrieverService:
@@ -22,7 +23,7 @@ class RetrieverService:
             )
         except Exception as exc:
             raise RetrievalError("Failed to retrieve data from the vector store") from exc
-        chunks = sorted(chunks, key=lambda chunk: chunk.score, reverse=True)
+        chunks = rerank_chunks(request.query, chunks)[: request.top_k]
         return RetrievalResponse(
             query=request.query,
             top_k=request.top_k,

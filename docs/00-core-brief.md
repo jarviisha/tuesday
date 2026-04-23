@@ -212,8 +212,10 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | DL-028 | Chương `post-mvp` đã đóng; nhịp mới chuyển track `core` |
 | DL-029 | **Ưu tiên track `core`**: provider thật + env-based selection → vector store thật → container qua lifespan → context-sufficiency policy → retrieval hardening |
 | DL-030 | Journey docs tách sang `docs/history/`; `docs/` root = spec hiện hành, `docs/core/` = track đang mở |
-| DL-031 | Nhịp 1 track `core` (provider integration + runtime lifecycle, spec 57/60) đã hoàn tất `2026-04-23`; nhịp đang mở = `real_vector_store_adapter` (spec 58) |
+| DL-031 | Nhịp 1 track `core` (provider integration + runtime lifecycle, spec 57/60) đã hoàn tất `2026-04-23` |
 | DL-032 | Spec 58 chọn `Qdrant` cho v1; LlamaIndex chỉ được dùng chọn lọc trong `infrastructure/`, không được trở thành orchestration spine |
+| DL-033 | Spec 59 khóa deterministic context-sufficiency policy trước khi gọi `LLMProvider`; thiếu context thì trả `insufficient_context` và vẫn giữ `used_chunks` |
+| DL-034 | Spec 56 khóa deterministic post-retrieval lexical reranking/filter trong `RetrieverService` trước khi trả response |
 
 ## 14. Dấu hiệu đang lệch khỏi đường ray (checklist tự rà)
 
@@ -251,10 +253,10 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | Chủ đề | File gốc | Trạng thái |
 |---|---|---|
 | Core track overview + ưu tiên hiện tại | `docs/core/55-core-track-overview.md` | — |
-| Retrieval core hardening v1 | `docs/core/56-spec-retrieval-core-hardening-v1.md` | `proposed` |
+| Retrieval core hardening v1 | `docs/core/56-spec-retrieval-core-hardening-v1.md` | `accepted` (`2026-04-23`) — vừa hoàn tất |
 | Provider integration + runtime lifecycle v1 | `docs/core/57-spec-provider-integration-and-runtime-lifecycle-v1.md` | `accepted` (`2026-04-23`) |
-| Real vector store adapter v1 | `docs/core/58-spec-real-vector-store-adapter-v1.md` | `accepted` (`2026-04-23`) — nhịp đang mở |
-| Generation context policy v1 | `docs/core/59-spec-generation-context-policy-v1.md` | `proposed` |
+| Real vector store adapter v1 | `docs/core/58-spec-real-vector-store-adapter-v1.md` | `accepted` (`2026-04-23`) |
+| Generation context policy v1 | `docs/core/59-spec-generation-context-policy-v1.md` | `accepted` (`2026-04-23`) — vừa hoàn tất |
 | Provider runtime implementation v1 | `docs/core/60-spec-provider-runtime-implementation-v1.md` | `accepted` (`2026-04-23`) |
 
 ### Archive lịch sử (`docs/history/` — tham khảo cho provenance, không áp dụng cho behavior hiện tại)

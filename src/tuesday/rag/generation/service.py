@@ -1,5 +1,3 @@
-import re
-
 from tuesday.rag.domain.errors import (
     GenerationError,
     InvalidGenerationOutputError,
@@ -7,43 +5,8 @@ from tuesday.rag.domain.errors import (
 )
 from tuesday.rag.domain.models import GeneratedAnswer, GenerationRequest
 from tuesday.rag.domain.ports import LLMProvider
+from tuesday.rag.generation.context_policy import has_sufficient_context
 from tuesday.rag.generation.prompt_builder import build_grounded_prompt
-
-GENERATION_STOPWORDS = {
-    "a",
-    "an",
-    "and",
-    "are",
-    "bao",
-    "cho",
-    "co",
-    "cua",
-    "do",
-    "duoc",
-    "for",
-    "from",
-    "gi",
-    "how",
-    "in",
-    "is",
-    "khi",
-    "la",
-    "lao",
-    "nhieu",
-    "o",
-    "of",
-    "the",
-    "to",
-    "trong",
-    "ve",
-    "what",
-    "when",
-    "where",
-    "which",
-    "who",
-    "why",
-    "with",
-}
 
 
 class GeneratorService:
@@ -63,7 +26,7 @@ class GeneratorService:
                 insufficient_context=True,
                 used_chunks=[],
             )
-        if not self._has_sufficient_context(request.question, used_chunks):
+        if not has_sufficient_context(request.question, used_chunks):
             return GeneratedAnswer(
                 answer=self._insufficient_context_answer,
                 citations=[],
@@ -94,22 +57,3 @@ class GeneratorService:
             insufficient_context=False,
             used_chunks=used_chunks,
         )
-
-    @staticmethod
-    def _has_sufficient_context(question: str, used_chunks: list) -> bool:
-        question_tokens = GeneratorService._meaningful_tokens(question)
-        if not question_tokens:
-            return bool(used_chunks)
-        context_tokens = GeneratorService._meaningful_tokens(
-            " ".join(chunk.text for chunk in used_chunks)
-        )
-        covered_tokens = question_tokens.intersection(context_tokens)
-        return (len(covered_tokens) / len(question_tokens)) >= 0.6
-
-    @staticmethod
-    def _meaningful_tokens(text: str) -> set[str]:
-        return {
-            token
-            for token in re.findall(r"\w+", text.lower())
-            if len(token) > 1 and token not in GENERATION_STOPWORDS
-        }

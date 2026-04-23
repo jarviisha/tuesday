@@ -47,9 +47,9 @@ Các hạng mục sau không nên là ưu tiên mặc định của track `core`
 Sau khi rà lại codebase hiện tại, track `core` ưu tiên theo thứ tự sau:
 
 1. ~~thêm provider thật cho `EmbeddingProvider` và `LLMProvider`, với chọn adapter theo env trong container~~ — **đã xong** (spec 57/60, `2026-04-23`)
-2. thay vector store demo hiện tại bằng adapter thật `Qdrant`, với selective adoption của LlamaIndex chỉ trong `infrastructure/`, đồng thời khóa semantics `filters`, `score ordering` và `replace-by-document_id` — **nhịp đang mở**
+2. ~~thay vector store demo hiện tại bằng adapter thật `Qdrant`, với selective adoption của LlamaIndex chỉ trong `infrastructure/`, đồng thời khóa semantics `filters`, `score ordering` và `replace-by-document_id`~~ — **đã xong** (spec 58, `2026-04-23`)
 3. ~~chuyển container vào app lifespan thay vì khởi tạo ở import-time~~ — **đã xong** (spec 57/60, `2026-04-23`)
-4. thay heuristic `_has_sufficient_context` bằng logic được đặc tả rõ hoặc delegate sang prompt/LLM khi đã có provider thật
+4. ~~thay heuristic `_has_sufficient_context` bằng logic được đặc tả rõ hoặc delegate sang prompt/LLM khi đã có provider thật~~ — **đã xong** (spec 59, `2026-04-23`)
 5. ~~khóa rõ phụ thuộc hệ thống `pdftotext` trong README và cân nhắc startup check tùy chọn cho PDF ingestion~~ — **đã xong** (DL-024 + `TUESDAY_PDF_STARTUP_CHECK_MODE`)
 
 Lý do của thứ tự này là:
@@ -60,20 +60,21 @@ Lý do của thứ tự này là:
 
 ## Workstream đề xuất
 
-Track `core` ban đầu nên được chia thành các workstream sau:
+Track `core` ban đầu được chia thành các workstream sau:
 
 1. ~~`provider_integration_and_runtime_lifecycle`~~ — **đã xong** (`2026-04-23`, spec 57/60 + DL-031)
-2. `real_vector_store_adapter` — **nhịp đang mở** (spec 58)
-3. `generation_context_policy` (spec 59)
-4. `retrieval_core_hardening` (spec 56)
+2. ~~`real_vector_store_adapter`~~ — **đã xong** (`2026-04-23`, spec 58 + DL-032)
+3. ~~`generation_context_policy`~~ — **đã xong** (`2026-04-23`, spec 59 + DL-033)
+4. ~~`retrieval_core_hardening`~~ — **đã xong** (`2026-04-23`, spec 56 + DL-034)
 
-Nhịp thực tế đang mở là `real_vector_store_adapter`, tiếp theo là `generation_context_policy`, rồi mới đến `retrieval_core_hardening`.
+Hiện tại toàn bộ nhóm spec nền ban đầu của track `core` đã hoàn tất. Nhịp kế tiếp nên bắt đầu từ spec/decision mới thay vì tiếp tục mở rộng ngầm trong track này.
 
-Quyết định đã khóa cho nhịp đang mở:
+Quyết định đã khóa làm nền cho các nhịp đã hoàn tất:
 
-- backend v1 là `Qdrant`
-- LlamaIndex chỉ được dùng như adapter/helper hạ tầng trong `infrastructure/`
-- không pivot sang mô hình để LlamaIndex điều phối toàn bộ pipeline
+- backend vector store v1 là `Qdrant`
+- context-sufficiency policy là deterministic rule ở application layer trước khi gọi `LLMProvider`
+- retrieval hardening v1 là post-retrieval lexical coverage reranking/filter trong `RetrieverService`
+- public contract vẫn giữ nguyên; mọi cải tiến retrieval phải chứng minh bằng regression/benchmark thay vì đổi API
 
 ## Acceptance criteria của track
 

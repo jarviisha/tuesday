@@ -12,18 +12,18 @@ Mục tiêu của `core` là tập trung vào phần lõi của hệ thống RAG
 Tài liệu hiện có:
 
 - `55-core-track-overview.md`
-- `56-spec-retrieval-core-hardening-v1.md` — `proposed`
+- `56-spec-retrieval-core-hardening-v1.md` — `accepted` (`2026-04-23`)
 - `57-spec-provider-integration-and-runtime-lifecycle-v1.md` — `accepted` (`2026-04-23`)
-- `58-spec-real-vector-store-adapter-v1.md` — `accepted` (`2026-04-23`), nhịp đang mở (`Qdrant` + selective LlamaIndex adoption trong `infrastructure/`)
-- `59-spec-generation-context-policy-v1.md` — `proposed`
+- `58-spec-real-vector-store-adapter-v1.md` — `accepted` (`2026-04-23`)
+- `59-spec-generation-context-policy-v1.md` — `accepted` (`2026-04-23`)
 - `60-spec-provider-runtime-implementation-v1.md` — `accepted` (`2026-04-23`)
 
 Thứ tự ưu tiên hiện tại của track này là:
 
 1. ~~provider thật và env-based selection trong container~~ — đã xong
-2. vector store thật `Qdrant` thay cho adapter demo hiện tại, với selective LlamaIndex adoption trong `infrastructure/` — đang mở
+2. ~~vector store thật `Qdrant` thay cho adapter demo hiện tại, với selective LlamaIndex adoption trong `infrastructure/`~~ — đã xong
 3. ~~chuyển container wiring vào app lifespan~~ — đã xong
-4. đặc tả lại logic `sufficient_context`
+4. ~~đặc tả lại logic `sufficient_context`~~ — đã xong
 5. ~~khóa rõ phụ thuộc `pdftotext` và startup check tùy chọn~~ — đã xong
 
-`56-spec-retrieval-core-hardening-v1.md` vẫn còn giá trị, nhưng đứng sau `58` và `59` trong thứ tự nhịp core.
+`56-spec-retrieval-core-hardening-v1.md`, `58-spec-real-vector-store-adapter-v1.md`, và `59-spec-generation-context-policy-v1.md` đều đã hoàn tất trong track `core` hiện tại.

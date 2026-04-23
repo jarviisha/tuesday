@@ -142,3 +142,35 @@ async def test_generate_contract_returns_insufficient_context(api_client) -> Non
     assert body["grounded"] is False
     assert body["citations"] == []
     assert body["answer"] == "Không đủ dữ liệu trong ngữ cảnh hiện có để trả lời chắc chắn."
+
+
+@pytest.mark.anyio
+async def test_generate_contract_returns_insufficient_context_for_related_but_incomplete_chunks(
+    api_client,
+) -> None:
+    response = await api_client.post(
+        "/generate",
+        json={
+            "question": "Khach hang duoc hoan tien trong bao lau?",
+            "retrieved_chunks": [
+                {
+                    "chunk_id": "chunk-doc-refund-001-0001",
+                    "document_id": "doc-refund-001",
+                    "text": "Khach hang co the yeu cau hoan tien qua cong ho tro chinh thuc.",
+                    "score": 0.91,
+                    "metadata": {
+                        "chunk_id": "chunk-doc-refund-001-0001",
+                        "document_id": "doc-refund-001",
+                        "source_type": "text",
+                    },
+                }
+            ],
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["insufficient_context"] is True
+    assert body["grounded"] is False
+    assert body["citations"] == []
+    assert body["used_chunks"]

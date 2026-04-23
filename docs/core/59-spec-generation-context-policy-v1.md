@@ -2,7 +2,7 @@
 
 ## Trạng thái
 
-`proposed`
+`accepted` (`2026-04-23`)
 
 ## Mục lục
 
@@ -44,15 +44,17 @@ Nhịp này nên ưu tiên:
 
 ## Quyết định cần khóa
 
-- điều kiện nào khiến app trả `insufficient_context` trước khi gọi LLM
-- nếu dùng LLM-assisted check, prompt và output contract của bước check là gì
-- khi LLM nói context không đủ thì `used_chunks` có vẫn được trả về như hiện tại không
-- policy mới có cần phụ thuộc vào loại provider hay phải thống nhất toàn cục
+- app dùng **deterministic rule** trước khi gọi LLM; v1 không dùng LLM-assisted check
+- nếu `used_chunks` rỗng thì trả `insufficient_context` ngay như semantics hiện có
+- nếu question có meaningful-token overlap quá thấp với context thì trả `insufficient_context`
+- nếu question là loại hỏi chi tiết định lượng/thời gian (`bao lau`, `bao nhieu`, `khi nao`, `muc phi`, `gia bao nhieu`) nhưng context không có signal hỗ trợ tương ứng thì trả `insufficient_context`
+- khi policy trả context không đủ, `used_chunks` vẫn được trả về như hiện tại để giữ traceability
+- policy thống nhất toàn cục, không phụ thuộc provider cụ thể trong v1
 
 ## Success criteria
 
 - có decision rõ policy `sufficient_context` được chọn
-- có spec implementation đủ cụ thể để code
+- policy được tách khỏi heuristic inline và mô tả được bằng rule kiểm chứng được
 - có regression test cho các nhánh dễ sai nhất
 - không làm lệch semantics `citations` và `insufficient_context` đã khóa trước đó
 
