@@ -4,18 +4,18 @@ from pathlib import Path
 
 import pytest
 
-from tuesday_rag.config import RuntimeConfig
-from tuesday_rag.generation.service import GeneratorService
-from tuesday_rag.generation.use_case import GenerationUseCase
-from tuesday_rag.infrastructure.chunking import CharacterChunker
-from tuesday_rag.infrastructure.file_document_parser import LocalFileDocumentParser
-from tuesday_rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
-from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore
-from tuesday_rag.ingestion.file_use_case import FileIngestionUseCase
-from tuesday_rag.ingestion.service import IndexerService
-from tuesday_rag.ingestion.use_case import IngestionUseCase
-from tuesday_rag.retrieval.service import RetrieverService
-from tuesday_rag.retrieval.use_case import RetrievalUseCase
+from tuesday.rag.generation.service import GeneratorService
+from tuesday.rag.generation.use_case import GenerationUseCase
+from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.file_document_parser import LocalFileDocumentParser
+from tuesday.rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
+from tuesday.rag.infrastructure.vector_store import InMemoryVectorStore
+from tuesday.rag.ingestion.file_use_case import FileIngestionUseCase
+from tuesday.rag.ingestion.service import IndexerService
+from tuesday.rag.ingestion.use_case import IngestionUseCase
+from tuesday.rag.retrieval.service import RetrieverService
+from tuesday.rag.retrieval.use_case import RetrievalUseCase
+from tuesday.runtime.config import RuntimeConfig
 
 
 def test_file_ingestion_supports_retrieve_and_generate_flow(tmp_path: Path) -> None:

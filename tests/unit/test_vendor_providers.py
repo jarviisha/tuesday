@@ -1,6 +1,6 @@
 import pytest
 
-from tuesday_rag.infrastructure.providers_vendor import (
+from tuesday.rag.infrastructure.providers_vendor import (
     AzureOpenAIEmbeddingProvider,
     AzureOpenAILLMProvider,
     GeminiEmbeddingProvider,
@@ -27,7 +27,7 @@ def test_openai_embedding_provider_uses_embeddings_endpoint(
         captured["payload"] = payload
         return {"data": [{"embedding": [1.0, 2.0]}, {"embedding": [3.0, 4.0]}]}
 
-    monkeypatch.setattr("tuesday_rag.infrastructure.providers_vendor.post_json", fake_post_json)
+    monkeypatch.setattr("tuesday.rag.infrastructure.providers_vendor.post_json", fake_post_json)
     provider = OpenAIEmbeddingProvider(
         api_key="test-key",
         base_url="https://api.openai.com/v1",
@@ -60,7 +60,7 @@ def test_openai_llm_provider_parses_json_response(monkeypatch: pytest.MonkeyPatc
             ]
         }
 
-    monkeypatch.setattr("tuesday_rag.infrastructure.providers_vendor.post_json", fake_post_json)
+    monkeypatch.setattr("tuesday.rag.infrastructure.providers_vendor.post_json", fake_post_json)
     provider = OpenAILLMProvider(
         api_key="test-key",
         base_url="https://api.openai.com/v1",
@@ -87,7 +87,7 @@ def test_gemini_embedding_provider_uses_embed_content(monkeypatch: pytest.Monkey
         captured["payload"] = payload
         return {"embedding": {"values": [0.1, 0.2]}}
 
-    monkeypatch.setattr("tuesday_rag.infrastructure.providers_vendor.post_json", fake_post_json)
+    monkeypatch.setattr("tuesday.rag.infrastructure.providers_vendor.post_json", fake_post_json)
     provider = GeminiEmbeddingProvider(
         api_key="test-key",
         base_url="https://generativelanguage.googleapis.com/v1beta",
@@ -123,7 +123,7 @@ def test_gemini_llm_provider_parses_text_response(monkeypatch: pytest.MonkeyPatc
             ]
         }
 
-    monkeypatch.setattr("tuesday_rag.infrastructure.providers_vendor.post_json", fake_post_json)
+    monkeypatch.setattr("tuesday.rag.infrastructure.providers_vendor.post_json", fake_post_json)
     provider = GeminiLLMProvider(
         api_key="test-key",
         base_url="https://generativelanguage.googleapis.com/v1beta",
@@ -152,7 +152,7 @@ def test_azure_openai_embedding_provider_uses_deployment_endpoint(
         captured["headers"] = headers
         return {"data": [{"embedding": [9.0, 8.0]}]}
 
-    monkeypatch.setattr("tuesday_rag.infrastructure.providers_vendor.post_json", fake_post_json)
+    monkeypatch.setattr("tuesday.rag.infrastructure.providers_vendor.post_json", fake_post_json)
     provider = AzureOpenAIEmbeddingProvider(
         api_key="test-key",
         endpoint="https://example.openai.azure.com",
@@ -185,7 +185,7 @@ def test_azure_openai_llm_provider_parses_response(monkeypatch: pytest.MonkeyPat
             ]
         }
 
-    monkeypatch.setattr("tuesday_rag.infrastructure.providers_vendor.post_json", fake_post_json)
+    monkeypatch.setattr("tuesday.rag.infrastructure.providers_vendor.post_json", fake_post_json)
     provider = AzureOpenAILLMProvider(
         api_key="test-key",
         endpoint="https://example.openai.azure.com",

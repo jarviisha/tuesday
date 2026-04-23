@@ -2,14 +2,14 @@ from pathlib import Path
 
 from tests.fixtures import REFUND_DOCUMENT
 
-from tuesday_rag.config import RuntimeConfig
-from tuesday_rag.infrastructure.chunking import CharacterChunker
-from tuesday_rag.infrastructure.file_vector_store import FileBackedVectorStore
-from tuesday_rag.infrastructure.providers import HashEmbeddingProvider
-from tuesday_rag.ingestion.service import IndexerService
-from tuesday_rag.ingestion.use_case import IngestionUseCase
-from tuesday_rag.retrieval.service import RetrieverService
-from tuesday_rag.retrieval.use_case import RetrievalUseCase
+from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.file_vector_store import FileBackedVectorStore
+from tuesday.rag.infrastructure.providers import HashEmbeddingProvider
+from tuesday.rag.ingestion.service import IndexerService
+from tuesday.rag.ingestion.use_case import IngestionUseCase
+from tuesday.rag.retrieval.service import RetrieverService
+from tuesday.rag.retrieval.use_case import RetrievalUseCase
+from tuesday.runtime.config import RuntimeConfig
 
 
 def _build_use_cases(file_path: Path) -> tuple[IngestionUseCase, RetrievalUseCase]:

@@ -2,7 +2,7 @@ import time
 
 import pytest
 
-from tuesday_rag.infrastructure.resilience import (
+from tuesday.rag.infrastructure.resilience import (
     ResilientEmbeddingProvider,
     ResilientLLMProvider,
     ResilientVectorStore,

@@ -1,9 +1,9 @@
 import httpx
 import pytest
 
-from tuesday_rag.api.app import create_app
-from tuesday_rag.config import RuntimeConfig
-from tuesday_rag.runtime.container import build_container
+from tuesday.api.app import create_app
+from tuesday.runtime.config import RuntimeConfig
+from tuesday.runtime.container import build_container
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ async def api_app(monkeypatch: pytest.MonkeyPatch):
     def build_test_runtime():
         return build_container(RuntimeConfig())
 
-    monkeypatch.setattr("tuesday_rag.api.app.build_runtime_from_env", build_test_runtime)
+    monkeypatch.setattr("tuesday.api.app.build_runtime_from_env", build_test_runtime)
     app = create_app()
     async with app.router.lifespan_context(app):
         yield app

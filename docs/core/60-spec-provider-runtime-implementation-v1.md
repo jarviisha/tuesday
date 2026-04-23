@@ -1,5 +1,18 @@
 # 60. Spec Provider Runtime Implementation v1
 
+## Migration Note
+
+Tài liệu này mô tả implementation target trước khi hoàn tất migration package ngày `2026-04-23`.
+
+Khi đọc tài liệu này ở trạng thái repo hiện tại, cần quy chiếu như sau:
+
+- app shell hiện tại nằm ở `src/tuesday/api/`
+- runtime/config hiện tại nằm ở `src/tuesday/runtime/`
+- capability `rag` hiện tại nằm ở `src/tuesday/rag/`
+- lệnh chạy API hiện tại là `python -m uvicorn tuesday.api.app:app --reload`
+- env prefix hiện tại là `TUESDAY_`
+- `src/tuesday_rag/` đã bị loại bỏ khỏi codebase; mọi nhắc đến path này bên dưới là historical reference
+
 ## Trạng thái
 
 `proposed`

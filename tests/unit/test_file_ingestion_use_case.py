@@ -2,15 +2,15 @@ from pathlib import Path
 
 import pytest
 
-from tuesday_rag.config import RuntimeConfig
-from tuesday_rag.domain.errors import EmptyDocumentError, InvalidInputError
-from tuesday_rag.infrastructure.chunking import CharacterChunker
-from tuesday_rag.infrastructure.file_document_parser import LocalFileDocumentParser
-from tuesday_rag.infrastructure.providers import HashEmbeddingProvider
-from tuesday_rag.infrastructure.vector_store import InMemoryVectorStore
-from tuesday_rag.ingestion.file_use_case import FileIngestionUseCase
-from tuesday_rag.ingestion.service import IndexerService
-from tuesday_rag.ingestion.use_case import IngestionUseCase
+from tuesday.rag.domain.errors import EmptyDocumentError, InvalidInputError
+from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.file_document_parser import LocalFileDocumentParser
+from tuesday.rag.infrastructure.providers import HashEmbeddingProvider
+from tuesday.rag.infrastructure.vector_store import InMemoryVectorStore
+from tuesday.rag.ingestion.file_use_case import FileIngestionUseCase
+from tuesday.rag.ingestion.service import IndexerService
+from tuesday.rag.ingestion.use_case import IngestionUseCase
+from tuesday.runtime.config import RuntimeConfig
 
 
 def _build_file_ingestion_use_case() -> FileIngestionUseCase:

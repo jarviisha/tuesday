@@ -7,14 +7,14 @@ async def test_request_logs_include_lifecycle_fields(
     api_client,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    caplog.set_level("INFO", logger="tuesday_rag.api")
+    caplog.set_level("INFO", logger="tuesday.api")
     response = await api_client.post("/documents/index", json=REFUND_DOCUMENT)
 
     assert response.status_code == 200
     completion_records = [
         record
         for record in caplog.records
-        if record.name == "tuesday_rag.api" and record.msg == "request.completed"
+        if record.name == "tuesday.api" and record.msg == "request.completed"
     ]
     assert completion_records
     record = completion_records[-1]
@@ -32,14 +32,14 @@ async def test_failed_request_logs_include_error_code(
     api_client,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    caplog.set_level("INFO", logger="tuesday_rag.api")
+    caplog.set_level("INFO", logger="tuesday.api")
     response = await api_client.post("/documents/index", json={**REFUND_DOCUMENT, "content": "   "})
 
     assert response.status_code == 400
     failure_records = [
         record
         for record in caplog.records
-        if record.name == "tuesday_rag.api" and record.msg == "request.failed"
+        if record.name == "tuesday.api" and record.msg == "request.failed"
     ]
     assert failure_records
     record = failure_records[-1]
