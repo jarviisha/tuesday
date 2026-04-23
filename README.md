@@ -128,6 +128,98 @@ Run the Phase 3 regression suite:
 ./.venv/bin/python -m pytest tests/regression
 ```
 
+## Internal File Ingestion
+
+Index a local `.txt`, `.md`, `.html`, or `.pdf` file through the internal file-ingestion entrypoint:
+
+```bash
+./.venv/bin/python scripts/index_file.py \
+  --path ./examples/refund-policy.md \
+  --document-id doc-refund-file \
+  --index-name enterprise-kb \
+  --language en \
+  --tag refund
+```
+
+This command does not change the public HTTP API. It uses the internal file-ingestion flow added in Phase 4.
+
+HTML files are also supported:
+
+```bash
+./.venv/bin/python scripts/index_file.py \
+  --path ./examples/refund-policy.html \
+  --document-id doc-refund-html \
+  --index-name enterprise-kb \
+  --language en \
+  --tag refund
+```
+
+PDF files are also supported:
+
+```bash
+./.venv/bin/python scripts/index_file.py \
+  --path ./examples/refund-policy.pdf \
+  --document-id doc-refund-pdf \
+  --index-name enterprise-kb \
+  --language en \
+  --tag refund
+```
+
+Batch index every supported file in a local directory:
+
+```bash
+./.venv/bin/python scripts/index_directory.py \
+  --dir ./examples \
+  --index-name enterprise-kb \
+  --language en \
+  --tag batch
+```
+
+Include nested directories when needed:
+
+```bash
+./.venv/bin/python scripts/index_directory.py \
+  --dir ./examples \
+  --index-name enterprise-kb \
+  --language en \
+  --tag batch \
+  --recursive
+```
+
+Write the batch summary to a JSON file while keeping `stdout` output:
+
+```bash
+./.venv/bin/python scripts/index_directory.py \
+  --dir ./examples \
+  --index-name enterprise-kb \
+  --language en \
+  --tag batch \
+  --recursive \
+  --output /tmp/tuesday-batch-summary.json
+```
+
+Filter files with include/exclude patterns on relative paths:
+
+```bash
+./.venv/bin/python scripts/index_directory.py \
+  --dir ./examples \
+  --index-name enterprise-kb \
+  --recursive \
+  --include '*.md' \
+  --exclude 'handbook/*'
+```
+
+Preview a batch run without indexing anything:
+
+```bash
+./.venv/bin/python scripts/index_directory.py \
+  --dir ./examples \
+  --recursive \
+  --include '*.md' \
+  --exclude 'handbook/*' \
+  --dry-run
+```
+
 ## Repository Layout
 
 - `src/tuesday_rag/api/`: FastAPI app, schemas, and request handling
@@ -148,5 +240,3 @@ Run the Phase 3 regression suite:
 - `runtime/` wires the app together through a shared container.
 - Capability packages (`ingestion/`, `retrieval/`, `generation/`) hold orchestration logic close to each feature area.
 - `domain/` and `infrastructure/` keep the ports-and-adapters boundary intact.
-
-The file `src/tuesday_rag/api/dependencies.py` is kept as a thin compatibility shim during the migration period; the main container now lives in `src/tuesday_rag/runtime/container.py`.

@@ -39,10 +39,11 @@
 ## Checklist feature expansion
 
 - [x] Có decision rõ về việc thực hiện full migration cấu trúc `src/tuesday_rag` theo guardrail và boundary hiện có.
-- [ ] Feature đầu tiên sau MVP đã có spec riêng.
-- [ ] Feature đầu tiên sau MVP đã nêu rõ lý do ưu tiên.
-- [ ] Feature đầu tiên sau MVP có test hoặc benchmark chứng minh giá trị.
-- [ ] Feature đầu tiên sau MVP không phá contract hiện tại nếu chưa có decision mới.
+- [x] Feature đầu tiên sau MVP đã có spec riêng.
+- [x] Feature đầu tiên sau MVP đã nêu rõ lý do ưu tiên.
+- [x] Feature đầu tiên sau MVP có test hoặc benchmark chứng minh giá trị.
+- [x] Feature đầu tiên sau MVP không phá contract hiện tại nếu chưa có decision mới.
+- [x] Phase 4 nhịp đầu đã có implementation summary và runbook đủ để đóng phase.
 
 ## Checklist boundary và guardrails
 
@@ -57,4 +58,5 @@
 - [x] `stabilize` đã đạt mức done.
 - [x] `operational_hardening` đã đạt mức done tối thiểu.
 - [x] `quality_evaluation` đã có baseline đủ dùng.
-- [ ] Có quyết định rõ feature nào được làm tiếp theo.
+- [x] Có quyết định rõ feature nào được làm tiếp theo.
+- [x] Nhịp đầu của `feature_expansion` đã hoàn tất và có thể chuyển sang nhịp ưu tiên tiếp theo bằng decision/spec mới.

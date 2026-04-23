@@ -89,19 +89,26 @@ Deliverable:
 
 Mục tiêu:
 
-- mở rộng feature theo nhu cầu thật
+- mở rộng feature theo nhu cầu thật trên layout đã migrate
 
 Phạm vi:
 
-- chọn 1 nhóm feature có giá trị cao nhất sau khi đã có dữ liệu từ phase 2-3
-- viết spec riêng cho feature được chọn
-- triển khai feature mà không phá baseline hiện có
+- hoàn tất migration theo `40-spec-quyet-dinh-migration-cau-truc-src.md` và `41-spec-target-layout-migration-phase-4.md` ở mức đủ làm nền cho nhịp feature đầu tiên
+- triển khai feature đầu tiên đã được ưu tiên: `internal file ingestion` qua entrypoint nội bộ
+- giữ nguyên 3 endpoint HTTP hiện tại và không mở thêm public contract mới trong nhịp này
+- viết verification cho migration và feature mới mà không phá baseline hiện có
 
 Deliverable:
 
-- feature đầu tiên sau MVP được ship có kiểm soát
+- feature `internal file ingestion` đầu tiên sau MVP được ship có kiểm soát
 - benchmark hoặc test chứng minh feature không làm regress behavior lõi
 - layout `src/tuesday_rag` mới đủ ổn để feature đầu tiên có thể phát triển tiếp trên đó mà vẫn bám guardrail và boundary thực tế của codebase
+
+Trạng thái hiện tại:
+
+- Phase 4 nhịp đầu đã hoàn tất với `internal file ingestion` nội bộ cho `.txt`, `.md`, `.html`, `.pdf`
+- batch CLI nội bộ đã có `--recursive`, `--output`, `--include`, `--exclude`, `--dry-run`
+- verification đã được khóa bằng unit test, integration test, smoke test và regression suite
 
 ## Deliverable theo phase
 
