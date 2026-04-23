@@ -46,11 +46,11 @@ Các hạng mục sau không nên là ưu tiên mặc định của track `core`
 
 Sau khi rà lại codebase hiện tại, track `core` ưu tiên theo thứ tự sau:
 
-1. thêm provider thật cho `EmbeddingProvider` và `LLMProvider`, với chọn adapter theo env trong container
-2. thay vector store demo hiện tại bằng adapter thật như `Qdrant` hoặc `pgvector`, nhưng phải khóa semantics `filters`, `score ordering` và `replace-by-document_id`
-3. chuyển container vào app lifespan thay vì khởi tạo ở import-time
+1. ~~thêm provider thật cho `EmbeddingProvider` và `LLMProvider`, với chọn adapter theo env trong container~~ — **đã xong** (spec 57/60, `2026-04-23`)
+2. thay vector store demo hiện tại bằng adapter thật như `Qdrant` hoặc `pgvector`, nhưng phải khóa semantics `filters`, `score ordering` và `replace-by-document_id` — **nhịp đang mở**
+3. ~~chuyển container vào app lifespan thay vì khởi tạo ở import-time~~ — **đã xong** (spec 57/60, `2026-04-23`)
 4. thay heuristic `_has_sufficient_context` bằng logic được đặc tả rõ hoặc delegate sang prompt/LLM khi đã có provider thật
-5. khóa rõ phụ thuộc hệ thống `pdftotext` trong README và cân nhắc startup check tùy chọn cho PDF ingestion
+5. ~~khóa rõ phụ thuộc hệ thống `pdftotext` trong README và cân nhắc startup check tùy chọn cho PDF ingestion~~ — **đã xong** (DL-024 + `TUESDAY_PDF_STARTUP_CHECK_MODE`)
 
 Lý do của thứ tự này là:
 
@@ -62,12 +62,12 @@ Lý do của thứ tự này là:
 
 Track `core` ban đầu nên được chia thành các workstream sau:
 
-1. `provider_integration_and_runtime_lifecycle`
-2. `real_vector_store_adapter`
-3. `generation_context_policy`
-4. `retrieval_core_hardening`
+1. ~~`provider_integration_and_runtime_lifecycle`~~ — **đã xong** (`2026-04-23`, spec 57/60 + DL-031)
+2. `real_vector_store_adapter` — **nhịp đang mở** (spec 58)
+3. `generation_context_policy` (spec 59)
+4. `retrieval_core_hardening` (spec 56)
 
-Nhịp đầu tiên được đề xuất là `provider_integration_and_runtime_lifecycle`, sau đó là `real_vector_store_adapter`.
+Nhịp thực tế đang mở là `real_vector_store_adapter`, tiếp theo là `generation_context_policy`, rồi mới đến `retrieval_core_hardening`.
 
 ## Acceptance criteria của track
 

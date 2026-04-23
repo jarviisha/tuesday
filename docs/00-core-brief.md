@@ -206,6 +206,7 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | DL-028 | Chương `post-mvp` đã đóng; nhịp mới chuyển track `core` |
 | DL-029 | **Ưu tiên track `core`**: provider thật + env-based selection → vector store thật → container qua lifespan → context-sufficiency policy → retrieval hardening |
 | DL-030 | Journey docs tách sang `docs/history/`; `docs/` root = spec hiện hành, `docs/core/` = track đang mở |
+| DL-031 | Nhịp 1 track `core` (provider integration + runtime lifecycle, spec 57/60) đã hoàn tất `2026-04-23`; nhịp đang mở = `real_vector_store_adapter` (spec 58) |
 
 ## 14. Dấu hiệu đang lệch khỏi đường ray (checklist tự rà)
 
@@ -239,14 +240,14 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 
 ### Track đang mở (`docs/core/`)
 
-| Chủ đề | File gốc |
-|---|---|
-| Core track overview + ưu tiên hiện tại | `docs/core/55-core-track-overview.md` |
-| Retrieval core hardening v1 | `docs/core/56-spec-retrieval-core-hardening-v1.md` |
-| Provider integration + runtime lifecycle v1 | `docs/core/57-spec-provider-integration-and-runtime-lifecycle-v1.md` |
-| Real vector store adapter v1 | `docs/core/58-spec-real-vector-store-adapter-v1.md` |
-| Generation context policy v1 | `docs/core/59-spec-generation-context-policy-v1.md` |
-| Provider runtime implementation v1 | `docs/core/60-spec-provider-runtime-implementation-v1.md` |
+| Chủ đề | File gốc | Trạng thái |
+|---|---|---|
+| Core track overview + ưu tiên hiện tại | `docs/core/55-core-track-overview.md` | — |
+| Retrieval core hardening v1 | `docs/core/56-spec-retrieval-core-hardening-v1.md` | `proposed` |
+| Provider integration + runtime lifecycle v1 | `docs/core/57-spec-provider-integration-and-runtime-lifecycle-v1.md` | `accepted` (`2026-04-23`) |
+| Real vector store adapter v1 | `docs/core/58-spec-real-vector-store-adapter-v1.md` | `proposed` — nhịp đang mở |
+| Generation context policy v1 | `docs/core/59-spec-generation-context-policy-v1.md` | `proposed` |
+| Provider runtime implementation v1 | `docs/core/60-spec-provider-runtime-implementation-v1.md` | `accepted` (`2026-04-23`) |
 
 ### Archive lịch sử (`docs/history/` — tham khảo cho provenance, không áp dụng cho behavior hiện tại)
 
