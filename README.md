@@ -1,6 +1,12 @@
 # Tuesday
 
+[![CI](https://github.com/jarviisha/tuesday/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jarviisha/tuesday/actions/workflows/ci.yml)
+
 Tuesday is a FastAPI-based platform shell with capability-oriented modules under `src/`, currently centered on the `rag` capability.
+
+## CI
+
+GitHub Actions runs `ruff`, `pyright` (`standard` mode), and `pytest` on every push and pull request.
 
 ## Prerequisites
 
@@ -35,6 +41,7 @@ These commands are the Phase 1 baseline for local development and CI:
 
 ```bash
 ./.venv/bin/python -m ruff check .
+./.venv/bin/pyright
 ./.venv/bin/python -m pytest
 ./.venv/bin/python -m pytest tests/unit
 ./.venv/bin/python -m pytest tests/api/test_health.py
@@ -75,6 +82,12 @@ Use targeted tests when iterating:
 ./.venv/bin/python -m pytest tests/unit
 ./.venv/bin/python -m pytest tests/api/test_health.py
 ./.venv/bin/python -m pytest tests/api tests/smoke/test_index_retrieve_generate.py tests/regression/test_quality_regression.py -q
+```
+
+Run static type checking with the same configuration used by CI:
+
+```bash
+./.venv/bin/pyright
 ```
 
 ## Runtime Configuration

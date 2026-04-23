@@ -37,6 +37,7 @@ benchmarks/         # artifact đánh giá chất lượng
 ### Boundary
 
 - **Không** import LlamaIndex, SDK vector store, SDK provider trong `tuesday.rag.domain/`, `tuesday.rag.*/use_case.py`, `tuesday.rag.*/service.py`.
+- LlamaIndex chỉ được phép dùng trong `tuesday.rag.infrastructure/` như adapter/helper hạ tầng; không dùng các orchestration object như `Settings`, `IngestionPipeline`, `VectorStoreIndex`, `QueryEngine`, `ResponseSynthesizer` (DL-032).
 - **Không** để object framework (Node, Document, QueryEngine của LlamaIndex; Response SDK của provider) chảy ra ngoài `infrastructure/`.
 - `Indexer`, `Retriever`, `Generator` là **service nội bộ gần capability**, không phải port lõi (DL-002) — không đẩy xuống adapter, không kéo lên thành framework abstraction.
 - API layer chỉ làm: nhận request → validate schema → gọi use case → map response/lỗi. Không đặt business rule tại đây.
@@ -81,14 +82,16 @@ benchmarks/         # artifact đánh giá chất lượng
 
 **Adapter hiện có** (`rag/infrastructure/`):
 - `HashEmbeddingProvider` (demo, deterministic, hash SHA-256 token set)
+- `DeterministicDenseEmbeddingProvider` (demo cho `Qdrant`, fixed-size dense vector để tương thích cosine retrieval thật)
 - `DeterministicLLMProvider` (demo, echo chunk đầu)
 - `OpenAI/Gemini/AzureOpenAI {Embedding,LLM}Provider` qua `providers_vendor.py` + `http_client.py` (stdlib `urllib`, không thêm dependency)
 - `InMemoryVectorStore` / `FileBackedVectorStore` (cosine-like qua token set intersection; file-backed ghi atomic qua tempfile + fsync + os.replace)
+- `QdrantVectorStore` (backend thật; local `:memory:` cho integration test, remote qua `url`/`api_key`)
 - `CharacterChunker` — chunk theo ký tự + overlap
 - `LocalFileDocumentParser` — txt/md/html/pdf
 - `ResilientEmbeddingProvider/LLMProvider/VectorStore` — timeout + retry qua `ThreadPoolExecutor`, chỉ retry trên `ConnectionError`/`OSError`/`RetryableDependencyError`
 
-Container chọn adapter bằng config backend: `embedding_provider_backend`/`generation_provider_backend` ∈ `{demo, openai, gemini, azure_openai}`; `vector_store_backend` ∈ `{memory, file}`.
+Container chọn adapter bằng config backend: `embedding_provider_backend`/`generation_provider_backend` ∈ `{demo, openai, gemini, azure_openai}`; `vector_store_backend` ∈ `{memory, file, qdrant}`. Khi `vector_store_backend=qdrant` và `embedding_provider_backend=demo`, runtime dùng `DeterministicDenseEmbeddingProvider` thay cho `HashEmbeddingProvider`.
 
 ## 7. API contract (3 endpoint — đã khóa)
 
@@ -132,7 +135,10 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | `index_name` length | — | 1..64 |
 | `*_timeout_ms` (embedding / generation / vector_store) | 1000 | 1..60000 |
 | `*_max_retries` | 0 | 0..5 |
-| `vector_store_backend` | `memory` | `memory`/`file` |
+| `vector_store_backend` | `memory` | `memory`/`file`/`qdrant` |
+| `qdrant_url` / `qdrant_location` | — | cần ít nhất một giá trị khi `vector_store_backend=qdrant` |
+| `qdrant_collection_prefix` | `tuesday` | non-blank |
+| `qdrant_dense_vector_size` | `512` | 8..4096 |
 | `embedding_provider_backend` / `generation_provider_backend` | `demo` | `demo`/`openai`/`gemini`/`azure_openai` |
 | `pdf_startup_check_mode` | `off` | `off`/`warn`/`strict` |
 | `insufficient_context_answer` | `"Không đủ dữ liệu trong ngữ cảnh hiện có để trả lời chắc chắn."` | chỉ override literal, không đổi schema |
@@ -169,7 +175,7 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 - **Ngôn ngữ**: English cho source, test, commit, identifier; tiếng Việt có dấu cho spec trong `docs/`; fixture/input ưu tiên tiếng Việt.
 - **Thay đổi surgical**: chỉ sửa đúng file/line cần cho task. Không refactor lẫn vào. Vấn đề lân cận ghi riêng.
 - **Trước khi implement thay đổi đáng kể**: nêu rõ giả định, đặt tiêu chí nghiệm thu, ưu tiên có test chứng minh.
-- **Lint**: ruff với `E, F, I, B, UP` — mọi code mới phải pass.
+- **Lint/typing**: ruff với `E, F, I, B, UP` và `pyright` (mode `standard`) — mọi code mới phải pass.
 - **Test**: chạy `./.venv/bin/python -m pytest` trước khi báo xong; nếu đổi contract/config bounds/semantics, phải cập nhật test + doc gốc.
 - **Không viết comment giải thích WHAT**; chỉ viết khi WHY không hiển nhiên.
 - **Không thêm doc .md mới trừ khi user yêu cầu** — mở rộng file hiện có.
@@ -207,10 +213,12 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | DL-029 | **Ưu tiên track `core`**: provider thật + env-based selection → vector store thật → container qua lifespan → context-sufficiency policy → retrieval hardening |
 | DL-030 | Journey docs tách sang `docs/history/`; `docs/` root = spec hiện hành, `docs/core/` = track đang mở |
 | DL-031 | Nhịp 1 track `core` (provider integration + runtime lifecycle, spec 57/60) đã hoàn tất `2026-04-23`; nhịp đang mở = `real_vector_store_adapter` (spec 58) |
+| DL-032 | Spec 58 chọn `Qdrant` cho v1; LlamaIndex chỉ được dùng chọn lọc trong `infrastructure/`, không được trở thành orchestration spine |
 
 ## 14. Dấu hiệu đang lệch khỏi đường ray (checklist tự rà)
 
 - [ ] Code ở `rag/*/use_case.py` hoặc `rag/*/service.py` đang import SDK provider hoặc `llama_index` → vi phạm boundary.
+- [ ] `infrastructure/` bắt đầu dùng `Settings`, `IngestionPipeline`, `VectorStoreIndex`, `QueryEngine`, `ResponseSynthesizer` của LlamaIndex như orchestration spine → lệch khỏi DL-032.
 - [ ] Adapter bắt đầu quyết định prompt format, citation format, response schema → kéo lên `generation/` hoặc `api/`.
 - [ ] Endpoint mới xuất hiện không có spec trong `docs/` root hoặc `docs/core/`.
 - [ ] Config mới thêm để mở rộng behavior thay vì siết/nới trong biên đã khóa.
@@ -245,7 +253,7 @@ Container chọn adapter bằng config backend: `embedding_provider_backend`/`ge
 | Core track overview + ưu tiên hiện tại | `docs/core/55-core-track-overview.md` | — |
 | Retrieval core hardening v1 | `docs/core/56-spec-retrieval-core-hardening-v1.md` | `proposed` |
 | Provider integration + runtime lifecycle v1 | `docs/core/57-spec-provider-integration-and-runtime-lifecycle-v1.md` | `accepted` (`2026-04-23`) |
-| Real vector store adapter v1 | `docs/core/58-spec-real-vector-store-adapter-v1.md` | `proposed` — nhịp đang mở |
+| Real vector store adapter v1 | `docs/core/58-spec-real-vector-store-adapter-v1.md` | `accepted` (`2026-04-23`) — nhịp đang mở |
 | Generation context policy v1 | `docs/core/59-spec-generation-context-policy-v1.md` | `proposed` |
 | Provider runtime implementation v1 | `docs/core/60-spec-provider-runtime-implementation-v1.md` | `accepted` (`2026-04-23`) |
 

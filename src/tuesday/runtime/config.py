@@ -9,6 +9,11 @@ ENV_PREFIX = "TUESDAY"
 class RuntimeConfigOverrides(TypedDict, total=False):
     vector_store_backend: str
     vector_store_file_path: str
+    qdrant_url: str
+    qdrant_api_key: str
+    qdrant_location: str
+    qdrant_collection_prefix: str
+    qdrant_dense_vector_size: int
     pdf_startup_check_mode: str
     embedding_provider_backend: str
     generation_provider_backend: str
@@ -57,6 +62,11 @@ class RuntimeConfigOverrides(TypedDict, total=False):
 class RuntimeConfig:
     vector_store_backend: str = "memory"
     vector_store_file_path: str = ".tuesday/vector_store.json"
+    qdrant_url: str | None = None
+    qdrant_api_key: str | None = None
+    qdrant_location: str | None = None
+    qdrant_collection_prefix: str = "tuesday"
+    qdrant_dense_vector_size: int = 512
     pdf_startup_check_mode: str = "off"
     embedding_provider_backend: str = "demo"
     generation_provider_backend: str = "demo"
@@ -190,6 +200,12 @@ class RuntimeConfig:
                 5,
             ),
             (
+                "qdrant_dense_vector_size",
+                self.qdrant_dense_vector_size,
+                8,
+                4096,
+            ),
+            (
                 "content_length_max",
                 self.content_length_max,
                 self.content_length_min,
@@ -211,8 +227,16 @@ class RuntimeConfig:
         for field_name, value, minimum, maximum in integer_bounds:
             if not (minimum <= value <= maximum):
                 raise ValueError(f"{field_name} is outside spec bounds")
-        if self.vector_store_backend not in {"memory", "file"}:
+        if self.vector_store_backend not in {"memory", "file", "qdrant"}:
             raise ValueError("vector_store_backend is outside supported values")
+        if self.vector_store_backend == "qdrant":
+            if not self.qdrant_url and not self.qdrant_location:
+                raise ValueError(
+                    "qdrant_url or qdrant_location is required "
+                    "for the selected vector store backend"
+                )
+            if not self.qdrant_collection_prefix.strip():
+                raise ValueError("qdrant_collection_prefix must not be blank")
         if self.pdf_startup_check_mode not in {"off", "warn", "strict"}:
             raise ValueError("pdf_startup_check_mode is outside supported values")
         if self.embedding_provider_backend not in {"demo", "openai", "gemini", "azure_openai"}:

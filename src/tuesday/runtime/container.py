@@ -5,7 +5,11 @@ from tuesday.rag.generation.use_case import GenerationUseCase
 from tuesday.rag.infrastructure.chunking import CharacterChunker
 from tuesday.rag.infrastructure.file_document_parser import LocalFileDocumentParser
 from tuesday.rag.infrastructure.file_vector_store import FileBackedVectorStore
-from tuesday.rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
+from tuesday.rag.infrastructure.providers import (
+    DeterministicDenseEmbeddingProvider,
+    DeterministicLLMProvider,
+    HashEmbeddingProvider,
+)
 from tuesday.rag.infrastructure.providers_vendor import (
     AzureOpenAIEmbeddingProvider,
     AzureOpenAILLMProvider,
@@ -78,6 +82,16 @@ class Container:
     def _build_vector_store(self) -> ResilientVectorStore:
         if self.config.vector_store_backend == "file":
             store = FileBackedVectorStore(self.config.vector_store_file_path)
+        elif self.config.vector_store_backend == "qdrant":
+            from tuesday.rag.infrastructure.qdrant_vector_store import QdrantVectorStore
+
+            store = QdrantVectorStore(
+                url=self.config.qdrant_url,
+                api_key=self.config.qdrant_api_key,
+                location=self.config.qdrant_location,
+                collection_prefix=self.config.qdrant_collection_prefix,
+                dense_vector_size=self.config.qdrant_dense_vector_size,
+            )
         else:
             store = InMemoryVectorStore()
         return ResilientVectorStore(
@@ -88,6 +102,10 @@ class Container:
 
     def _build_embedding_provider(self):
         if self.config.embedding_provider_backend == "demo":
+            if self.config.vector_store_backend == "qdrant":
+                return DeterministicDenseEmbeddingProvider(
+                    dimension=self.config.qdrant_dense_vector_size
+                )
             return HashEmbeddingProvider()
         if self.config.embedding_provider_backend == "openai":
             return OpenAIEmbeddingProvider(

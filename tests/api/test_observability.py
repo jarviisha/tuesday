@@ -2,6 +2,10 @@ import pytest
 from tests.fixtures import REFUND_DOCUMENT
 
 
+def _record_extra(record, field: str):
+    return getattr(record, field, None)
+
+
 @pytest.mark.anyio
 async def test_request_logs_include_lifecycle_fields(
     api_client,
@@ -18,13 +22,13 @@ async def test_request_logs_include_lifecycle_fields(
     ]
     assert completion_records
     record = completion_records[-1]
-    assert record.request_id
-    assert record.use_case == "documents.index"
-    assert record.error_code is None
-    assert isinstance(record.latency_ms, int)
-    assert record.failure_group is None
-    assert record.failure_component is None
-    assert record.retry_count == 0
+    assert _record_extra(record, "request_id")
+    assert _record_extra(record, "use_case") == "documents.index"
+    assert _record_extra(record, "error_code") is None
+    assert isinstance(_record_extra(record, "latency_ms"), int)
+    assert _record_extra(record, "failure_group") is None
+    assert _record_extra(record, "failure_component") is None
+    assert _record_extra(record, "retry_count") == 0
 
 
 @pytest.mark.anyio
@@ -43,10 +47,10 @@ async def test_failed_request_logs_include_error_code(
     ]
     assert failure_records
     record = failure_records[-1]
-    assert record.request_id
-    assert record.use_case == "documents.index"
-    assert record.error_code == "INVALID_INPUT"
-    assert record.failure_group == "application"
-    assert record.failure_component == "request_validation"
-    assert record.failure_mode == "handled_error"
-    assert record.retry_count == 0
+    assert _record_extra(record, "request_id")
+    assert _record_extra(record, "use_case") == "documents.index"
+    assert _record_extra(record, "error_code") == "INVALID_INPUT"
+    assert _record_extra(record, "failure_group") == "application"
+    assert _record_extra(record, "failure_component") == "request_validation"
+    assert _record_extra(record, "failure_mode") == "handled_error"
+    assert _record_extra(record, "retry_count") == 0

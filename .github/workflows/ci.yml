@@ -26,6 +26,9 @@ jobs:
       - name: Run ruff
         run: ruff check .
 
+      - name: Run pyright
+        run: pyright
+
   test:
     runs-on: ubuntu-latest
     steps:

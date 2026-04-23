@@ -30,6 +30,22 @@ def test_runtime_config_reads_env_override_within_spec(monkeypatch: pytest.Monke
     assert config.pdf_startup_check_mode == "warn"
 
 
+def test_runtime_config_accepts_qdrant_backend_with_location(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("TUESDAY_VECTOR_STORE_BACKEND", "qdrant")
+    monkeypatch.setenv("TUESDAY_QDRANT_LOCATION", ":memory:")
+    monkeypatch.setenv("TUESDAY_QDRANT_COLLECTION_PREFIX", "kb")
+    monkeypatch.setenv("TUESDAY_QDRANT_DENSE_VECTOR_SIZE", "256")
+
+    config = RuntimeConfig.from_env()
+
+    assert config.vector_store_backend == "qdrant"
+    assert config.qdrant_location == ":memory:"
+    assert config.qdrant_collection_prefix == "kb"
+    assert config.qdrant_dense_vector_size == 256
+
+
 def test_runtime_config_rejects_env_override_outside_spec(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("TUESDAY_QUERY_LENGTH_MAX", "3000")
 
@@ -84,6 +100,18 @@ def test_runtime_config_rejects_unsupported_vector_store_backend(
     monkeypatch.setenv("TUESDAY_VECTOR_STORE_BACKEND", "redis")
 
     with pytest.raises(ValueError, match="vector_store_backend is outside supported values"):
+        RuntimeConfig.from_env()
+
+
+def test_runtime_config_requires_qdrant_location_or_url_when_selected(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("TUESDAY_VECTOR_STORE_BACKEND", "qdrant")
+
+    with pytest.raises(
+        ValueError,
+        match="qdrant_url or qdrant_location is required for the selected vector store backend",
+    ):
         RuntimeConfig.from_env()
 
 

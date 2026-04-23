@@ -157,13 +157,15 @@ LlamaIndex chỉ được dùng trong infrastructure với vai trò engine phụ
 
 | Thành phần hạ tầng | Có thể dùng LlamaIndex | Ghi chú |
 |---|---|---|
-| Helper cho `Indexer` | Có | Dùng để pipeline embedding/indexing nếu tiện |
-| Helper cho `Retriever` | Có | Dùng retrieval abstraction nhưng phải map về `RetrievedChunk` |
-| Helper cho `Generator` | Có giới hạn | Chỉ dùng như helper build context/prompt nếu cần |
+| `VectorStore` adapter | Có | Được phép dùng wrapper/backend client của LlamaIndex nhưng phải map về contract `VectorStore` nội bộ |
+| `DocumentParser` adapter | Có | Chỉ như parser/reader hạ tầng, không đổi ingestion contract |
+| `Chunker` helper | Có điều kiện | Chỉ khi có spec mới; hiện tại DL-006 vẫn khóa chunking theo ký tự |
+| `Retriever`/`Generator` helper | Không phải mặc định | Không dùng orchestration object của LlamaIndex để thay vai trò capability service |
 
 Ràng buộc:
 
 - Không expose `Node`, `Document`, `QueryEngine`, `Response` của LlamaIndex ra orchestration/capability layer.
+- Không dùng `Settings`, `IngestionPipeline`, `VectorStoreIndex`, `QueryEngine`, `ResponseSynthesizer` làm orchestration spine của hệ thống nếu chưa có decision mới.
 - Nếu LlamaIndex bị thay thế, domain và use case không phải sửa contract.
 
 ## Adapter nào dùng cloud provider
