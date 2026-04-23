@@ -86,6 +86,56 @@ def test_qdrant_vector_store_supports_tags_contains_any_and_top_k_sorted() -> No
     assert result.chunks == sorted(result.chunks, key=lambda chunk: chunk.score, reverse=True)
 
 
+def test_qdrant_vector_store_supports_language_filter() -> None:
+    ingestion, retrieval = _build_use_cases()
+    ingestion.execute(REFUND_DOCUMENT)
+    ingestion.execute(ONBOARDING_DOCUMENT)
+
+    result = retrieval.execute(
+        {
+            "query": "hoan tien",
+            "filters": {"language": "vi"},
+            "index_name": "enterprise-kb",
+        }
+    )
+
+    assert result.chunks
+    assert all(chunk.metadata["language"] == "vi" for chunk in result.chunks)
+
+
+def test_qdrant_vector_store_supports_document_id_filter() -> None:
+    ingestion, retrieval = _build_use_cases()
+    ingestion.execute(REFUND_DOCUMENT)
+    ingestion.execute(ONBOARDING_DOCUMENT)
+
+    result = retrieval.execute(
+        {
+            "query": "nhan su moi",
+            "filters": {"document_id": "doc-onboarding-001"},
+            "index_name": "enterprise-kb",
+        }
+    )
+
+    assert result.chunks
+    assert all(chunk.document_id == "doc-onboarding-001" for chunk in result.chunks)
+
+
+def test_qdrant_vector_store_supports_source_type_filter() -> None:
+    ingestion, retrieval = _build_use_cases()
+    ingestion.execute(REFUND_DOCUMENT)
+
+    result = retrieval.execute(
+        {
+            "query": "hoan tien",
+            "filters": {"source_type": "text"},
+            "index_name": "enterprise-kb",
+        }
+    )
+
+    assert result.chunks
+    assert all(chunk.metadata["source_type"] == "text" for chunk in result.chunks)
+
+
 def test_qdrant_vector_store_returns_empty_list_for_no_match_query() -> None:
     ingestion, retrieval = _build_use_cases()
     ingestion.execute(REFUND_DOCUMENT)

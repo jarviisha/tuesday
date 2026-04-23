@@ -18,7 +18,7 @@ class QdrantVectorStore:
         api_key: str | None = None,
         location: str | None = None,
         collection_prefix: str = "tuesday",
-        dense_vector_size: int = 128,
+        dense_vector_size: int = 512,
     ) -> None:
         client_kwargs: dict[str, Any] = {}
         if url:

@@ -102,11 +102,16 @@ If the same key exists in both places, the OS environment variable wins over `.e
 
 You can start from [.env.example](/home/jarviisha/development/tuesday/.env.example). The Phase 1 runbook, config baseline, and release baseline are documented in `docs/history/post-mvp/phase-1/27-runbook-config-va-release-baseline-implementation.md` (historical archive).
 
-Phase 2 operational hardening adds:
+Runtime and backend configuration includes:
 
 ```bash
-TUESDAY_VECTOR_STORE_BACKEND=memory|file
+TUESDAY_VECTOR_STORE_BACKEND=memory|file|qdrant
 TUESDAY_VECTOR_STORE_FILE_PATH=.tuesday/vector_store.json
+TUESDAY_QDRANT_URL=
+TUESDAY_QDRANT_API_KEY=
+TUESDAY_QDRANT_LOCATION=
+TUESDAY_QDRANT_COLLECTION_PREFIX=tuesday
+TUESDAY_QDRANT_DENSE_VECTOR_SIZE=512
 TUESDAY_PDF_STARTUP_CHECK_MODE=off|warn|strict
 TUESDAY_EMBEDDING_PROVIDER_BACKEND=demo|openai|gemini|azure_openai
 TUESDAY_GENERATION_PROVIDER_BACKEND=demo|openai|gemini|azure_openai
@@ -138,7 +143,19 @@ export TUESDAY_VECTOR_STORE_BACKEND=file
 export TUESDAY_VECTOR_STORE_FILE_PATH=.tuesday/vector_store.json
 ```
 
+Use Qdrant when you want a real vector-store backend:
+
+```bash
+export TUESDAY_VECTOR_STORE_BACKEND=qdrant
+export TUESDAY_QDRANT_LOCATION=:memory:
+export TUESDAY_QDRANT_COLLECTION_PREFIX=tuesday
+export TUESDAY_QDRANT_DENSE_VECTOR_SIZE=512
+```
+
+For remote Qdrant, set `TUESDAY_QDRANT_URL` and `TUESDAY_QDRANT_API_KEY` instead of `TUESDAY_QDRANT_LOCATION`.
+
 Provider backends default to `demo` for both embeddings and generation. To use real providers, set the backend selectors and the matching credentials/model or deployment env vars for `OpenAI`, `Gemini`, or `Azure OpenAI`.
+When `TUESDAY_VECTOR_STORE_BACKEND=qdrant` and `TUESDAY_EMBEDDING_PROVIDER_BACKEND=demo`, runtime automatically switches to a deterministic dense demo embedding provider so cosine retrieval works with the real vector store.
 
 ## Smoke Test
 

@@ -2,6 +2,8 @@ import logging
 
 import pytest
 
+from tuesday.rag.infrastructure.providers import DeterministicDenseEmbeddingProvider
+from tuesday.rag.infrastructure.qdrant_vector_store import QdrantVectorStore
 from tuesday.runtime.config import RuntimeConfig
 from tuesday.runtime.container import build_container
 
@@ -45,3 +47,24 @@ def test_build_container_allows_strict_when_pdftotext_is_available(
     container = build_container(RuntimeConfig(pdf_startup_check_mode="strict"))
 
     assert container.config.pdf_startup_check_mode == "strict"
+
+
+def test_build_container_uses_qdrant_and_dense_demo_embedding_for_qdrant_backend(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "tuesday.rag.infrastructure.file_document_parser.LocalFileDocumentParser.has_pdftotext",
+        staticmethod(lambda: True),
+    )
+    config = RuntimeConfig(
+        vector_store_backend="qdrant",
+        qdrant_location=":memory:",
+        qdrant_collection_prefix="runtime-test",
+        qdrant_dense_vector_size=512,
+        embedding_provider_backend="demo",
+    )
+
+    container = build_container(config)
+
+    assert isinstance(container.vector_store._store, QdrantVectorStore)
+    assert isinstance(container.embedding_provider._provider, DeterministicDenseEmbeddingProvider)

@@ -55,6 +55,7 @@ Nhịp này nên ưu tiên:
 - Không dùng `Settings`, `IngestionPipeline`, `VectorStoreIndex`, `QueryEngine`, `ResponseSynthesizer` hoặc bất kỳ orchestration object nào của LlamaIndex.
 - Không để `Document`, `Node`, `NodeWithScore`, `Response` hoặc object framework tương tự chảy ra ngoài `infrastructure/`.
 - `domain`, `use_case`, `service`, `api` và public HTTP contract phải giữ nguyên.
+- Implementation v1 hiện tại dùng `qdrant-client` trực tiếp; selective adoption của LlamaIndex vẫn được phép về mặt boundary nhưng chưa được dùng trong nhịp này.
 
 ## Semantics phải khóa trước khi code
 
