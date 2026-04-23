@@ -64,6 +64,7 @@ Decision log không thay thế các tài liệu spec chính. Nó chỉ ghi lại
 | `DL-025` | `accepted` | Batch ingestion nội bộ hỗ trợ `--output` để lưu summary JSON ra file; command vẫn tiếp tục in summary ra `stdout` để giữ backward compatibility | Giữ trải nghiệm CLI cũ ổn định nhưng bổ sung artifact hữu ích cho review batch run, debugging và lưu kết quả thủ công | phase 4 planning, scripts, runbook, CLI tests |
 | `DL-026` | `accepted` | Batch ingestion nội bộ hỗ trợ `--include` và `--exclude` theo glob pattern trên relative path; filter `exclude` thắng cuối cùng | Giúp người vận hành khoanh đúng tập file cần index mà không phải đổi cấu trúc thư mục hay tạo script ad-hoc, đồng thời giữ batch utility ở mức đơn giản | phase 4 planning, scripts, runbook, CLI tests |
 | `DL-027` | `accepted` | Batch ingestion nội bộ hỗ trợ `--dry-run` để preview candidate files và `document_id` mà không ghi vào vector store | Giúp người vận hành kiểm tra trước phạm vi batch, pattern filter và document id mapping với chi phí thấp, không tạo side effect | phase 4 planning, scripts, runbook, CLI tests |
+| `DL-028` | `accepted` | Chương `post-mvp` được coi là đã hoàn tất sau khi đủ 4 phase nền và nhịp đầu tiên của `feature_expansion`; các spec tiếp theo phải chuyển sang một track tài liệu mới thay vì tiếp tục mở rộng `docs/post-mvp/` | Giữ ranh giới roadmap rõ, tránh kéo dài vô hạn chương post-MVP và buộc các nhịp tiếp theo phải có mục tiêu mới tập trung hơn vào phần lõi của hệ thống | planning, decision log, closeout docs, track `core` |
 
 ## Mẫu ghi quyết định mới
 

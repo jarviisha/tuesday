@@ -7,6 +7,7 @@
 - Giả định kỹ thuật
 - Thứ tự ưu tiên
 - Nguyên tắc triển khai
+- Trạng thái hiện tại
 
 ## Mục tiêu
 
@@ -74,3 +75,12 @@ Thứ tự ưu tiên được khóa như sau:
 - Mọi thay đổi behavior sau MVP vẫn phải đi kèm test hoặc benchmark thể hiện behavior mới.
 - Nếu một thay đổi làm đổi thứ tự ưu tiên giữa các phase, phải ghi decision mới.
 - Nếu cần mở rộng feature sớm do yêu cầu nghiệp vụ thật, phải nêu rõ feature đó đang chen vào phase nào và rủi ro gì bị chấp nhận.
+
+## Trạng thái hiện tại
+
+Chương `post-mvp` hiện đã hoàn tất ở mức roadmap đã định và được giữ lại như hồ sơ lịch sử triển khai.
+
+Các spec mới sau mốc này nên chuyển sang track tài liệu riêng, bắt đầu tại:
+
+- `docs/54-closeout-post-mvp.md`
+- `docs/core/README.md`
