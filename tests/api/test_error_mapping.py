@@ -75,7 +75,11 @@ async def test_documents_index_returns_502_for_index_write_error(
     def fail_replace_document(**_: object) -> bool:
         raise RuntimeError("write failed")
 
-    monkeypatch.setattr(api_app.state.container.vector_store, "replace_document", fail_replace_document)
+    monkeypatch.setattr(
+        api_app.state.container.vector_store,
+        "replace_document",
+        fail_replace_document,
+    )
     response = await api_client.post("/documents/index", json=REFUND_DOCUMENT)
 
     assert response.status_code == 502

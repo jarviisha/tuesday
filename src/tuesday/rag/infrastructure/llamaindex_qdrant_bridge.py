@@ -1,9 +1,10 @@
+# pyright: reportAssignmentType=false
 from __future__ import annotations
 
 import math
 import uuid
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from hashlib import sha256
 from typing import Any, cast
 
@@ -12,50 +13,60 @@ from qdrant_client import QdrantClient, models
 from tuesday.rag.domain.models import IndexedChunk
 
 try:
-    from llama_index.core.schema import TextNode
+    from llama_index.core.schema import TextNode as _TextNode
     from llama_index.core.vector_stores.types import (
-        FilterCondition,
-        FilterOperator,
-        MetadataFilter,
-        MetadataFilters,
-        VectorStoreQuery,
-        VectorStoreQueryResult,
+        FilterCondition as _FilterCondition,
+    )
+    from llama_index.core.vector_stores.types import (
+        FilterOperator as _FilterOperator,
+    )
+    from llama_index.core.vector_stores.types import (
+        MetadataFilter as _MetadataFilter,
+    )
+    from llama_index.core.vector_stores.types import (
+        MetadataFilters as _MetadataFilters,
+    )
+    from llama_index.core.vector_stores.types import (
+        VectorStoreQuery as _VectorStoreQuery,
+    )
+    from llama_index.core.vector_stores.types import (
+        VectorStoreQueryResult as _VectorStoreQueryResult,
     )
 except Exception:
-    class FilterCondition(str, Enum):
+    class _FilterCondition(StrEnum):
         AND = "and"
         OR = "or"
         NOT = "not"
 
-    class FilterOperator(str, Enum):
+    class _FilterOperator(StrEnum):
         EQ = "=="
         ANY = "any"
 
     @dataclass(frozen=True)
-    class MetadataFilter:
+    class _MetadataFilter:
         key: str
         value: int | float | str | list[str] | list[float] | list[int] | None
-        operator: FilterOperator = FilterOperator.EQ
+        operator: _FilterOperator = _FilterOperator.EQ
 
     @dataclass(frozen=True)
-    class MetadataFilters:
-        filters: list[MetadataFilter | "MetadataFilters"]
-        condition: FilterCondition | None = FilterCondition.AND
+    class _MetadataFilters:
+        filters: list[_MetadataFilter | _MetadataFilters]
+        condition: _FilterCondition | None = _FilterCondition.AND
 
     @dataclass(frozen=True)
-    class VectorStoreQuery:
+    class _VectorStoreQuery:
         query_embedding: list[float] | None = None
         similarity_top_k: int = 1
-        filters: MetadataFilters | None = None
+        filters: _MetadataFilters | None = None
 
     @dataclass(frozen=True)
-    class VectorStoreQueryResult:
-        nodes: list["TextNode"] | None = None
+    class _VectorStoreQueryResult:
+        nodes: list[_TextNode] | None = None
         similarities: list[float] | None = None
         ids: list[str] | None = None
 
     @dataclass
-    class TextNode:
+    class _TextNode:
         id_: str
         text: str = ""
         metadata: dict[str, Any] = field(default_factory=dict)
@@ -64,6 +75,15 @@ except Exception:
         @property
         def node_id(self) -> str:
             return self.id_
+
+
+TextNode = cast(Any, _TextNode)
+FilterCondition = cast(Any, _FilterCondition)
+FilterOperator = cast(Any, _FilterOperator)
+MetadataFilter = cast(Any, _MetadataFilter)
+MetadataFilters = cast(Any, _MetadataFilters)
+VectorStoreQuery = cast(Any, _VectorStoreQuery)
+VectorStoreQueryResult = cast(Any, _VectorStoreQueryResult)
 
 
 class LlamaIndexQdrantBridge:
@@ -118,7 +138,7 @@ class LlamaIndexQdrantBridge:
         query_embedding: list[float],
         top_k: int,
         filters: dict[str, Any] | None,
-    ) -> VectorStoreQueryResult:
+    ) -> Any:
         collection_name = self.collection_name(index_name)
         if not self._client.collection_exists(collection_name):
             return VectorStoreQueryResult(nodes=[], similarities=[], ids=[])
@@ -153,7 +173,7 @@ class LlamaIndexQdrantBridge:
     def _resolve_vector_size(
         self,
         collection_name: str,
-        nodes: list[TextNode],
+        nodes: list[Any],
     ) -> int:
         if self._client.collection_exists(collection_name):
             return self._collection_vector_size(collection_name)
@@ -184,7 +204,7 @@ class LlamaIndexQdrantBridge:
             return self._named_vectors_size(vectors)
         return self._vector_params_size(vectors)
 
-    def _to_point(self, *, node: TextNode, vector_size: int) -> models.PointStruct:
+    def _to_point(self, *, node: Any, vector_size: int) -> models.PointStruct:
         metadata = dict(node.metadata)
         return models.PointStruct(
             id=str(uuid.uuid5(uuid.NAMESPACE_URL, node.node_id)),
@@ -201,7 +221,7 @@ class LlamaIndexQdrantBridge:
         )
 
     @staticmethod
-    def _to_text_node(chunk: IndexedChunk) -> TextNode:
+    def _to_text_node(chunk: IndexedChunk) -> Any:
         metadata = dict(chunk.metadata)
         metadata.setdefault("document_id", chunk.document_id)
         metadata.setdefault("chunk_id", chunk.chunk_id)
@@ -213,11 +233,11 @@ class LlamaIndexQdrantBridge:
         )
 
     @staticmethod
-    def _to_metadata_filters(filters: dict[str, Any]) -> MetadataFilters | None:
+    def _to_metadata_filters(filters: dict[str, Any]) -> Any | None:
         if not filters:
             return None
 
-        resolved_filters: list[MetadataFilter] = []
+        resolved_filters: list[Any] = []
         for key, value in filters.items():
             if key == "tags":
                 if not value:
@@ -226,13 +246,19 @@ class LlamaIndexQdrantBridge:
                     MetadataFilter(key="tags", value=list(value), operator=FilterOperator.ANY)
                 )
                 continue
-            resolved_filters.append(MetadataFilter(key=key, value=value, operator=FilterOperator.EQ))
+            resolved_filters.append(
+                MetadataFilter(
+                    key=key,
+                    value=value,
+                    operator=FilterOperator.EQ,
+                )
+            )
         if not resolved_filters:
             return None
         return MetadataFilters(filters=resolved_filters, condition=FilterCondition.AND)
 
     @staticmethod
-    def _to_qdrant_filter(filters: MetadataFilters | None) -> models.Filter | None:
+    def _to_qdrant_filter(filters: Any | None) -> models.Filter | None:
         if filters is None:
             return None
 
@@ -254,24 +280,24 @@ class LlamaIndexQdrantBridge:
         return models.Filter(must=conditions)
 
     @staticmethod
-    def _to_qdrant_condition(metadata_filter: MetadataFilter) -> models.Condition:
+    def _to_qdrant_condition(metadata_filter: Any) -> models.Condition:
         if metadata_filter.operator == FilterOperator.ANY:
             values = metadata_filter.value
             if not isinstance(values, list):
                 values = [cast(str, metadata_filter.value)]
             return models.FieldCondition(
                 key=metadata_filter.key,
-                match=models.MatchAny(any=list(values)),
+                match=models.MatchAny(any=cast(Any, list(values))),
             )
         return models.FieldCondition(
             key=metadata_filter.key,
-            match=models.MatchValue(value=metadata_filter.value),
+            match=models.MatchValue(value=cast(Any, metadata_filter.value)),
         )
 
     @staticmethod
-    def _to_query_result(response: Any) -> VectorStoreQueryResult:
+    def _to_query_result(response: Any) -> Any:
         points = LlamaIndexQdrantBridge._query_result_points(response)
-        nodes: list[TextNode] = []
+        nodes: list[Any] = []
         similarities: list[float] = []
         ids: list[str] = []
         for point in points:
