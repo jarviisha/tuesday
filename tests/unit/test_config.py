@@ -107,6 +107,8 @@ def test_runtime_config_requires_qdrant_location_or_url_when_selected(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("TUESDAY_VECTOR_STORE_BACKEND", "qdrant")
+    monkeypatch.setenv("TUESDAY_QDRANT_URL", "")
+    monkeypatch.setenv("TUESDAY_QDRANT_LOCATION", "")
 
     with pytest.raises(
         ValueError,
