@@ -4,11 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Entry point for session context
 
-Before substantial implementation work, read [docs/00-core-brief.md](docs/00-core-brief.md) — it is the compressed spec for this project and the source of truth for locked behavior, decision-log IDs, runtime defaults, error mapping, and boundary rules. When a detail in this CLAUDE.md conflicts with `docs/00-core-brief.md` or the active specs under `docs/` root and `docs/core/`, those documents win.
+Before substantial implementation work, read [docs.md](docs.md) — it is the consolidated project reference and source of truth for locked behavior, decision-log IDs, runtime defaults, error mapping, and boundary rules.
 
-- `docs/` root and `docs/core/` — active spec (current behavior, open tracks).
-- `docs/history/` — archive only; does not define current behavior.
-- `docs/14-decision-log.md` — DL-NNN decisions referenced throughout.
+When a detail here conflicts with `docs.md` or active feature spec artifacts under `specs/`, those documents win.
+
+- `docs.md` — consolidated active spec (replaces the legacy `docs/` tree).
+- `specs/<NNN>-<feature>/` — feature-specific artifacts: `spec.md`, `plan.md`, `tasks.md`, `data-model.md`, `contracts/`, `checklists/`.
+- `.specify/memory/constitution.md` — process principles that apply when spec questions arise.
+- The legacy `docs/` tree exists as migration/archive background only; do not treat it as the current workflow source of truth.
 
 ## Commands
 
@@ -34,6 +37,23 @@ Phase smoke / benchmark / internal ingestion scripts:
 
 First-time setup only: `pip install -e '.[dev]'` into a Python 3.12+ venv.
 
+## Spec-driven development (speckit)
+
+This repo uses speckit for feature development. The current active feature directory is tracked in `.specify/feature.json`. Speckit skills drive the SDD cycle:
+
+| Skill | Purpose |
+|---|---|
+| `/speckit-specify` | Create or update `spec.md` from a feature description |
+| `/speckit-clarify` | Ask targeted questions to fill spec gaps |
+| `/speckit-plan` | Generate `plan.md` design artifacts |
+| `/speckit-tasks` | Generate dependency-ordered `tasks.md` |
+| `/speckit-implement` | Execute tasks from `tasks.md` |
+| `/speckit-analyze` | Cross-artifact consistency check across spec/plan/tasks |
+| `/speckit-checklist` | Generate a custom checklist for the feature |
+| `/speckit-constitution` | Create or update `.specify/memory/constitution.md` |
+
+Feature artifacts live under `specs/<NNN>-<feature>/` (e.g. `specs/001-llamaindex-qdrant-adapter/`). The full SDD workflow is: specify → clarify → plan → tasks → implement.
+
 ## High-level architecture
 
 Tuesday is a capability-oriented FastAPI platform. The only capability today is RAG (`src/tuesday/rag/`). The dependency flow is strictly one-directional and must not be broken:
@@ -57,7 +77,7 @@ Tests mirror the scopes: `tests/unit/` (domain, use cases, scripts, config bound
 
 ## Locked behavior (do not change without a decision-log entry)
 
-These are frequent sources of accidental regressions. Full list lives in `docs/14-decision-log.md`.
+These are frequent sources of accidental regressions. Full list lives in `docs.md` (sourced from `docs/14-decision-log.md`).
 
 - **Re-index policy**: `replace-by-document_id-within-index_name`; idempotent on same `(document_id, index_name, content)` (DL-001).
 - **`Indexer`/`Retriever`/`Generator`** are capability-local services, not core ports — do not push them down to adapters or up to framework abstractions (DL-002).
@@ -69,7 +89,7 @@ These are frequent sources of accidental regressions. Full list lives in `docs/1
 - **Observability**: every request must log `request_id`, `use_case`, `error_code`, `latency_ms`, `failure_group/component/mode`; **never** log raw content or sensitive data (DL-009).
 - **Public API surface**: exactly `POST /documents/index`, `POST /retrieve`, `POST /generate`, `GET /health`. File parsers are **internal** ingestion only via `FileIngestionUseCase` + scripts (DL-008). `PARTIAL_INDEXED` status is not part of public MVP (DL-010).
 
-Error-code → HTTP status mapping, runtime defaults and bounds, and validation rules are listed in sections 7–9 of `docs/00-core-brief.md`; treat those tables as locked.
+Error-code → HTTP status mapping, runtime defaults and bounds, and validation rules are in `docs.md` (sections 7–9 of the core brief); treat those tables as locked.
 
 ## Runtime config
 
@@ -84,14 +104,20 @@ Backend selectors:
 ## Language rules
 
 - English by default for source, tests, commit messages, comments, and identifiers.
-- Spec documents under `docs/` (planning, checklists, review, decision log) may use Vietnamese **with full diacritics** — do not write Vietnamese without diacritics in those files.
+- `docs.md`, feature spec artifacts under `specs/`, and `.specify/memory/constitution.md` may use Vietnamese **with full diacritics** — do not write Vietnamese without diacritics in those files.
 - Fixtures, sample payloads, benchmark cases, and other domain input prefer Vietnamese to match the evaluation baseline, unless the scenario explicitly requires another language.
 - Files under `prompt/` are not constrained by this rule.
 
 ## Working rules specific to this repo
 
 - **Surgical changes only**: touch only files/lines needed for the task; do not refactor adjacent code. Mention out-of-scope issues separately instead of folding them in.
-- **No new `.md` files** (including in `docs/`) unless the user asks — extend existing documents. Never add new files to `docs/history/`; new specs go in `docs/` root or `docs/core/`.
+- **No new `.md` files** (including in `docs/`) unless the user asks — extend existing documents. New feature specs go under `specs/` via speckit skills, not freehand.
 - **Lint must pass**: ruff with rules `E, F, I, B, UP` (see `pyproject.toml`), `line-length = 100`, `target-version = py312`.
-- **When changing locked semantics, config bounds, or contract behavior**: update tests, the corresponding spec in `docs/`, the decision log, and section 2/7/8 of `docs/00-core-brief.md` together — don't ship them apart.
+- **Commit prefix required**: use `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `build:`, or `ci:` on every commit. Keep the subject short, imperative, and scoped to one change.
+- **When changing locked semantics, config bounds, or contract behavior**: update tests, the active spec in `docs.md`, the decision log, and the core brief section together — don't ship them apart.
 - **Never re-introduce `src/tuesday_rag/`** — the legacy shim was deleted; all imports use `tuesday.*`.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read [specs/001-llamaindex-qdrant-adapter/plan.md](/home/jarviisha/development/tuesday/specs/001-llamaindex-qdrant-adapter/plan.md)
+<!-- SPECKIT END -->
