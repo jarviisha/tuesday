@@ -84,7 +84,7 @@ These are frequent sources of accidental regressions. Full list lives in `docs.m
 - **Filter `tags` semantics**: `contains-any` (DL-003). Keep this consistent across fake adapter, real adapter, and contract tests.
 - **Insufficient context**: when no context exists, orchestration returns `GeneratedAnswer(insufficient_context=True, grounded=False, citations=[], used_chunks=[])` with the literal `config.insufficient_context_answer`, **without** calling `LLMProvider` (DL-004).
 - **Citations**: always by `chunk_id`, always a subset of `used_chunks.chunk_id`; if `used_chunks` is empty, `citations` must be empty (DL-005).
-- **Chunking**: character-based, not token-based; `chunk_overlap < chunk_size` (DL-006).
+- **Chunking**: token-based via `LlamaIndex SentenceSplitter`; `chunk_overlap < chunk_size` (DL-006 superseded by DL-035).
 - **PDF parser**: `pdftotext` via subprocess; missing → `DOCUMENT_PARSE_ERROR`. Startup check modes via `TUESDAY_PDF_STARTUP_CHECK_MODE ∈ {off, warn, strict}` (DL-024).
 - **Observability**: every request must log `request_id`, `use_case`, `error_code`, `latency_ms`, `failure_group/component/mode`; **never** log raw content or sensitive data (DL-009).
 - **Public API surface**: exactly `POST /documents/index`, `POST /retrieve`, `POST /generate`, `GET /health`. File parsers are **internal** ingestion only via `FileIngestionUseCase` + scripts (DL-008). `PARTIAL_INDEXED` status is not part of public MVP (DL-010).
