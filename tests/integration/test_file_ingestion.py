@@ -6,7 +6,7 @@ import pytest
 
 from tuesday.rag.generation.service import GeneratorService
 from tuesday.rag.generation.use_case import GenerationUseCase
-from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 from tuesday.rag.infrastructure.file_document_parser import LocalFileDocumentParser
 from tuesday.rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
 from tuesday.rag.infrastructure.vector_store import InMemoryVectorStore
@@ -34,9 +34,9 @@ def test_file_ingestion_supports_retrieve_and_generate_flow(tmp_path: Path) -> N
     embedding_provider = HashEmbeddingProvider()
     ingestion_use_case = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(embedding_provider, vector_store),
     )
@@ -112,9 +112,9 @@ def test_html_file_ingestion_supports_retrieve_and_generate_flow(tmp_path: Path)
     embedding_provider = HashEmbeddingProvider()
     ingestion_use_case = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(embedding_provider, vector_store),
     )
@@ -191,9 +191,9 @@ def test_pdf_file_ingestion_supports_retrieve_and_generate_flow(tmp_path: Path) 
     embedding_provider = HashEmbeddingProvider()
     ingestion_use_case = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(embedding_provider, vector_store),
     )

@@ -8,7 +8,7 @@ from tuesday.rag.domain.errors import (
     InvalidInputError,
 )
 from tuesday.rag.domain.models import Chunk, IndexedChunk, SourceDocument
-from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 from tuesday.rag.infrastructure.providers import HashEmbeddingProvider
 from tuesday.rag.infrastructure.vector_store import InMemoryVectorStore
 from tuesday.rag.ingestion.service import IndexerService
@@ -68,9 +68,9 @@ class FailingVectorStore:
 
 def test_ingestion_returns_replaced_document_false_on_first_index() -> None:
     config = RuntimeConfig()
-    chunker = CharacterChunker(
-        chunk_size=config.ingestion_chunk_size_chars_default,
-        chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+    chunker = LlamaIndexNodeParser(
+        chunk_size=config.ingestion_chunk_size_tokens_default,
+        chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
     )
     vector_store = InMemoryVectorStore()
     use_case = IngestionUseCase(
@@ -93,9 +93,9 @@ def test_ingestion_returns_replaced_document_false_on_first_index() -> None:
 
 def test_ingestion_returns_replaced_document_true_on_reindex() -> None:
     config = RuntimeConfig()
-    chunker = CharacterChunker(
-        chunk_size=config.ingestion_chunk_size_chars_default,
-        chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+    chunker = LlamaIndexNodeParser(
+        chunk_size=config.ingestion_chunk_size_tokens_default,
+        chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
     )
     vector_store = InMemoryVectorStore()
     use_case = IngestionUseCase(
@@ -114,9 +114,9 @@ def test_ingestion_returns_replaced_document_true_on_reindex() -> None:
 
 def test_ingestion_creates_multiple_chunks_for_long_document() -> None:
     config = RuntimeConfig()
-    chunker = CharacterChunker(
-        chunk_size=config.ingestion_chunk_size_chars_default,
-        chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+    chunker = LlamaIndexNodeParser(
+        chunk_size=config.ingestion_chunk_size_tokens_default,
+        chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
     )
     vector_store = InMemoryVectorStore()
     use_case = IngestionUseCase(
@@ -135,9 +135,9 @@ def test_ingestion_rejects_invalid_metadata_tags() -> None:
     config = RuntimeConfig()
     use_case = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(HashEmbeddingProvider(), InMemoryVectorStore()),
     )
@@ -170,9 +170,9 @@ def test_ingestion_raises_chunking_error_when_chunk_count_exceeds_hard_limit() -
     config = RuntimeConfig(ingestion_chunk_count_max=1)
     use_case = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(HashEmbeddingProvider(), InMemoryVectorStore()),
     )

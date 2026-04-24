@@ -2,7 +2,7 @@ import pytest
 from tests.fixtures import NO_MATCH_QUERY, REFUND_DOCUMENT
 
 from tuesday.rag.domain.errors import InvalidInputError, UnsupportedFilterError
-from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 from tuesday.rag.infrastructure.providers import HashEmbeddingProvider
 from tuesday.rag.infrastructure.vector_store import InMemoryVectorStore
 from tuesday.rag.ingestion.service import IndexerService
@@ -18,9 +18,9 @@ def test_retrieval_tags_filter_uses_contains_any() -> None:
     embedding_provider = HashEmbeddingProvider()
     ingestion = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(embedding_provider, vector_store),
     )
@@ -56,9 +56,9 @@ def test_retrieval_returns_empty_list_when_query_has_no_match() -> None:
     embedding_provider = HashEmbeddingProvider()
     ingestion = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(embedding_provider, vector_store),
     )

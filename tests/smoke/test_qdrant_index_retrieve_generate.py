@@ -2,7 +2,7 @@ from tests.fixtures import REFUND_DOCUMENT
 
 from tuesday.rag.generation.service import GeneratorService
 from tuesday.rag.generation.use_case import GenerationUseCase
-from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 from tuesday.rag.infrastructure.providers import (
     DeterministicDenseEmbeddingProvider,
     DeterministicLLMProvider,
@@ -30,9 +30,9 @@ def test_qdrant_smoke_index_retrieve_generate_flow() -> None:
     embedding_provider = DeterministicDenseEmbeddingProvider(
         dimension=config.qdrant_dense_vector_size
     )
-    chunker = CharacterChunker(
-        chunk_size=config.ingestion_chunk_size_chars_default,
-        chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+    chunker = LlamaIndexNodeParser(
+        chunk_size=config.ingestion_chunk_size_tokens_default,
+        chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
     )
     retriever = RetrieverService(embedding_provider, vector_store)
     generator = GeneratorService(

@@ -1,8 +1,8 @@
 from tests.fixtures import NO_MATCH_QUERY, ONBOARDING_DOCUMENT, REFUND_DOCUMENT
 
-from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 from tuesday.rag.infrastructure.providers import DeterministicDenseEmbeddingProvider
-from tuesday.rag.infrastructure.qdrant_vector_store import QdrantVectorStore
+from tuesday.rag.infrastructure.qdrant_vector_store import LlamaIndexQdrantAdapter
 from tuesday.rag.ingestion.service import IndexerService
 from tuesday.rag.ingestion.use_case import IngestionUseCase
 from tuesday.rag.retrieval.service import RetrieverService
@@ -17,9 +17,9 @@ def _build_use_cases() -> tuple[IngestionUseCase, RetrievalUseCase]:
         qdrant_collection_prefix="test",
         qdrant_dense_vector_size=512,
     )
-    vector_store = QdrantVectorStore(
+    vector_store = LlamaIndexQdrantAdapter(
         location=config.qdrant_location,
-        collection_prefix=config.qdrant_collection_prefix,
+        collection_prefix=config.qdrant_collection_prefix_v2,
         dense_vector_size=config.qdrant_dense_vector_size,
     )
     embedding_provider = DeterministicDenseEmbeddingProvider(
@@ -27,9 +27,9 @@ def _build_use_cases() -> tuple[IngestionUseCase, RetrievalUseCase]:
     )
     ingestion = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(embedding_provider, vector_store),
     )
@@ -96,9 +96,9 @@ def test_qdrant_vector_store_replace_document_is_isolated_by_index_name() -> Non
 
 def test_qdrant_vector_store_returns_empty_list_for_missing_collection() -> None:
     config = _build_config()
-    vector_store = QdrantVectorStore(
+    vector_store = LlamaIndexQdrantAdapter(
         location=config.qdrant_location,
-        collection_prefix=config.qdrant_collection_prefix,
+        collection_prefix=config.qdrant_collection_prefix_v2,
         dense_vector_size=config.qdrant_dense_vector_size,
     )
 

@@ -74,13 +74,13 @@ def test_generation_uses_question_as_retrieval_query_when_query_missing() -> Non
         insufficient_context_answer=config.insufficient_context_answer,
     )
 
-    from tuesday.rag.infrastructure.chunking import CharacterChunker
+    from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 
     ingestion = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(HashEmbeddingProvider(), vector_store),
     )

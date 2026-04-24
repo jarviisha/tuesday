@@ -1,6 +1,6 @@
 from tests.fixtures import NO_MATCH_QUERY, ONBOARDING_DOCUMENT, REFUND_DOCUMENT
 
-from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 from tuesday.rag.infrastructure.providers import HashEmbeddingProvider
 from tuesday.rag.infrastructure.vector_store import InMemoryVectorStore
 from tuesday.rag.ingestion.service import IndexerService
@@ -16,9 +16,9 @@ def _build_ingestion_and_retrieval() -> tuple[IngestionUseCase, RetrievalUseCase
     embedding_provider = HashEmbeddingProvider()
     ingestion = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(embedding_provider, vector_store),
     )

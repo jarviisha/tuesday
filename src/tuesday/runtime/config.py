@@ -13,6 +13,7 @@ class RuntimeConfigOverrides(TypedDict, total=False):
     qdrant_api_key: str
     qdrant_location: str
     qdrant_collection_prefix: str
+    qdrant_collection_prefix_v2: str
     qdrant_dense_vector_size: int
     pdf_startup_check_mode: str
     embedding_provider_backend: str
@@ -42,12 +43,12 @@ class RuntimeConfigOverrides(TypedDict, total=False):
     generation_max_retries: int
     vector_store_timeout_ms: int
     vector_store_max_retries: int
-    ingestion_chunk_size_chars_default: int
-    ingestion_chunk_size_chars_min: int
-    ingestion_chunk_size_chars_max: int
-    ingestion_chunk_overlap_chars_default: int
-    ingestion_chunk_overlap_chars_min: int
-    ingestion_chunk_overlap_chars_max: int
+    ingestion_chunk_size_tokens_default: int
+    ingestion_chunk_size_tokens_min: int
+    ingestion_chunk_size_tokens_max: int
+    ingestion_chunk_overlap_tokens_default: int
+    ingestion_chunk_overlap_tokens_min: int
+    ingestion_chunk_overlap_tokens_max: int
     ingestion_chunk_count_max: int
     content_length_min: int
     content_length_max: int
@@ -66,6 +67,7 @@ class RuntimeConfig:
     qdrant_api_key: str | None = None
     qdrant_location: str | None = None
     qdrant_collection_prefix: str = "tuesday"
+    qdrant_collection_prefix_v2: str = "tuesday_v2"
     qdrant_dense_vector_size: int = 512
     pdf_startup_check_mode: str = "off"
     embedding_provider_backend: str = "demo"
@@ -95,12 +97,12 @@ class RuntimeConfig:
     generation_max_retries: int = 0
     vector_store_timeout_ms: int = 1000
     vector_store_max_retries: int = 0
-    ingestion_chunk_size_chars_default: int = 1000
-    ingestion_chunk_size_chars_min: int = 300
-    ingestion_chunk_size_chars_max: int = 2000
-    ingestion_chunk_overlap_chars_default: int = 150
-    ingestion_chunk_overlap_chars_min: int = 0
-    ingestion_chunk_overlap_chars_max: int = 300
+    ingestion_chunk_size_tokens_default: int = 1024
+    ingestion_chunk_size_tokens_min: int = 64
+    ingestion_chunk_size_tokens_max: int = 4096
+    ingestion_chunk_overlap_tokens_default: int = 200
+    ingestion_chunk_overlap_tokens_min: int = 0
+    ingestion_chunk_overlap_tokens_max: int = 500
     ingestion_chunk_count_max: int = 200
     content_length_min: int = 1
     content_length_max: int = 100000
@@ -146,16 +148,16 @@ class RuntimeConfig:
                 self.generation_max_context_chunks_max,
             ),
             (
-                "ingestion_chunk_size_chars_default",
-                self.ingestion_chunk_size_chars_default,
-                self.ingestion_chunk_size_chars_min,
-                self.ingestion_chunk_size_chars_max,
+                "ingestion_chunk_size_tokens_default",
+                self.ingestion_chunk_size_tokens_default,
+                self.ingestion_chunk_size_tokens_min,
+                self.ingestion_chunk_size_tokens_max,
             ),
             (
-                "ingestion_chunk_overlap_chars_default",
-                self.ingestion_chunk_overlap_chars_default,
-                self.ingestion_chunk_overlap_chars_min,
-                self.ingestion_chunk_overlap_chars_max,
+                "ingestion_chunk_overlap_tokens_default",
+                self.ingestion_chunk_overlap_tokens_default,
+                self.ingestion_chunk_overlap_tokens_min,
+                self.ingestion_chunk_overlap_tokens_max,
             ),
             (
                 "ingestion_chunk_count_max",
@@ -252,20 +254,20 @@ class RuntimeConfig:
         ):
             raise ValueError("generation_max_context_chunks bounds are invalid")
         if not (
-            self.ingestion_chunk_size_chars_min
-            <= self.ingestion_chunk_size_chars_default
-            <= self.ingestion_chunk_size_chars_max
+            self.ingestion_chunk_size_tokens_min
+            <= self.ingestion_chunk_size_tokens_default
+            <= self.ingestion_chunk_size_tokens_max
         ):
-            raise ValueError("ingestion_chunk_size_chars_default is outside spec bounds")
+            raise ValueError("ingestion_chunk_size_tokens_default is outside spec bounds")
         if not (
-            self.ingestion_chunk_overlap_chars_min
-            <= self.ingestion_chunk_overlap_chars_default
-            <= self.ingestion_chunk_overlap_chars_max
+            self.ingestion_chunk_overlap_tokens_min
+            <= self.ingestion_chunk_overlap_tokens_default
+            <= self.ingestion_chunk_overlap_tokens_max
         ):
-            raise ValueError("ingestion_chunk_overlap_chars_default is outside spec bounds")
+            raise ValueError("ingestion_chunk_overlap_tokens_default is outside spec bounds")
         if (
-            self.ingestion_chunk_overlap_chars_default
-            >= self.ingestion_chunk_size_chars_default
+            self.ingestion_chunk_overlap_tokens_default
+            >= self.ingestion_chunk_size_tokens_default
         ):
             raise ValueError("chunk_overlap must be smaller than chunk_size")
         if self.content_length_min > self.content_length_max:

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from tests.fixtures import REFUND_DOCUMENT
 
-from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 from tuesday.rag.infrastructure.file_vector_store import FileBackedVectorStore
 from tuesday.rag.infrastructure.providers import HashEmbeddingProvider
 from tuesday.rag.ingestion.service import IndexerService
@@ -18,9 +18,9 @@ def _build_use_cases(file_path: Path) -> tuple[IngestionUseCase, RetrievalUseCas
     embedding_provider = HashEmbeddingProvider()
     ingestion = IngestionUseCase(
         config=config,
-        chunker=CharacterChunker(
-            chunk_size=config.ingestion_chunk_size_chars_default,
-            chunk_overlap=config.ingestion_chunk_overlap_chars_default,
+        chunker=LlamaIndexNodeParser(
+            chunk_size=config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=config.ingestion_chunk_overlap_tokens_default,
         ),
         indexer=IndexerService(embedding_provider, vector_store),
     )
