@@ -67,6 +67,44 @@ async def test_retrieve_returns_502_for_embedding_error(
 
 
 @pytest.mark.anyio
+async def test_documents_index_returns_502_for_index_write_error(
+    api_app,
+    api_client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail_replace_document(**_: object) -> bool:
+        raise RuntimeError("write failed")
+
+    monkeypatch.setattr(api_app.state.container.vector_store, "replace_document", fail_replace_document)
+    response = await api_client.post("/documents/index", json=REFUND_DOCUMENT)
+
+    assert response.status_code == 502
+    assert response.json()["error_code"] == "INDEX_WRITE_ERROR"
+
+
+@pytest.mark.anyio
+async def test_retrieve_returns_502_for_retrieval_error(
+    api_app,
+    api_client,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fail_query(**_: object) -> list[object]:
+        raise RuntimeError("query failed")
+
+    monkeypatch.setattr(api_app.state.container.vector_store, "query", fail_query)
+    response = await api_client.post(
+        "/retrieve",
+        json={
+            "query": "Khach hang duoc hoan tien trong bao lau?",
+            "index_name": "enterprise-kb",
+        },
+    )
+
+    assert response.status_code == 502
+    assert response.json()["error_code"] == "RETRIEVAL_ERROR"
+
+
+@pytest.mark.anyio
 async def test_generate_returns_502_for_generation_error(
     api_app,
     api_client,

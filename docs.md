@@ -2509,7 +2509,7 @@ Nhịp này nên ưu tiên:
 - Không dùng `Settings`, `IngestionPipeline`, `VectorStoreIndex`, `QueryEngine`, `ResponseSynthesizer` hoặc bất kỳ orchestration object nào của LlamaIndex.
 - Không để `Document`, `Node`, `NodeWithScore`, `Response` hoặc object framework tương tự chảy ra ngoài `infrastructure/`.
 - `domain`, `use_case`, `service`, `api` và public HTTP contract phải giữ nguyên.
-- Implementation v1 hiện tại dùng `qdrant-client` trực tiếp; selective adoption của LlamaIndex vẫn được phép về mặt boundary nhưng chưa được dùng trong nhịp này.
+- Implementation hiện tại giữ `QdrantVectorStore` làm entry point nhưng route read/write qua bridge hạ tầng `llamaindex_qdrant_bridge.py`; bridge ưu tiên `llama-index-core` khi import được và fallback sang compatibility shim nội bộ trong môi trường Python 3.14 hiện tại, vẫn giữ nguyên boundary và không làm rò object framework ra ngoài `infrastructure/`.
 
 ## Semantics phải khóa trước khi code
 

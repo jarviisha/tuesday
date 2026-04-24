@@ -82,3 +82,41 @@ def test_regression_retrieval_prefers_lexically_supported_chunks() -> None:
         "chunk-timeline",
         "chunk-broad-policy",
     ]
+
+
+def test_regression_retrieval_respects_top_k_after_lexical_rerank() -> None:
+    retriever = RetrieverService(
+        StubEmbeddingProvider(),
+        StubVectorStore(
+            [
+                RetrievedChunk(
+                    chunk_id="chunk-broad-policy",
+                    document_id="doc-policy",
+                    text="Chinh sach hoan tien duoc tiep nhan qua cong ho tro chinh thuc.",
+                    score=0.95,
+                    metadata={},
+                ),
+                RetrievedChunk(
+                    chunk_id="chunk-timeline",
+                    document_id="doc-refund",
+                    text=(
+                        "Khach hang co the yeu cau hoan tien trong vong 7 ngay "
+                        "ke tu ngay thanh toan."
+                    ),
+                    score=0.73,
+                    metadata={},
+                ),
+            ]
+        ),
+    )
+
+    result = retriever.retrieve(
+        RetrievalRequest(
+            query="Khach hang duoc hoan tien trong bao lau?",
+            top_k=1,
+            filters=None,
+            index_name="enterprise-kb",
+        )
+    )
+
+    assert [chunk.chunk_id for chunk in result.chunks] == ["chunk-timeline"]

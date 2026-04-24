@@ -40,6 +40,15 @@ def _build_use_cases() -> tuple[IngestionUseCase, RetrievalUseCase]:
     return ingestion, retrieval
 
 
+def _build_config() -> RuntimeConfig:
+    return RuntimeConfig(
+        vector_store_backend="qdrant",
+        qdrant_location=":memory:",
+        qdrant_collection_prefix="test",
+        qdrant_dense_vector_size=512,
+    )
+
+
 def test_qdrant_vector_store_replace_document_within_index_name() -> None:
     ingestion, retrieval = _build_use_cases()
 
@@ -65,6 +74,42 @@ def test_qdrant_vector_store_replace_document_within_index_name() -> None:
     assert result.chunks
     assert any("14 ngay" in chunk.text for chunk in result.chunks)
     assert all("7 ngay" not in chunk.text for chunk in result.chunks)
+
+
+def test_qdrant_vector_store_replace_document_is_isolated_by_index_name() -> None:
+    ingestion, retrieval = _build_use_cases()
+
+    first_index_result = ingestion.execute(REFUND_DOCUMENT)
+    second_index_result = ingestion.execute({**REFUND_DOCUMENT, "index_name": "support-kb"})
+    result = retrieval.execute(
+        {
+            "query": "Khach hang duoc hoan tien trong bao lau?",
+            "index_name": "enterprise-kb",
+        }
+    )
+
+    assert first_index_result.replaced_document is False
+    assert second_index_result.replaced_document is False
+    assert result.chunks
+    assert all(chunk.document_id == "doc-refund-001" for chunk in result.chunks)
+
+
+def test_qdrant_vector_store_returns_empty_list_for_missing_collection() -> None:
+    config = _build_config()
+    vector_store = QdrantVectorStore(
+        location=config.qdrant_location,
+        collection_prefix=config.qdrant_collection_prefix,
+        dense_vector_size=config.qdrant_dense_vector_size,
+    )
+
+    results = vector_store.query(
+        index_name="missing-index",
+        query_embedding=[0.1] * config.qdrant_dense_vector_size,
+        top_k=5,
+        filters={},
+    )
+
+    assert results == []
 
 
 def test_qdrant_vector_store_supports_tags_contains_any_and_top_k_sorted() -> None:
@@ -148,3 +193,20 @@ def test_qdrant_vector_store_returns_empty_list_for_no_match_query() -> None:
     )
 
     assert result.chunks == []
+
+
+def test_qdrant_vector_store_preserves_top_k_after_retrieval_sorting() -> None:
+    ingestion, retrieval = _build_use_cases()
+    ingestion.execute(REFUND_DOCUMENT)
+    ingestion.execute(ONBOARDING_DOCUMENT)
+
+    result = retrieval.execute(
+        {
+            "query": "hoan tien onboarding nhan su",
+            "top_k": 1,
+            "index_name": "enterprise-kb",
+        }
+    )
+
+    assert len(result.chunks) == 1
+    assert result.chunks == sorted(result.chunks, key=lambda chunk: chunk.score, reverse=True)

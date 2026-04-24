@@ -47,6 +47,32 @@ async def test_retrieve_contract_applies_tags_contains_any(api_client) -> None:
 
 
 @pytest.mark.anyio
+async def test_retrieve_contract_preserves_applied_filters_for_supported_fields(api_client) -> None:
+    await api_client.post("/documents/index", json=REFUND_DOCUMENT)
+    response = await api_client.post(
+        "/retrieve",
+        json={
+            "query": "hoan tien",
+            "filters": {
+                "document_id": "doc-refund-001",
+                "source_type": "text",
+                "language": "vi",
+                "tags": ["refund"],
+            },
+            "index_name": "enterprise-kb",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["applied_filters"] == {
+        "document_id": "doc-refund-001",
+        "source_type": "text",
+        "language": "vi",
+        "tags": ["refund"],
+    }
+
+
+@pytest.mark.anyio
 async def test_retrieve_contract_returns_empty_chunks_when_no_match(api_client) -> None:
     await api_client.post("/documents/index", json=REFUND_DOCUMENT)
     response = await api_client.post(
@@ -56,6 +82,7 @@ async def test_retrieve_contract_returns_empty_chunks_when_no_match(api_client) 
 
     assert response.status_code == 200
     assert response.json()["chunks"] == []
+    assert response.json()["applied_filters"] == {}
 
 
 @pytest.mark.anyio

@@ -76,5 +76,5 @@ Runtime defaults are defined in `src/tuesday/runtime/config.py` and are expected
 
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
+shell commands, and other important information, read [specs/001-llamaindex-qdrant-adapter/plan.md](/home/jarviisha/development/tuesday/specs/001-llamaindex-qdrant-adapter/plan.md)
 <!-- SPECKIT END -->

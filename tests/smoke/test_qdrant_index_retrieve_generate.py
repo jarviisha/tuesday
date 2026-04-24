@@ -11,6 +11,7 @@ from tuesday.rag.infrastructure.qdrant_vector_store import QdrantVectorStore
 from tuesday.rag.ingestion.service import IndexerService
 from tuesday.rag.ingestion.use_case import IngestionUseCase
 from tuesday.rag.retrieval.service import RetrieverService
+from tuesday.rag.retrieval.use_case import RetrievalUseCase
 from tuesday.runtime.config import RuntimeConfig
 
 
@@ -48,8 +49,18 @@ def test_qdrant_smoke_index_retrieve_generate_flow() -> None:
         retriever=retriever,
         generator=generator,
     )
+    retrieval = RetrievalUseCase(
+        config=config,
+        retriever=retriever,
+    )
 
     index_result = ingestion.execute(REFUND_DOCUMENT)
+    retrieval_result = retrieval.execute(
+        {
+            "query": "Khach hang duoc hoan tien trong bao lau?",
+            "index_name": "enterprise-kb",
+        }
+    )
     generation_result = generation.execute(
         {
             "question": "Khach hang duoc hoan tien trong bao lau?",
@@ -61,6 +72,8 @@ def test_qdrant_smoke_index_retrieve_generate_flow() -> None:
     )
 
     assert index_result.status == "indexed"
+    assert retrieval_result.chunks
+    assert retrieval_result.applied_filters == {}
     assert generation_result.grounded is True
     assert generation_result.insufficient_context is False
     assert generation_result.citations
