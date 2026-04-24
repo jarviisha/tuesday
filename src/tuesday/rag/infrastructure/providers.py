@@ -92,7 +92,7 @@ class DeterministicDenseEmbeddingProvider(BaseEmbedding):
     dimension: int = 512
 
     def __init__(self, *, dimension: int = 512, **kwargs: Any) -> None:
-        super().__init__(model_name="deterministic-dense", dimension=dimension, **kwargs)
+        super().__init__(model_name="deterministic-dense", **{"dimension": dimension, **kwargs})
 
     def embed_texts(self, texts: list[str]) -> list[list[float]]:
         return [_dense_vector(text, self.dimension) for text in texts]
@@ -105,14 +105,14 @@ class DeterministicDenseEmbeddingProvider(BaseEmbedding):
     def _get_text_embedding(self, text: str) -> list[float]:
         return _dense_vector(text, self.dimension)
 
-    def _get_query_embedding(self, text: str) -> list[float]:
-        return _dense_vector(text, self.dimension)
+    def _get_query_embedding(self, query: str) -> list[float]:
+        return _dense_vector(query, self.dimension)
 
     async def _aget_text_embedding(self, text: str) -> list[float]:
         return self._get_text_embedding(text)
 
-    async def _aget_query_embedding(self, text: str) -> list[float]:
-        return self._get_query_embedding(text)
+    async def _aget_query_embedding(self, query: str) -> list[float]:
+        return self._get_query_embedding(query)
 
 
 def _parse_demo_llm_prompt(prompt: str) -> LLMGenerationResult:

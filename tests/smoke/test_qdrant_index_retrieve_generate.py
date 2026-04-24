@@ -7,7 +7,7 @@ from tuesday.rag.infrastructure.providers import (
     DeterministicDenseEmbeddingProvider,
     DeterministicLLMProvider,
 )
-from tuesday.rag.infrastructure.qdrant_vector_store import QdrantVectorStore
+from tuesday.rag.infrastructure.qdrant_vector_store import LlamaIndexQdrantAdapter
 from tuesday.rag.ingestion.service import IndexerService
 from tuesday.rag.ingestion.use_case import IngestionUseCase
 from tuesday.rag.retrieval.service import RetrieverService
@@ -22,9 +22,9 @@ def test_qdrant_smoke_index_retrieve_generate_flow() -> None:
         qdrant_collection_prefix="smoke",
         qdrant_dense_vector_size=512,
     )
-    vector_store = QdrantVectorStore(
+    vector_store = LlamaIndexQdrantAdapter(
         location=config.qdrant_location,
-        collection_prefix=config.qdrant_collection_prefix,
+        collection_prefix=config.qdrant_collection_prefix_v2,
         dense_vector_size=config.qdrant_dense_vector_size,
     )
     embedding_provider = DeterministicDenseEmbeddingProvider(
