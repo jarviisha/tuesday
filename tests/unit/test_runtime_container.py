@@ -3,7 +3,7 @@ import logging
 import pytest
 
 from tuesday.rag.infrastructure.providers import DeterministicDenseEmbeddingProvider
-from tuesday.rag.infrastructure.qdrant_vector_store import QdrantVectorStore
+from tuesday.rag.infrastructure.qdrant_vector_store import LlamaIndexQdrantAdapter
 from tuesday.runtime.config import RuntimeConfig
 from tuesday.runtime.container import build_container
 
@@ -66,5 +66,5 @@ def test_build_container_uses_qdrant_and_dense_demo_embedding_for_qdrant_backend
 
     container = build_container(config)
 
-    assert isinstance(container.vector_store._store, QdrantVectorStore)
+    assert isinstance(container.vector_store._store, LlamaIndexQdrantAdapter)
     assert isinstance(container.embedding_provider._provider, DeterministicDenseEmbeddingProvider)

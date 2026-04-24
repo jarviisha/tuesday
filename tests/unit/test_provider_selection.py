@@ -2,12 +2,8 @@ import pytest
 
 from tuesday.rag.infrastructure.providers import DeterministicLLMProvider, HashEmbeddingProvider
 from tuesday.rag.infrastructure.providers_vendor import (
-    AzureOpenAIEmbeddingProvider,
-    AzureOpenAILLMProvider,
-    GeminiEmbeddingProvider,
-    GeminiLLMProvider,
-    OpenAIEmbeddingProvider,
-    OpenAILLMProvider,
+    LlamaIndexEmbeddingAdapter,
+    LlamaIndexLLMAdapter,
 )
 from tuesday.runtime.config import RuntimeConfig
 from tuesday.runtime.container import build_container
@@ -31,11 +27,23 @@ def test_build_container_selects_openai_providers() -> None:
         )
     )
 
-    assert isinstance(container.embedding_provider._provider, OpenAIEmbeddingProvider)
-    assert isinstance(container.llm_provider._provider, OpenAILLMProvider)
+    assert isinstance(container.embedding_provider._provider, LlamaIndexEmbeddingAdapter)
+    assert isinstance(container.llm_provider._provider, LlamaIndexLLMAdapter)
 
 
-def test_build_container_selects_gemini_providers() -> None:
+def test_build_container_selects_gemini_providers(monkeypatch: pytest.MonkeyPatch) -> None:
+
+    from tuesday.rag.infrastructure.providers import DeterministicDenseEmbeddingProvider
+    from tuesday.rag.infrastructure.providers import DeterministicLLMProvider as _DemoLLM
+
+    monkeypatch.setattr(
+        "tuesday.rag.infrastructure.providers_vendor.build_gemini_embedding",
+        lambda config: LlamaIndexEmbeddingAdapter(DeterministicDenseEmbeddingProvider(dimension=8)),
+    )
+    monkeypatch.setattr(
+        "tuesday.rag.infrastructure.providers_vendor.build_gemini_llm",
+        lambda config: LlamaIndexLLMAdapter(_DemoLLM()),
+    )
     container = build_container(
         RuntimeConfig(
             embedding_provider_backend="gemini",
@@ -46,8 +54,8 @@ def test_build_container_selects_gemini_providers() -> None:
         )
     )
 
-    assert isinstance(container.embedding_provider._provider, GeminiEmbeddingProvider)
-    assert isinstance(container.llm_provider._provider, GeminiLLMProvider)
+    assert isinstance(container.embedding_provider._provider, LlamaIndexEmbeddingAdapter)
+    assert isinstance(container.llm_provider._provider, LlamaIndexLLMAdapter)
 
 
 def test_build_container_selects_azure_openai_providers() -> None:
@@ -62,8 +70,8 @@ def test_build_container_selects_azure_openai_providers() -> None:
         )
     )
 
-    assert isinstance(container.embedding_provider._provider, AzureOpenAIEmbeddingProvider)
-    assert isinstance(container.llm_provider._provider, AzureOpenAILLMProvider)
+    assert isinstance(container.embedding_provider._provider, LlamaIndexEmbeddingAdapter)
+    assert isinstance(container.llm_provider._provider, LlamaIndexLLMAdapter)
 
 
 def test_runtime_config_requires_provider_specific_openai_fields() -> None:

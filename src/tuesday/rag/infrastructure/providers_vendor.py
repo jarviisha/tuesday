@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 import json
 
-from tuesday.rag.domain.models import LLMGenerationResult
-from tuesday.rag.infrastructure.http_client import post_json
+from llama_index.core.embeddings import BaseEmbedding
+from llama_index.core.llms import LLM
 
-JSON_GENERATION_INSTRUCTION = (
+from tuesday.rag.domain.models import LLMGenerationResult
+
+_JSON_INSTRUCTION = (
     "Return only valid JSON with schema "
     '{"answer":"string","citations":["chunk-id"]}. '
     "Do not wrap the JSON in markdown fences. "
@@ -11,170 +15,95 @@ JSON_GENERATION_INSTRUCTION = (
 )
 
 
-class OpenAIEmbeddingProvider:
-    def __init__(self, *, api_key: str, base_url: str, model: str) -> None:
-        self._api_key = api_key
-        self._base_url = base_url.rstrip("/")
-        self._model = model
+class LlamaIndexEmbeddingAdapter:
+    """Domain EmbeddingProvider wrapping a LlamaIndex BaseEmbedding."""
+
+    def __init__(self, llama_model: BaseEmbedding) -> None:
+        self._llama_model = llama_model
+
+    @property
+    def llama_model(self) -> BaseEmbedding:
+        return self._llama_model
 
     def embed_texts(self, texts: list[str]) -> list[list[float]]:
-        response = post_json(
-            url=f"{self._base_url}/embeddings",
-            headers={"Authorization": f"Bearer {self._api_key}"},
-            payload={
-                "model": self._model,
-                "input": texts,
-                "encoding_format": "float",
-            },
-        )
-        return [item["embedding"] for item in response["data"]]
+        return self._llama_model.get_text_embedding_batch(texts)
 
     def embed_query(self, text: str) -> list[float]:
-        return self.embed_texts([text])[0]
+        return self._llama_model.get_query_embedding(text)
 
 
-class OpenAILLMProvider:
-    def __init__(self, *, api_key: str, base_url: str, model: str) -> None:
-        self._api_key = api_key
-        self._base_url = base_url.rstrip("/")
-        self._model = model
+class LlamaIndexLLMAdapter:
+    """Domain LLMProvider wrapping a LlamaIndex LLM."""
 
-    def generate_text(self, prompt: str) -> LLMGenerationResult:
-        response = post_json(
-            url=f"{self._base_url}/chat/completions",
-            headers={"Authorization": f"Bearer {self._api_key}"},
-            payload={
-                "model": self._model,
-                "response_format": {"type": "json_object"},
-                "messages": [
-                    {"role": "developer", "content": JSON_GENERATION_INSTRUCTION},
-                    {"role": "user", "content": prompt},
-                ],
-            },
-        )
-        content = response["choices"][0]["message"]["content"]
-        return _parse_generation_result(content)
+    def __init__(self, llama_llm: LLM) -> None:
+        self._llama_llm = llama_llm
 
-
-class GeminiEmbeddingProvider:
-    def __init__(self, *, api_key: str, base_url: str, model: str) -> None:
-        self._api_key = api_key
-        self._base_url = base_url.rstrip("/")
-        self._model = _gemini_model_path(model)
-
-    def embed_texts(self, texts: list[str]) -> list[list[float]]:
-        return [self._embed(text, task_type="RETRIEVAL_DOCUMENT") for text in texts]
-
-    def embed_query(self, text: str) -> list[float]:
-        return self._embed(text, task_type="RETRIEVAL_QUERY")
-
-    def _embed(self, text: str, *, task_type: str) -> list[float]:
-        response = post_json(
-            url=f"{self._base_url}/{self._model}:embedContent?key={self._api_key}",
-            headers={},
-            payload={
-                "content": {"parts": [{"text": text}]},
-                "taskType": task_type,
-            },
-        )
-        return response["embedding"]["values"]
-
-
-class GeminiLLMProvider:
-    def __init__(self, *, api_key: str, base_url: str, model: str) -> None:
-        self._api_key = api_key
-        self._base_url = base_url.rstrip("/")
-        self._model = _gemini_model_path(model)
+    @property
+    def llama_llm(self) -> LLM:
+        return self._llama_llm
 
     def generate_text(self, prompt: str) -> LLMGenerationResult:
-        response = post_json(
-            url=f"{self._base_url}/{self._model}:generateContent?key={self._api_key}",
-            headers={},
-            payload={
-                "contents": [
-                    {
-                        "parts": [
-                            {
-                                "text": (
-                                    f"{JSON_GENERATION_INSTRUCTION}\n\n"
-                                    f"{prompt}"
-                                )
-                            }
-                        ]
-                    }
-                ]
-            },
+        full_prompt = f"{_JSON_INSTRUCTION}\n\n{prompt}"
+        response = self._llama_llm.complete(full_prompt)
+        return _parse_generation_result(response.text)
+
+
+def build_openai_embedding(config) -> LlamaIndexEmbeddingAdapter:
+    from llama_index.embeddings.openai import OpenAIEmbedding
+
+    return LlamaIndexEmbeddingAdapter(
+        OpenAIEmbedding(api_key=config.openai_api_key, model=config.openai_embedding_model)
+    )
+
+
+def build_gemini_embedding(config) -> LlamaIndexEmbeddingAdapter:
+    from llama_index.embeddings.gemini import GeminiEmbedding
+
+    return LlamaIndexEmbeddingAdapter(
+        GeminiEmbedding(api_key=config.gemini_api_key, model_name=config.gemini_embedding_model)
+    )
+
+
+def build_azure_openai_embedding(config) -> LlamaIndexEmbeddingAdapter:
+    from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+
+    return LlamaIndexEmbeddingAdapter(
+        AzureOpenAIEmbedding(
+            api_key=config.azure_openai_api_key,
+            azure_endpoint=config.azure_openai_endpoint,
+            api_version=config.azure_openai_api_version,
+            azure_deployment=config.azure_openai_embedding_deployment,
         )
-        content = response["candidates"][0]["content"]["parts"][0]["text"]
-        return _parse_generation_result(content)
+    )
 
 
-class AzureOpenAIEmbeddingProvider:
-    def __init__(
-        self,
-        *,
-        api_key: str,
-        endpoint: str,
-        api_version: str,
-        deployment: str,
-    ) -> None:
-        self._api_key = api_key
-        self._endpoint = endpoint.rstrip("/")
-        self._api_version = api_version
-        self._deployment = deployment
+def build_openai_llm(config) -> LlamaIndexLLMAdapter:
+    from llama_index.llms.openai import OpenAI
 
-    def embed_texts(self, texts: list[str]) -> list[list[float]]:
-        response = post_json(
-            url=(
-                f"{self._endpoint}/openai/deployments/{self._deployment}/embeddings"
-                f"?api-version={self._api_version}"
-            ),
-            headers={"api-key": self._api_key},
-            payload={"input": texts},
+    return LlamaIndexLLMAdapter(
+        OpenAI(api_key=config.openai_api_key, model=config.openai_generation_model)
+    )
+
+
+def build_gemini_llm(config) -> LlamaIndexLLMAdapter:
+    from llama_index.llms.gemini import Gemini
+
+    return LlamaIndexLLMAdapter(
+        Gemini(api_key=config.gemini_api_key, model=config.gemini_generation_model)
+    )
+
+
+def build_azure_openai_llm(config) -> LlamaIndexLLMAdapter:
+    from llama_index.llms.azure_openai import AzureOpenAI
+
+    return LlamaIndexLLMAdapter(
+        AzureOpenAI(
+            api_key=config.azure_openai_api_key,
+            azure_endpoint=config.azure_openai_endpoint,
+            api_version=config.azure_openai_api_version,
+            azure_deployment=config.azure_openai_generation_deployment,
         )
-        return [item["embedding"] for item in response["data"]]
-
-    def embed_query(self, text: str) -> list[float]:
-        return self.embed_texts([text])[0]
-
-
-class AzureOpenAILLMProvider:
-    def __init__(
-        self,
-        *,
-        api_key: str,
-        endpoint: str,
-        api_version: str,
-        deployment: str,
-    ) -> None:
-        self._api_key = api_key
-        self._endpoint = endpoint.rstrip("/")
-        self._api_version = api_version
-        self._deployment = deployment
-
-    def generate_text(self, prompt: str) -> LLMGenerationResult:
-        response = post_json(
-            url=(
-                f"{self._endpoint}/openai/deployments/{self._deployment}/chat/completions"
-                f"?api-version={self._api_version}"
-            ),
-            headers={"api-key": self._api_key},
-            payload={
-                "response_format": {"type": "json_object"},
-                "messages": [
-                    {"role": "system", "content": JSON_GENERATION_INSTRUCTION},
-                    {"role": "user", "content": prompt},
-                ],
-            },
-        )
-        content = response["choices"][0]["message"]["content"]
-        return _parse_generation_result(content)
-
-
-def _gemini_model_path(model: str) -> str:
-    if model.startswith("models/"):
-        return model
-    return f"models/{model}"
+    )
 
 
 def _parse_generation_result(raw_content: str) -> LLMGenerationResult:
