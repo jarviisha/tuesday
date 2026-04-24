@@ -100,7 +100,7 @@ Runtime configuration is loaded from:
 
 If the same key exists in both places, the OS environment variable wins over `.env`.
 
-You can start from [.env.example](/home/jarviisha/development/tuesday/.env.example). The Phase 1 runbook, config baseline, and release baseline are documented in `docs/history/post-mvp/phase-1/27-runbook-config-va-release-baseline-implementation.md` (historical archive).
+You can start from [.env.example](/home/jarviisha/development/tuesday/.env.example). Historical runbooks and prior planning materials have been consolidated into `docs.md`.
 
 Runtime and backend configuration includes:
 
@@ -298,7 +298,8 @@ Preview a batch run without indexing anything:
 - `src/tuesday/rag/infrastructure/`: RAG adapter implementations for external or concrete mechanics. Contains chunking, embedding/LLM providers, vector-store adapters, resilience wrappers, and file-document parsing.
 - `src/tuesday/rag/evaluation/`: evaluation assets for quality measurement. Contains golden cases and related inputs used by benchmark and regression flows to track retrieval/generation behavior over time.
 - `tests/`: unit, API, and integration tests
-- `docs/`: design notes and post-MVP planning
+- `docs.md`: consolidated project documentation
+- `docs/`: legacy source tree for the consolidated documentation, kept only until the migration is fully removed from workflow
 
 ## Architecture Notes
 

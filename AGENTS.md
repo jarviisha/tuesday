@@ -5,11 +5,10 @@ The codebase uses a `src/` layout and the canonical package is `src/tuesday/`. T
 
 Tests are organized by scope under `tests/` (`unit/`, `api/`, `integration/`, `smoke/`, `regression/`, plus shared fixtures). Operational scripts live in `scripts/`, real sample documents live in `examples/`, and benchmark artifacts live in `benchmarks/`.
 
-Documentation has three distinct roles:
+Documentation workflow is consolidated into a single file:
 
-- `docs/00-core-brief.md` is the compressed entry point for a working session and should be read before substantial implementation work.
-- `docs/` root and `docs/core/` are the active sources of truth for current behavior and open implementation tracks.
-- `docs/history/` is archive material for provenance and planning context only; it does not define the current system behavior.
+- `docs.md` is the consolidated project reference and should be read before substantial implementation work.
+- The legacy `docs/` tree may still exist temporarily as migration input/archive material, but it is no longer the workflow source of truth.
 
 ## Build, Test, and Development Commands
 Create or reuse a Python 3.12+ environment, then install the package in editable mode:
@@ -47,7 +46,7 @@ Use English across the codebase by default, including source code, tests, commit
 
 Exceptions:
 
-- specification documents under `docs/` may use Vietnamese with full diacritics when the document is part of the project's spec, planning, checklist, review, or decision-log flow. For these spec documents, do not write Vietnamese without diacritics.
+- the consolidated `docs.md` file and feature specification artifacts may use Vietnamese with full diacritics when the content is part of the project's spec, planning, checklist, review, or decision-log flow. For these documents, do not write Vietnamese without diacritics.
 - files under `prompt/` are not constrained by this language rule.
 - input data, fixtures, sample payloads, benchmark cases, and other domain content are not constrained by the English-by-default rule. Unless a test or integration scenario explicitly requires another language, prefer Vietnamese for these inputs to match the project docs and evaluation baseline.
 
@@ -58,7 +57,7 @@ Keep changes surgical. Touch only the files and lines needed for the task, match
 
 Define concrete success criteria before making substantial changes. For bug fixes or behavior changes, prefer a test or another verifiable check that demonstrates the problem and confirms the result. For multi-step work, use a short plan with a verification step for each major change.
 
-For documentation-driven work, resolve questions in this order: `docs/00-core-brief.md`, then the relevant spec in `docs/` root or `docs/core/`, then `docs/14-decision-log.md`. Treat `docs/history/` as reference-only background unless the task is explicitly about historical rationale or archived plans.
+For documentation-driven work, resolve questions in this order: `docs.md`, then the relevant active feature spec artifacts, then `.specify/memory/constitution.md` when process rules matter. Treat the legacy `docs/` tree as migration/archive background only unless the task is explicitly about documentation consolidation history.
 
 Respect the project's lint rules as configured in `pyproject.toml` for every code change. New or modified code should pass the configured lint checks, and agents should avoid introducing style or import-order violations that conflict with the repository's lint setup.
 
@@ -74,3 +73,8 @@ PRs should summarize the behavior change, list the commands run (`pytest`, targe
 
 ## Configuration & Runtime Notes
 Runtime defaults are defined in `src/tuesday/runtime/config.py` and are expected to be loaded through the runtime/container path. When changing limits such as chunk size, overlap, retrieval bounds, provider selection, or startup checks, update tests alongside the code so the spec stays locked.
+
+<!-- SPECKIT START -->
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+<!-- SPECKIT END -->
