@@ -1,22 +1,16 @@
 import logging
 
+from llama_index.core import Settings
+
 from tuesday.rag.generation.service import GeneratorService
 from tuesday.rag.generation.use_case import GenerationUseCase
-from tuesday.rag.infrastructure.chunking import CharacterChunker
+from tuesday.rag.infrastructure.chunking import LlamaIndexNodeParser
 from tuesday.rag.infrastructure.file_document_parser import LocalFileDocumentParser
 from tuesday.rag.infrastructure.file_vector_store import FileBackedVectorStore
 from tuesday.rag.infrastructure.providers import (
     DeterministicDenseEmbeddingProvider,
     DeterministicLLMProvider,
     HashEmbeddingProvider,
-)
-from tuesday.rag.infrastructure.providers_vendor import (
-    AzureOpenAIEmbeddingProvider,
-    AzureOpenAILLMProvider,
-    GeminiEmbeddingProvider,
-    GeminiLLMProvider,
-    OpenAIEmbeddingProvider,
-    OpenAILLMProvider,
 )
 from tuesday.rag.infrastructure.resilience import (
     ResilientEmbeddingProvider,
@@ -48,9 +42,9 @@ class Container:
             timeout_ms=self.config.generation_timeout_ms,
             max_retries=self.config.generation_max_retries,
         )
-        self.chunker = CharacterChunker(
-            chunk_size=self.config.ingestion_chunk_size_chars_default,
-            chunk_overlap=self.config.ingestion_chunk_overlap_chars_default,
+        self.chunker = LlamaIndexNodeParser(
+            chunk_size=self.config.ingestion_chunk_size_tokens_default,
+            chunk_overlap=self.config.ingestion_chunk_overlap_tokens_default,
         )
         self.document_parser = LocalFileDocumentParser()
         self.indexer = IndexerService(self.embedding_provider, self.vector_store)
@@ -83,13 +77,13 @@ class Container:
         if self.config.vector_store_backend == "file":
             store = FileBackedVectorStore(self.config.vector_store_file_path)
         elif self.config.vector_store_backend == "qdrant":
-            from tuesday.rag.infrastructure.qdrant_vector_store import QdrantVectorStore
+            from tuesday.rag.infrastructure.qdrant_vector_store import LlamaIndexQdrantAdapter
 
-            store = QdrantVectorStore(
+            store = LlamaIndexQdrantAdapter(
                 url=self.config.qdrant_url,
                 api_key=self.config.qdrant_api_key,
                 location=self.config.qdrant_location,
-                collection_prefix=self.config.qdrant_collection_prefix,
+                collection_prefix=self.config.qdrant_collection_prefix_v2,
                 dense_vector_size=self.config.qdrant_dense_vector_size,
             )
         else:
@@ -103,50 +97,57 @@ class Container:
     def _build_embedding_provider(self):
         if self.config.embedding_provider_backend == "demo":
             if self.config.vector_store_backend == "qdrant":
-                return DeterministicDenseEmbeddingProvider(
+                provider = DeterministicDenseEmbeddingProvider(
                     dimension=self.config.qdrant_dense_vector_size
                 )
-            return HashEmbeddingProvider()
-        if self.config.embedding_provider_backend == "openai":
-            return OpenAIEmbeddingProvider(
-                api_key=self.config.openai_api_key or "",
-                base_url=self.config.openai_base_url,
-                model=self.config.openai_embedding_model or "",
-            )
-        if self.config.embedding_provider_backend == "gemini":
-            return GeminiEmbeddingProvider(
-                api_key=self.config.gemini_api_key or "",
-                base_url=self.config.gemini_base_url,
-                model=self.config.gemini_embedding_model or "",
-            )
-        return AzureOpenAIEmbeddingProvider(
-            api_key=self.config.azure_openai_api_key or "",
-            endpoint=self.config.azure_openai_endpoint or "",
-            api_version=self.config.azure_openai_api_version,
-            deployment=self.config.azure_openai_embedding_deployment or "",
-        )
+            else:
+                provider = HashEmbeddingProvider()
+            if isinstance(provider, DeterministicDenseEmbeddingProvider):
+                Settings.embed_model = provider
+            return provider
+
+        provider = _build_vendor_embedding(self.config)
+        Settings.embed_model = provider.llama_model
+        return provider
 
     def _build_llm_provider(self):
         if self.config.generation_provider_backend == "demo":
-            return DeterministicLLMProvider()
-        if self.config.generation_provider_backend == "openai":
-            return OpenAILLMProvider(
-                api_key=self.config.openai_api_key or "",
-                base_url=self.config.openai_base_url,
-                model=self.config.openai_generation_model or "",
-            )
-        if self.config.generation_provider_backend == "gemini":
-            return GeminiLLMProvider(
-                api_key=self.config.gemini_api_key or "",
-                base_url=self.config.gemini_base_url,
-                model=self.config.gemini_generation_model or "",
-            )
-        return AzureOpenAILLMProvider(
-            api_key=self.config.azure_openai_api_key or "",
-            endpoint=self.config.azure_openai_endpoint or "",
-            api_version=self.config.azure_openai_api_version,
-            deployment=self.config.azure_openai_generation_deployment or "",
-        )
+            provider = DeterministicLLMProvider()
+            Settings.llm = provider
+            return provider
+
+        provider = _build_vendor_llm(self.config)
+        Settings.llm = provider.llama_llm
+        return provider
+
+
+def _build_vendor_embedding(config: RuntimeConfig):
+    from tuesday.rag.infrastructure.providers_vendor import (
+        build_azure_openai_embedding,
+        build_gemini_embedding,
+        build_openai_embedding,
+    )
+
+    if config.embedding_provider_backend == "openai":
+        return build_openai_embedding(config)
+    if config.embedding_provider_backend == "gemini":
+        return build_gemini_embedding(config)
+    return build_azure_openai_embedding(config)
+
+
+def _build_vendor_llm(config: RuntimeConfig):
+    from tuesday.rag.infrastructure.providers_vendor import (
+        build_azure_openai_llm,
+        build_gemini_llm,
+        build_openai_llm,
+    )
+
+    if config.generation_provider_backend == "openai":
+        return build_openai_llm(config)
+    if config.generation_provider_backend == "gemini":
+        return build_gemini_llm(config)
+    return build_azure_openai_llm(config)
+
 
 def build_config_from_env() -> RuntimeConfig:
     return RuntimeConfig.from_env()
