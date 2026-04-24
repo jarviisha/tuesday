@@ -1,3 +1,3 @@
 {
-  "feature_directory": "specs/001-llamaindex-qdrant-adapter"
+  "feature_directory": "specs/002-llamaindex-rag-migration"
 }

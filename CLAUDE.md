@@ -119,5 +119,5 @@ Backend selectors:
 
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
-shell commands, and other important information, read [specs/001-llamaindex-qdrant-adapter/plan.md](/home/jarviisha/development/tuesday/specs/001-llamaindex-qdrant-adapter/plan.md)
+shell commands, and other important information, read [specs/002-llamaindex-rag-migration/plan.md](/home/jarviisha/development/tuesday/specs/002-llamaindex-rag-migration/plan.md)
 <!-- SPECKIT END -->
