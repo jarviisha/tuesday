@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib
 import uuid
 
-from llama_index.core.schema import NodeRelationship, RelatedNodeInfo, TextNode
+from llama_index.core.schema import BaseNode, NodeRelationship, RelatedNodeInfo, TextNode
 from llama_index.core.vector_stores import MetadataFilter, MetadataFilters
 from llama_index.core.vector_stores.types import (
     FilterCondition,
@@ -82,7 +82,7 @@ class LlamaIndexQdrantAdapter:
                 if replaced:
                     qdrant_store.delete(document_id)
 
-            nodes = [_chunk_to_node(chunk) for chunk in chunks]
+            nodes: list[BaseNode] = [_chunk_to_node(chunk) for chunk in chunks]
             qdrant_store.add(nodes)
             return replaced
         except Exception as exc:
@@ -163,7 +163,7 @@ def _build_metadata_filters(filters: dict | None) -> MetadataFilters | None:
     if not filters:
         return None
 
-    leaf_filters: list[MetadataFilter] = []
+    leaf_filters: list[MetadataFilter | MetadataFilters] = []
     has_tags = "tags" in filters
 
     for key, value in filters.items():
